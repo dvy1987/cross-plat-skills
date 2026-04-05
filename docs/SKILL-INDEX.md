@@ -138,6 +138,38 @@ Install globally: `~/.agents/skills/`. Apply to any domain — product, engineer
 
 ---
 
+### `first-principles`
+**Triggers:** "think from first principles", "why does it have to work this way", "what are the actual constraints", "rebuild this from scratch", "ignore convention" — or called by deep-thinking
+**What it does:** Strips a problem to its irreducible fundamental truths and rebuilds the solution from the ground up — eliminating inherited assumptions and conventional constraints. Six steps: define without assuming → list all assumptions → challenge each (necessary vs. conventional) → confirm fundamental truths → validate → rebuild. Produces solutions that bypass inherited design constraints.
+**Output:** No files. Analysis (fundamental truths / conventional constraints / rebuilt solution / expected delta) in chat.
+**Impact report:** Assumptions challenged, conventional constraints found, fundamental truths confirmed, new solution built
+
+---
+
+### `second-order`
+**Triggers:** "what are the downstream effects", "and then what", "unintended consequences", "long-term vs short-term", "think ahead on this" — or called by deep-thinking
+**What it does:** Traces the consequences of consequences across time — first order (immediate), second order (what that causes), third order (what that causes). Maps effects to time horizons (immediate / 6 months / 3 years). Finds hidden risks (first-order positive, second-order negative) and hidden opportunities (first-order negative, second-order positive). Based on Howard Marks second-level thinking.
+**Output:** No files. Consequence chain + time horizon map + hidden risks/opportunities in chat.
+**Impact report:** Orders traced, hidden risks found, hidden opportunities found, recommended time horizon
+
+---
+
+### `fermi`
+**Triggers:** "ballpark this", "rough estimate", "how big is this market", "how long would this take", "how many users", "we don't have the numbers" — or called by deep-thinking
+**What it does:** Decomposes an unknown quantity into 3–5 estimable factors, anchors each with a defensible round number, multiplies through, sense-checks against a known reference, and delivers a low/central/high range. Names the most uncertain factor. Always states what decision the estimate enables. Based on Enrico Fermi's estimation method.
+**Output:** No files. Factor tree + calculation + range + sense-check + decision enabled in chat.
+**Impact report:** Factors decomposed, central estimate, range, most uncertain factor, decision enabled
+
+---
+
+### `ooda`
+**Triggers:** "what should we do right now", "the situation is changing", "competitive response", "we need to move fast", "we're stuck deciding", "OODA" — or called by deep-thinking
+**What it does:** Boyd's OODA loop adapted for product and business — Observe (separate facts from assumptions), Orient (filter through mental models and context, find the key insight), Decide (2–3 options, pick one specifically), Act (owner + timeline + reversibility). Sets the next loop trigger so the team knows when to loop again. Based on OODA Canvas framework (TDHJ 2026).
+**Output:** No files. OODA report (Observe/Orient/Decide/Act + next loop trigger) in chat.
+**Impact report:** Key orientation insight, decision made, owner, timeline, next loop trigger
+
+---
+
 ## Project-Specific Skills
 
 Install globally: `~/.agents/skills/`. Output files land inside the current project.

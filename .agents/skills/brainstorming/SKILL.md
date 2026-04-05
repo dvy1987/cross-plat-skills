@@ -33,10 +33,13 @@ Read existing docs, AGENTS.md, README, or recent commits. Identify tech stack an
 If `docs/product-soul.md` exists — read it first. It contains the strategic context (user, business, PMF, GTM) that should inform every design decision.
 If brand new project, note it and proceed.
 
-### Step 2 — Check Scope
+### Step 2 — Check Ambiguity
+If the problem is extremely ambiguous — the user cannot articulate the goal clearly, multiple interpretations are equally plausible, or the domain is unfamiliar — offer: "This feels like it needs deeper thinking before we design. Shall I run deep-thinking first?" Invoke `deep-thinking` if the user agrees.
+
+### Step 3 — Check Scope
 If the request covers multiple independent subsystems (e.g. "build a platform with chat, billing, analytics, auth"): stop and decompose. Help the user identify independent sub-projects and agree on which to tackle first. Each sub-project runs through this full workflow separately.
 
-### Step 3 — Ask Clarifying Questions
+### Step 4 — Ask Clarifying Questions
 One question per message. Wait for the answer before asking the next. Focus on:
 - **Purpose** — what problem, for whom?
 - **Success criteria** — how will we know it worked?
@@ -45,17 +48,17 @@ One question per message. Wait for the answer before asking the next. Focus on:
 
 Prefer multiple-choice when options are known. Stop when you have enough to design.
 
-### Step 4 — Propose 2–3 Approaches
+### Step 5 — Propose 2–3 Approaches
 Present distinct approaches with tradeoffs. Lead with your recommendation and explain why.
 
-### Step 5 — Present Design in Sections
+### Step 6 — Present Design in Sections
 Once the user picks an approach, present the design one section at a time. Ask for approval after each section.
 
 Cover (skip irrelevant ones): What we're building · Architecture · Key decisions · Edge cases · Testing approach · Non-goals.
 
 Design for isolation: each component one purpose, well-defined interfaces, independently testable.
 
-### Step 6 — Write the Design Doc
+### Step 7 — Write the Design Doc
 Write to: `docs/specs/YYYY-MM-DD-<topic>-design.md`
 
 ```bash
@@ -70,19 +73,19 @@ Then append to `docs/skill-outputs/SKILL-OUTPUTS.md` (create if missing):
 Tell the user:
 > "Design doc saved to `docs/specs/YYYY-MM-DD-<topic>-design.md` and committed. Logged in `docs/skill-outputs/SKILL-OUTPUTS.md`."
 
-### Step 7 — Self-Review
+### Step 8 — Self-Review
 Fix inline before showing the user:
 - [ ] Any TBD / TODO / vague requirements? Fill them in.
 - [ ] Any contradictions between sections? Resolve them.
 - [ ] Any ambiguous requirement? Pick one interpretation, make it explicit.
 - [ ] Scope focused enough for one implementation cycle?
 
-### Step 8 — User Reviews
+### Step 9 — User Reviews
 > "Spec written and committed to `docs/specs/YYYY-MM-DD-<topic>-design.md`. Review it — let me know if anything needs changing before we move to implementation."
 
 Wait. Make requested changes. Re-run Step 7 if changes are significant.
 
-### Step 9 — Hand Off
+### Step 10 — Hand Off
 After explicit approval: summarize decisions, list first 3 implementation steps. If `prd-writing` skill is available, offer to run it.
 
 **Inversion + Adversarial Hat checkpoint (before finalising design):**

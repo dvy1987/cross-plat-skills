@@ -37,7 +37,10 @@ The Product Soul document is the strategic layer above any PRD. It answers: why 
 
 Look for existing context: `docs/specs/`, `docs/prd/`, `AGENTS.md`, README, any prior brainstorming outputs. Import as foundation. Ask only about what's missing.
 
-### Step 2 — Discovery Interview (Five Lenses)
+### Step 2 — Check Clarity
+If the user cannot articulate the user problem, the business model, or the strategic differentiation with any confidence, offer: "This product needs deeper thinking before we document it. Shall I run first-principles or socratic thinking first?" Invoke `deep-thinking` with the relevant frame if yes.
+
+### Step 3 — Discovery Interview (Five Lenses)
 
 Ask one question at a time across the five lenses. Stop each lens when you have enough — do not interview exhaustively. The goal is to capture the honest truth, not the polished pitch.
 
@@ -68,7 +71,7 @@ Read `references/discovery-questions.md` for the full question bank per lens. Co
 - What distribution channel is the wedge — the one that works before scale?
 - What is the acquisition → activation → retention loop in plain language?
 
-### Step 3 — Run Inversion + Adversarial Hat (Recommended)
+### Step 4 — Run Inversion + Adversarial Hat (Recommended)
 
 Before writing, offer: "Shall I run inversion and adversarial hat to pressure-test the strategic assumptions?"
 - `inversion` — flips the strategic assumptions to find what could guarantee failure
@@ -76,14 +79,14 @@ Before writing, offer: "Shall I run inversion and adversarial hat to pressure-te
 
 Apply findings to the PMF and Strategy sections before writing.
 
-### Step 4 — Write the Product Soul Document
+### Step 5 — Write the Product Soul Document
 
 Write the complete document in one pass. Use the schema from `references/product-soul-schema.md`. Apply the quality bar:
 - Every claim must be specific and falsifiable — no "we are building a platform that delights users"
 - If you don't have real data, state what the hypothesis is and what would confirm it
 - Tone: honest internal document, not investor pitch
 
-### Step 5 — Self-Review
+### Step 6 — Self-Review
 
 Before presenting:
 - [ ] Every section answers a real question an agent or human would ask
@@ -93,7 +96,7 @@ Before presenting:
 - [ ] Strategic differentiation is specific — "we do X better than Y because Z" not "we are different"
 - [ ] Run `inversion` if not already done
 
-### Step 6 — Save and Log
+### Step 7 — Save and Log
 
 Save to: `docs/product-soul.md`
 Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:

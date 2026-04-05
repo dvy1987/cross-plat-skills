@@ -43,7 +43,9 @@ Ask only about what's missing after reading available context.
 Ask or infer: Full PRD · Lean PRD · One-Pager · Technical PRD. Default: Full PRD.
 
 ### Step 3 — Discovery Interview
-One question at a time. Stop when you have enough. Minimum 2 questions always.
+If discovery reveals extreme ambiguity — the user cannot define the problem, success criteria, or user with any confidence — offer: "Before writing requirements, shall I run deep-thinking to help clarify the fundamentals?" Invoke `deep-thinking` if yes; apply findings as the foundation for discovery.
+
+Otherwise: one question at a time. Stop when you have enough. Minimum 2 questions always.
 
 Must answer before writing:
 1. What problem does this solve and who experiences it?

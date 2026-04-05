@@ -1,0 +1,13 @@
+# agents/openai.yaml — Codex app UI metadata
+# This file is optional and only used by OpenAI Codex for the skill picker UI.
+# All other platforms ignore it.
+
+interface:
+  display_name: "Universal Skill Creator"
+  short_description: "Create cross-platform agent skills for Codex, Warp, Factory.ai, Replit, and more"
+  brand_color: "#6366F1"
+  default_prompt: "Create a new agent skill for the following workflow"
+
+policy:
+  # Allow Codex to implicitly invoke this skill when it detects a skill-creation request
+  allow_implicit_invocation: true

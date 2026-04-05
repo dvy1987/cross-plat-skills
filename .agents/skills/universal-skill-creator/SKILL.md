@@ -120,6 +120,31 @@ Read `references/examples.md` for complete worked examples of Atomic and Advance
 
 ---
 
+## Mandatory Requirements for Every Skill You Create
+
+Every skill created by this skill MUST include two things in its body:
+
+**1. An `## Impact Report` section** (at the end of SKILL.md) that the agent delivers in-chat after the skill runs. The format must be specific to what that skill produces. See `references/examples.md` for examples.
+
+**2. A file-output logging instruction** — if the skill generates any files (markdown docs, PRDs, design docs, reports, configs), it must:
+
+```markdown
+### Log Output
+After creating any file, append an entry to `docs/skill-outputs/SKILL-OUTPUTS.md`
+(create the file and directory if they don't exist):
+
+```markdown
+| YYYY-MM-DD HH:MM | [skill-name] | [file path] | [one-line description] |
+```
+
+Then tell the user:
+> "[File description] saved to `[path]`. Logged in `docs/skill-outputs/SKILL-OUTPUTS.md`."
+```
+
+This applies to all project-level output files — PRDs, design docs, reports, changelogs, generated configs, exported data. It does NOT apply to skill files themselves (those go to `.agents/skills/`, not `docs/skill-outputs/`).
+
+---
+
 ## Verification Checklist
 - [ ] Starts with `---` on line 1, name matches directory
 - [ ] Description has trigger keywords and action verbs
@@ -127,6 +152,8 @@ Read `references/examples.md` for complete worked examples of Atomic and Advance
 - [ ] At least 1 complete (non-truncated) example
 - [ ] Output format is a schema or template, not prose
 - [ ] Under 200 lines, `agentskills validate` passes
+- [ ] `## Impact Report` section present at end of SKILL.md
+- [ ] If skill generates files: file-output logging to `docs/skill-outputs/SKILL-OUTPUTS.md` included
 
 ---
 
@@ -139,6 +166,7 @@ Read `references/examples.md` for complete worked examples of Atomic and Advance
 - **`references/examples.md`**: Complete worked examples (Atomic: conventional-commits, Advanced: db-migrate). Read when the user wants to see a full skill output.
 - **`scripts/skill_scaffold.py`**: CLI scaffolder. Run with `--name`, `--tier`, `--platform` flags.
 - **`templates/SKILL-template.md`**: Production-ready cross-platform template. Starting point for all new skills.
+- **`templates/SKILL-OUTPUTS-template.md`**: Template for `docs/skill-outputs/SKILL-OUTPUTS.md`. Copy into any project that uses skills to get automatic output tracking. Skills append to this file whenever they generate project files.
 
 ---
 

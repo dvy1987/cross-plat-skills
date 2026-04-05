@@ -59,6 +59,14 @@ Write to: `docs/specs/YYYY-MM-DD-<topic>-design.md`
 git add docs/specs/ && git commit -m "docs: add design spec for <topic>"
 ```
 
+Then append to `docs/skill-outputs/SKILL-OUTPUTS.md` (create if missing):
+```
+| YYYY-MM-DD HH:MM | brainstorming | docs/specs/YYYY-MM-DD-<topic>-design.md | Design spec for <topic> |
+```
+
+Tell the user:
+> "Design doc saved to `docs/specs/YYYY-MM-DD-<topic>-design.md` and committed. Logged in `docs/skill-outputs/SKILL-OUTPUTS.md`."
+
 ### Step 7 — Self-Review
 Fix inline before showing the user:
 - [ ] Any TBD / TODO / vague requirements? Fill them in.

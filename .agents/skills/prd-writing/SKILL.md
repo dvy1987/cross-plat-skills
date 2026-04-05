@@ -63,8 +63,18 @@ Apply quality bar: every requirement specific and testable before marking Approv
 - [ ] User stories have acceptance criteria
 - [ ] No hallucinated constraints
 
-### Step 7 — Present and Iterate
-Present full PRD. Ask: "Which sections need refinement?"
+### Step 7 — Present, Save, and Iterate
+Present the full PRD in chat.
+
+Save to file: `docs/prd/YYYY-MM-DD-<feature>-prd.md`
+Append to `docs/skill-outputs/SKILL-OUTPUTS.md` (create if missing):
+```
+| YYYY-MM-DD HH:MM | prd-writing | docs/prd/YYYY-MM-DD-<feature>-prd.md | PRD: <feature> |
+```
+Tell the user:
+> "PRD saved to `docs/prd/YYYY-MM-DD-<feature>-prd.md`. Logged in `docs/skill-outputs/SKILL-OUTPUTS.md`."
+
+Ask: "Which sections need refinement?"
 Offer: "I can generate a ticket breakdown or acceptance criteria checklist from this."
 
 ---

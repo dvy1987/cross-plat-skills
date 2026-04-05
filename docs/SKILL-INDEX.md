@@ -202,6 +202,23 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 **Impact report:** Sections written, PMF status, inversion run yes/no, open hypotheses count
 **References:** `references/product-soul-schema.md` (full template), `references/discovery-questions.md` (question bank per lens)
 
+---
+
+### `implementation-plan`
+**Triggers:** "plan a feature", "create a technical roadmap", "break down a PRD into tasks", "design an implementation strategy"
+**What it does:** Create a detailed, step-by-step implementation plan for a feature or project
+**Output file:** `docs/plans/YYYY-MM-DD-<feature>-plan.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** Plan complete, phases defined, total tasks, critical risks identified, estimated effort, ready for
+
+---
+
+### `test-driven-development`
+**Triggers:** "test-driven development", "write tests first", "TDD this feature", "Red-Green-Refactor"
+**What it does:** Apply the Red-Green-Refactor cycle to software development
+**Output file:** `tests/` and `src/` updates
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** TDD session complete, tests written, code coverage achieved, refactorings performed, status, ready for
 
 ---
 

@@ -102,6 +102,8 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 |-------|-------------|-----------------|----------------|
 | [`product-soul`](.agents/skills/product-soul/) | Writes `docs/product-soul.md` — strategic north star above any PRD. Five lenses: User, Business, Strategy, PMF, GTM. | **File created:** `docs/product-soul.md` + logged | "write the product soul", "product strategy doc", "product north star" |
 | [`prd-writing`](.agents/skills/prd-writing/) | Discovery interview then structured PRD in your chosen format | **File created:** `docs/prd/YYYY-MM-DD-<feature>-prd.md` + logged to `docs/skill-outputs/SKILL-OUTPUTS.md` | "write a PRD", "document requirements", "create a spec" |
+| [`implementation-plan`](.agents/skills/implementation-plan/) | Create a detailed, step-by-step implementation plan for a feature or project | **File created:** `docs/plans/YYYY-MM-DD-<feature>-plan.md` + logged | "plan a feature", "create a technical roadmap", "break down a PRD into tasks", "design an implementation strategy" |
+| [`test-driven-development`](.agents/skills/test-driven-development/) | Apply the Red-Green-Refactor cycle to software development | **File created:** `tests/` and `src/` updates + logged | "test-driven development", "write tests first", "TDD this feature", "Red-Green-Refactor" |
 
 
 ---

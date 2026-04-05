@@ -54,9 +54,10 @@ If >200 lines → invoke `split-skill` (see `docs/SKILL-INDEX.md` for full decis
 ## Skill Types (see docs/SKILL-INDEX.md for full details)
 
 ```
-meta            | manage the skill library itself     | install globally
-project-specific| workflows that recur across projects| install globally, output lands in current project
-domain          | specialized, not universally needed | install only when needed (currently empty)
+meta            | manage the skill library itself          | always global
+thinking        | structured thinking frameworks            | always global, any domain
+project-specific| workflows that recur across projects     | global install, output in current project
+domain          | specialized, not universally needed      | install only when needed (currently empty)
 ```
 
 ---

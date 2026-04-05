@@ -68,11 +68,23 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 
 ### What Each Category Means
 
-**Meta skills** manage the skill library itself — creating, improving, validating, compressing, and publishing other skills. Always installed globally, always available. You interact with two directly; the rest are called automatically.
+**Meta skills** manage the skill library itself — creating, improving, validating, compressing, and publishing other skills. Always global. You interact with two directly; the rest are called automatically.
 
-**Project-specific skills** are workflows that recur across most or all projects. Installed globally, but the files they generate always land inside the current project (e.g., `docs/specs/`, `docs/prd/`). Brainstorming and PRD writing are project-specific: they're universally useful but their output belongs to the project you're working in.
+**Thinking skills** are structured thinking frameworks that work in any context — product decisions, engineering choices, personal decisions, creative work. Always global. Each one encodes a proven method so the agent applies it rigorously: brainstorming (structured design before code), inversion (flip the problem 180°), adversarial hat (systematic critique). More thinking frameworks will be added here over time.
 
-**Domain skills** are specialized workflows useful for some projects but not all — story writing, dramatization, screenplay formatting, academic paper structuring, etc. Currently empty. Built and installed only when a specific project needs them.
+**Project-specific skills** are workflows that recur across most or all projects. Installed globally, but the files they generate always land inside the current project (`docs/specs/`, `docs/prd/`, `docs/product-soul.md`).
+
+**Domain skills** are specialized workflows useful for some projects but not all — story writing, dramatization, academic paper structuring, etc. Currently empty. Built only when a specific project needs them.
+
+---
+
+### Thinking Skills
+
+| Skill | What it does | Output / Outcome | Trigger phrases |
+|-------|-------------|-----------------|----------------|
+| [`brainstorming`](.agents/skills/brainstorming/) | Structured dialogue that turns rough ideas into approved design docs — hard gate prevents any code until you sign off | **File created:** `docs/specs/YYYY-MM-DD-<topic>-design.md` committed + logged | "brainstorm", "design this feature", "what's the best approach for" |
+| [`inversion`](.agents/skills/inversion/) | Flips any problem 180° to surface hidden assumptions and failure modes — max 2 questions before inverting, always returns forward actions | No files. Inverted view + assumptions + forward actions in chat. | "invert this", "pre-mortem", "stress test this plan", "what could go wrong" |
+| [`adversarial-hat`](.agents/skills/adversarial-hat/) | Structured adversarial critic — three phases: diagnostic, creative, challenge. Every critique cites specific evidence. Always ends with resolution conditions. | No files unless integration requested. Delivers Critical/Significant/Minor findings in chat. | "stress test this", "red team this plan", "find the flaws", "devil's advocate" |
 
 ---
 
@@ -80,12 +92,9 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 
 | Skill | What it does | Output / Outcome | Trigger phrases |
 |-------|-------------|-----------------|----------------|
-| [`brainstorming`](.agents/skills/brainstorming/) | Turns ideas into approved design docs through structured dialogue — hard gate prevents any code until you sign off | **File created:** `docs/specs/YYYY-MM-DD-<topic>-design.md` committed to git + logged to `docs/skill-outputs/SKILL-OUTPUTS.md` | "brainstorm", "design this feature", "what's the best approach for" |
+| [`product-soul`](.agents/skills/product-soul/) | Writes `docs/product-soul.md` — strategic north star above any PRD. Five lenses: User, Business, Strategy, PMF, GTM. | **File created:** `docs/product-soul.md` + logged | "write the product soul", "product strategy doc", "product north star" |
 | [`prd-writing`](.agents/skills/prd-writing/) | Discovery interview then structured PRD in your chosen format | **File created:** `docs/prd/YYYY-MM-DD-<feature>-prd.md` + logged to `docs/skill-outputs/SKILL-OUTPUTS.md` | "write a PRD", "document requirements", "create a spec" |
 
-| [`adversarial-hat`](.agents/skills/adversarial-hat/) | Structured adversarial critic — three phases: diagnostic (facts vs. hypotheses), creative (constrained options?), challenge (solutions robust?). Every critique cites a specific reason. Always ends with resolution conditions and strongest elements. | No files generated unless integration requested. Delivers adversarial report (Critical/Significant/Minor) in chat. | "stress test this", "red team this plan", "find the flaws", "devil's advocate" |
-| [`product-soul`](.agents/skills/product-soul/) | Writes `docs/product-soul.md` — the strategic north star above any PRD. Five lenses: User, Business, Strategy, PMF, GTM. Read by brainstorming and prd-writing for strategic grounding. | **File created:** `docs/product-soul.md` (living document). Logged to `docs/skill-outputs/SKILL-OUTPUTS.md`. | "write the product soul", "product strategy doc", "product north star", "why we exist" |
-| [`inversion`](.agents/skills/inversion/) | Flips any problem 180° to surface hidden assumptions and failure modes — max 2 questions before inverting, always returns forward actions | No files generated. Delivers inverted view + assumptions surfaced + forward actions in chat. Called by brainstorming and prd-writing. | "invert this", "pre-mortem", "stress test this plan", "what could go wrong" |
 
 ---
 

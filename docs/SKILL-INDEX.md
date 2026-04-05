@@ -11,13 +11,16 @@ Last updated: 2026-04-05
 ## Skill Categories — Definitions
 
 ### Meta Skills
-Skills that manage the skill library itself. They create, improve, validate, compress, split, deprecate, and publish other skills. Meta skills are always installed globally (`~/.agents/skills/`) and are available across every project automatically. They call each other — see the Call Graph below. Users interact with only two: `universal-skill-creator` and `improve-skills`. The rest are called automatically.
+Skills that manage the skill library itself — creating, improving, validating, compressing, splitting, deprecating, and publishing other skills. Always installed globally (`~/.agents/skills/`). Users interact with only two directly: `universal-skill-creator` and `improve-skills`. The rest are called automatically.
+
+### Thinking Skills
+Structured thinking frameworks that help reason through any problem, decision, or document. Not product-specific, not project-specific — they apply wherever clear thinking is needed: product strategy, engineering decisions, personal choices, creative work. Always installed globally. Each skill encodes a proven thinking method (inversion, adversarial critique, structured brainstorming) so the agent applies it rigorously rather than generically. New thinking frameworks can be added here as they are discovered.
 
 ### Project-Specific Skills
-Skills built for workflows that recur across most or all projects — things like designing features before coding, writing product requirements, planning implementation, writing changelogs, or documenting decisions. These skills are installed globally and work in any project, but the files they generate land inside the current project's directory structure (e.g., `docs/specs/`, `docs/prd/`). They are "project-specific" not because they are scoped to one codebase, but because their output is always tied to the project you are currently working in.
+Workflows that recur across most or all projects. Installed globally, but the files they generate always land inside the current project (e.g. `docs/specs/`, `docs/prd/`, `docs/product-soul.md`). These are "project-specific" not because they're scoped to one codebase, but because their output belongs to whichever project you're working in.
 
 ### Domain Skills
-Skills built for specialized workflows that are useful in some projects but not all. Examples: story writing, dramatization, screenplay formatting, academic paper structuring, legal document drafting, marketing copy generation. Domain skills are not universally applicable — they are built and installed only when a project or user explicitly needs them. **This category is currently empty.** Add skills here when you build something specialized.
+Specialized workflows useful in some projects but not all. Examples: story writing, dramatization, screenplay formatting, academic paper structuring, legal document drafting. Not universally applicable — built and installed only when a project needs them. **Currently empty.** Add skills here as they are built.
 
 ---
 
@@ -106,11 +109,38 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ---
 
+## Thinking Skills
+
+Install globally: `~/.agents/skills/`. Apply to any domain — product, engineering, personal decisions, creative work.
+
+### `brainstorming`
+**Triggers:** "brainstorm", "design this feature", "what's the best approach for", "let's think through", "before we build", "I have an idea for", "explore options"
+**What it does:** Turns a rough idea into an approved design through structured dialogue. One question at a time. Hard gate — no code or implementation until the user reviews and approves a written design doc. Decomposes oversized requests into sub-projects. Reads `docs/product-soul.md` for strategic context when available.
+**Output file:** `docs/specs/YYYY-MM-DD-<topic>-design.md` (committed to git)
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** Approach chosen, key decisions, open questions resolved, next step
+
+---
+
+### `inversion`
+**Triggers:** "invert this", "what could go wrong", "pre-mortem", "stress test this plan", "flip this problem", "steelman the failure" — or called by brainstorming/prd-writing
+**What it does:** Flips any problem 180° — asks what would guarantee failure, what the opposite looks like, what hidden assumptions haven't been examined. Five frames: Failure Inversion (Munger), Opposite Goal, Pre-mortem (Klein), Assumption Inversion, Socratic Decomposition. Max 2 questions before inverting. Always returns forward actions.
+**Output:** No files. Inverted view + hidden assumptions + forward actions in chat.
+**Impact report:** Frames used, questions asked, assumptions surfaced, forward actions derived
+
+---
+
+### `adversarial-hat`
+**Triggers:** "stress test this", "red team this plan", "poke holes in this", "devil's advocate", "challenge my assumptions", "what could kill this", "find the flaws" — or called by product-soul, brainstorming, prd-writing
+**What it does:** Structured adversarial critique — three phases: Diagnostic (facts vs. hypotheses?), Creative (problem artificially constrained?), Challenge (solutions robust?). Every critique cites specific evidence. Always ends with resolution conditions and strongest elements to build on. Complementary to inversion: inversion asks "what is the opposite?", adversarial hat asks "what is wrong with what we have?"
+**Output:** Adversarial report in chat (Critical/Significant/Minor). Optionally integrated into target document.
+**Impact report:** Phases run, critical/significant/minor counts, integrated yes/no
+
+---
+
 ## Project-Specific Skills
 
 Install globally: `~/.agents/skills/`. Output files land inside the current project.
-
-### `brainstorming`
 **Triggers:** "brainstorm", "design this feature", "what's the best approach for", "let's think through", "before we build", "I have an idea for", "explore options"
 **What it does:** Turns a rough idea into an approved design through structured dialogue. One question at a time. Hard gate — no code or implementation until the user reviews and approves a written design doc. Decomposes oversized requests into sub-projects.
 **Output file:** `docs/specs/YYYY-MM-DD-<topic>-design.md` (committed to git)
@@ -140,15 +170,6 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 **Impact report:** Sections written, PMF status, inversion run yes/no, open hypotheses count
 **References:** `references/product-soul-schema.md` (full template), `references/discovery-questions.md` (question bank per lens)
 
----
-
-### `adversarial-hat`
-**Triggers:** "stress test this", "red team this plan", "poke holes in this", "devil's advocate", "challenge my assumptions", "what could kill this", "find the flaws", "critique this rigorously" — or called by product-soul, brainstorming, prd-writing
-**What it does:** Structured adversarial critique across three phases: Diagnostic (are claims accurate? facts vs. hypotheses?), Creative (is the problem artificially constrained? what options weren't considered?), Challenge (are solutions robust? what failure conditions exist?). Every critique cites a specific reason — no generic pessimism. Always ends with what would need to be true for critiques to be resolved, and with the strongest elements to build on.
-**Called by:** `product-soul` (before writing), `brainstorming` (before design doc), `prd-writing` (before writing)
-**Complementary to:** `inversion` — inversion asks "what is the opposite?", adversarial hat asks "what is wrong with what we have?"
-**Output:** Adversarial report in chat (Critical/Significant/Minor findings + resolution conditions + strongest elements). Optionally integrated into the target document.
-**Impact report:** Phases run, critical/significant/minor counts, integrated yes/no
 
 ---
 

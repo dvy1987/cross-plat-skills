@@ -16,7 +16,7 @@ license: MIT
 metadata:
   author: dvy1987
   version: "1.0"
-  category: project-specific
+  category: thinking
   sources: Munger-Farnam-Street, EMNLP-2023-Socratic-Questioning, LatEval-2024, arXiv:2502.11872
 ---
 

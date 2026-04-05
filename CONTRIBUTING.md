@@ -32,7 +32,7 @@ cp .agents/skills/universal-skill-creator/templates/SKILL-template.md \
 Open `.agents/skills/your-skill-name/SKILL.md` and fill in:
 
 - **`description`** — the most important field. Write it to answer: "When should an agent load this?" Include trigger phrases, domain keywords, and synonyms. Use the full 1024 characters for public skills.
-- **`metadata.category`** — must be one of `meta`, `project-specific`, or `domain`. See `docs/SKILL-INDEX.md` for definitions.
+- **`metadata.category`** — must be one of `meta`, `thinking`, `project-specific`, or `domain`. See `docs/SKILL-INDEX.md` for definitions.
 - **Role definition** — "You are a [specific expert] specializing in [narrow domain]"
 - **Numbered workflow** — one action per step, action verbs only
 - **Gotchas** — non-obvious facts the agent will get wrong without being told
@@ -104,7 +104,7 @@ Before every commit:
 - [ ] File starts with `---` on line 1 (no blank lines before it)
 - [ ] `name` is lowercase, hyphens-only, matches directory name exactly
 - [ ] `description` has trigger keywords, action verbs, synonyms
-- [ ] `metadata.category` is set to `meta`, `project-specific`, or `domain`
+- [ ] `metadata.category` is set to `meta`, `thinking`, `project-specific`, or `domain`
 - [ ] No unknown top-level fields (custom fields go under `metadata:`)
 
 **Body**

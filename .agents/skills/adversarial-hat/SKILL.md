@@ -15,7 +15,7 @@ license: MIT
 metadata:
   author: dvy1987
   version: "1.0"
-  category: project-specific
+  category: thinking
   sources: DEBATE-arXiv:2405.09935, DeBono-BlackHat, Defence-RedTeam-Guide, GrowthMind-2025
 ---
 

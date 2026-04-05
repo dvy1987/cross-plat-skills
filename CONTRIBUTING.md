@@ -42,7 +42,7 @@ Open `.agents/skills/your-skill-name/SKILL.md` and fill in:
 - No vague language: "fast", "easy", "intuitive", "modern", "robust" → replace with specific, testable criteria
 - No negative constraints: "don't do X" → rewrite as "do Y instead"
 - No placeholder text in published skills: TBD, TODO, `[fill in]`
-- SKILL.md body under 500 lines — move large reference material to `references/`
+- SKILL.md body under 200 lines — no exceptions. If it grows over 200 lines, invoke `split-skill` first (check for duplication or natural seam), then `skill-compressor` if no seam exists
 
 ### 3. Validate it
 
@@ -90,7 +90,7 @@ Choose the right complexity for the job:
 | **Advanced** | + `scripts/` | Needs deterministic automation or validation |
 | **System** | + `assets/` + `agents/openai.yaml` | Full workflow with output templates + Codex UI |
 
-Start Atomic. Promote only when SKILL.md exceeds 400 lines or the agent consistently needs reference material.
+Start Atomic. Promote to Standard when the agent consistently needs reference material mid-task. Never promote to avoid the 200-line limit — use `split-skill` or `skill-compressor` instead.
 
 ---
 
@@ -112,7 +112,7 @@ Before every commit:
 - [ ] Output format defined as schema or template (not prose)
 - [ ] Verification checklist included
 - [ ] All constraints phrased positively
-- [ ] Under 500 lines
+- [ ] Under 200 lines — invoke `split-skill` or `skill-compressor` if over
 
 **Cross-platform**
 - [ ] Installs in `.agents/skills/` (universal location)
@@ -126,10 +126,18 @@ Before every commit:
 When adding a skill, consider how it chains with existing ones:
 
 ```
-brainstorming → prd-writing → [your planning/execution skill here]
+# Domain skill chain
+brainstorming → prd-writing → [your skill here]
+
+# Meta skill chain (automatic — you don't call these manually)
+universal-skill-creator → research-skill → (findings)
+                        → split-skill → skill-compressor
+improve-skills          → research-skill, split-skill, skill-compressor
 ```
 
-If your skill naturally follows or precedes an existing skill, add a handoff note at the end of your SKILL.md — e.g., "Once the plan is approved, invoke the `prd-writing` skill."
+If your skill naturally follows or precedes an existing skill, add a handoff note at the end of your SKILL.md. Example: "Once the design is approved, invoke the `prd-writing` skill."
+
+If your new skill duplicates a sub-workflow from an existing skill, flag it — `split-skill` should extract it into a shared child skill so both parents call the same thing.
 
 ---
 

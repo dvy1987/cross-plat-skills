@@ -31,12 +31,13 @@ You are a Senior AI Skill Engineer running a systematic improvement pass over a 
 
 ## Workflow
 
-### Step 1 — Discover Queue
-```bash
-ls .agents/skills/
-```
-Build queue: every skill in the repo. Report it with line counts, ask for confirmation.
-If the user wants to exclude specific skills, they'll say so. Otherwise include all.
+### Step 1 — Pre-flight via validate-skills
+Invoke `validate-skills` across the full library first. Use the report to:
+- Identify any P0 failures (agentskills validate fails) — fix these before anything else
+- Build the work queue ordered by score: lowest scores first
+- Flag any skills that score 0–5/14 as candidates for `deprecate-skill` (present to user, don't auto-deprecate)
+
+Report the queue with scores, ask for confirmation before starting.
 
 ### Step 2 — Per-Skill Improvement Cycle
 

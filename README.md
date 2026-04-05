@@ -83,26 +83,31 @@ This repo is self-managing. These skills maintain, improve, and grow the skill l
 | [`prune-skill`](.agents/skills/prune-skill/) | Removes content that is wrong, outdated, disproven, or based on poorly-cited sources — audits every citation for journal quality and recency before anything else runs | Called automatically at the start of every improve-skills cycle |
 | [`skill-compressor`](.agents/skills/skill-compressor/) | Compresses any skill to under 200 lines by moving non-core content to `references/` — never degrades quality | Called automatically after split-skill, or directly when only background content needs trimming |
 | [`split-skill`](.agents/skills/split-skill/) | Extracts a coherent sub-capability into a child skill when a skill is too large to compress without losing nuance | Called automatically before compression when duplication or a natural seam exists |
+| [`validate-skills`](.agents/skills/validate-skills/) | Read-only health check — scores every skill, flags P0 failures, size violations, and duplicate triggers | Pre-flight for `improve-skills`; quality gate for `universal-skill-creator` |
+| [`deprecate-skill`](.agents/skills/deprecate-skill/) | Retires redundant or superseded skills gracefully — archives to `.deprecated/`, updates all callers | Offered by `improve-skills` when a skill scores 0-5/14 |
+| [`publish-skill`](.agents/skills/publish-skill/) | Validates quality, packages, writes README, publishes to skills.sh | Optional final step after `universal-skill-creator` creates a skill |
 
 ### How the Meta Skills Work Together
 
 ```
 User: "create a skill for X"          User: "improve all skills"
          ↓                                      ↓
-universal-skill-creator            improve-skills (per skill):
-  → research-skill                    1. prune-skill   ← remove wrong/outdated first
-  → split-skill (if >200, seam)       2. score         ← baseline audit
-      → skill-compressor                 3. research-skill ← add what's missing
-  → skill-compressor (if no seam)     4. rewrite
-                                       5. split-skill (if >200, seam)
-                                           → skill-compressor
-                                       OR skill-compressor (if no seam)
+universal-skill-creator            improve-skills
+  → research-skill                    0. validate-skills  ← pre-flight, score all
+  → split-skill (if >200, seam)          └ deprecate-skill ← if score 0-5/14
+      → skill-compressor              Per skill:
+  → skill-compressor (if no seam)     1. prune-skill       ← remove wrong content
+  → validate-skills  (quality gate)   2. research-skill    ← add current research
+  → publish-skill    (optional)       3. rewrite
+                                       4. split/compress
+                                       5. validate + commit
 ```
 
 **Full ordering rationale:**
-- **Prune first** — remove what is wrong before adding anything new
-- **Research second** — add current best practices to what remains
-- **Split before compress** — splitting preserves nuance; compression discards content permanently
+- **Validate first** — know what you’re dealing with before touching anything
+- **Prune before research** — remove wrong content before adding new content
+- **Research before rewrite** — ground improvements in current evidence
+- **Split before compress** — splitting preserves nuance; compression discards permanently
 
 ---
 

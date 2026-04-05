@@ -93,17 +93,20 @@ If over 200 lines, apply in this order:
 
 `split-skill` will call `skill-compressor` on the resulting parent and child automatically.
 
-### Step 8 — Validate and Package
+### Step 8 — Validate via validate-skills
+Invoke `validate-skills` on the new skill. It must score ≥10/14 before the skill is committed.
+If score is below 10 — revise the weak sections and re-validate before proceeding.
+
 ```bash
 agentskills validate .agents/skills/<skill-name>/
-# Package: zip -r skill-name.zip skill-name/
+# Package if needed: zip -r skill-name.zip skill-name/
 ```
 
-### Step 8 — Publish (Optional)
-```bash
-npx skills publish ./skill-name          # skills.sh registry
-$skill-installer <skill-name>            # Codex native CLI
-```
+### Step 9 — Publish (Optional)
+Ask the user: "Would you like to publish this skill to skills.sh?"
+If yes — invoke `publish-skill`. It handles packaging, README, and registry submission.
+
+
 
 ---
 

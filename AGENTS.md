@@ -106,56 +106,67 @@ improve-skills            ← user: "improve skills" / "skill audit"
 ```
 universal-skill-creator
   ├── Step 2  → research-skill       (always — domain research before writing)
-  └── Step 7  → split-skill          (if >200 AND duplication or seam exists)
-              └── skill-compressor  (split-skill always calls this after splitting)
-              └── skill-compressor  (if >200 AND no seam — only BACKGROUND to trim)
+  ├── Step 7  → split-skill          (if >200 AND duplication or seam exists)
+  │           └── skill-compressor  (split-skill always calls this after splitting)
+  ├── Step 7  → skill-compressor     (if >200 AND no seam)
+  ├── Step 8  → validate-skills      (quality gate before commit — must score ≥10/14)
+  └── Step 9  → publish-skill        (optional — if user wants to publish)
 
 improve-skills
-  ├── Step 2a → prune-skill         (always — remove wrong/outdated content first)
-  ├── Step 2c → research-skill       (domain research before rewriting)
-  └── Step 2g → split-skill          (if >200 AND duplication or seam exists)
-              └── skill-compressor  (split-skill always calls this after splitting)
-              └── skill-compressor  (if >200 AND no seam)
+  ├── Step 1  → validate-skills      (pre-flight — scores all skills, builds work queue)
+  │           └── deprecate-skill   (if any skill scores 0–5/14, offered to user)
+  Per skill:
+  ├── Step 2a → prune-skill          (remove wrong/outdated content first)
+  ├── Step 2c → research-skill        (domain research before rewriting)
+  ├── Step 2g → split-skill           (if >200 AND duplication or seam exists)
+  │           └── skill-compressor  (split-skill always calls this after splitting)
+  └── Step 2g → skill-compressor      (if >200 AND no seam)
 
 skill-compressor
-  └── Step 3  → split-skill          (if CORE content still >200 after classify)
+  └── Step 3  → split-skill           (if CORE content still >200 after classify)
 
 split-skill
-  └── Step 5  → skill-compressor     (always — compress parent + child after every split)
+  └── Step 5  → skill-compressor      (always — compress parent + child after split)
 
+validate-skills           (leaf node — read-only, calls nothing, returns quality report)
 prune-skill               (leaf node — calls nothing, returns prune report)
 research-skill            (leaf node — calls nothing, returns findings report)
+deprecate-skill           (leaf node — called by improve-skills when score 0–5/14)
+publish-skill             (leaf node — called by universal-skill-creator optionally)
 ```
 
 **Per-skill sequence inside improve-skills (the full order):**
 ```
-1. prune-skill    — remove what is wrong or outdated
-2. score          — baseline audit (7 criteria, /14)
-3. research-skill — add what is missing or improved
-4. classify       — SkillReducer taxonomy
-5. rewrite        — apply improvements
-6. re-score       — measure delta
-7. split-skill    — extract if >200 and seam exists
-   └ skill-compressor  — always runs after split
-   OR skill-compressor  — directly, if no seam
+0. validate-skills  — pre-flight, build work queue by score
+   └ deprecate-skill — offered if score 0-5/14 (user decides)
+1. prune-skill      — remove what is wrong or outdated
+2. score            — baseline audit (7 criteria, /14)
+3. research-skill   — add what is missing or improved
+4. classify         — SkillReducer taxonomy
+5. rewrite          — apply improvements
+6. re-score         — measure delta
+7. split/compress   — split first if seam, then compress
 8. validate + commit
 ```
-Ordering rationale: prune first (remove bad), then add (research), then resize (split/compress).
-Never compress before pruning — you would be trimming content you haven't yet determined is correct.
+Ordering rationale: validate first (know what you’re dealing with), prune (remove bad),
+research (add current), rewrite (improve quality), resize (split then compress).
 
 **Decision logic when a skill exceeds 200 lines:**
 ```
-1. Does a sub-workflow appear in 2+ skills?    → split-skill (Type B)
-2. Is there a self-contained extractable phase? → split-skill (Type A)
+1. Sub-workflow appears in 2+ skills?          → split-skill (Type B)
+2. Self-contained extractable phase exists?    → split-skill (Type A)
 3. No seam — only BACKGROUND/EDGE_CASE excess? → skill-compressor
 ```
 
 **Skill roles:**
 - `universal-skill-creator`: creates new skills from scratch
 - `improve-skills`: orchestrates the full improvement cycle for all skills
+- `validate-skills`: read-only health check — scores all skills, flags issues, builds work queue
 - `prune-skill`: removes wrong, outdated, or poorly-cited content
 - `research-skill`: researches any domain, returns structured findings report
 - `skill-compressor`: moves non-core content to references/, trims prose
 - `split-skill`: extracts coherent sub-capabilities into child skills
+- `deprecate-skill`: gracefully retires redundant or superseded skills
+- `publish-skill`: packages and publishes skills to skills.sh or GitHub
 - `brainstorming`: design before code for any new feature
 - `prd-writing`: turns a design or brief into a structured PRD

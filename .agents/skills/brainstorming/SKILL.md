@@ -85,7 +85,11 @@ Wait. Make requested changes. Re-run Step 7 if changes are significant.
 ### Step 9 — Hand Off
 After explicit approval: summarize decisions, list first 3 implementation steps. If `prd-writing` skill is available, offer to run it.
 
-**Inversion checkpoint (before finalising design):** If the design involves significant assumptions or irreversible commitments, offer: "Before I write the design doc, shall I run inversion to stress-test the assumptions?" Invoke `inversion` with the near-final design as input. Apply any findings before writing the doc.
+**Inversion + Adversarial Hat checkpoint (before finalising design):**
+If the design involves significant assumptions or irreversible commitments, offer: "Before I write the design doc, shall I run inversion and adversarial hat to stress-test the approach?"
+- `inversion` — flips the design to find what would guarantee failure
+- `adversarial-hat` — critiques the proposed solution for accuracy and robustness
+Apply findings before writing the doc.
 
 ---
 

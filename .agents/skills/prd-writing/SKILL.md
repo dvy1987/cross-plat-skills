@@ -52,9 +52,11 @@ Must answer before writing:
 4. What is explicitly out of scope?
 5. Hard constraints — tech stack, deadline, compliance?
 
-### Step 4 — Inversion Before Writing (optional but recommended)
-Before writing, offer: "Shall I run inversion on the requirements to surface hidden assumptions before we commit them to the PRD?"
-If yes — invoke `inversion` with the discovery findings as input. Incorporate surfaced assumptions and risks into the PRD's Risks section and Open Questions.
+### Step 4 — Inversion + Adversarial Hat (optional but recommended)
+Before writing, offer: "Shall I run inversion and adversarial hat on the requirements?"
+- `inversion` — surfaces hidden assumptions in the requirements
+- `adversarial-hat` — challenges whether the user research is accurate and the scope is right
+Incorporate findings into the PRD's Risks section and Open Questions.
 
 ### Step 5 — Confirm Scope
 > "I have enough to write the [format] PRD. Shall I proceed?"

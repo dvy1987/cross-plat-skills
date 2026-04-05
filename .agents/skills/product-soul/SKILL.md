@@ -68,10 +68,13 @@ Read `references/discovery-questions.md` for the full question bank per lens. Co
 - What distribution channel is the wedge — the one that works before scale?
 - What is the acquisition → activation → retention loop in plain language?
 
-### Step 3 — Run Inversion (Recommended)
+### Step 3 — Run Inversion + Adversarial Hat (Recommended)
 
-Before writing, offer: "Shall I run inversion to pressure-test the strategic assumptions before we commit them to the doc?"
-If yes — invoke `inversion` with the discovery findings. Apply findings to the PMF and Strategy sections.
+Before writing, offer: "Shall I run inversion and adversarial hat to pressure-test the strategic assumptions?"
+- `inversion` — flips the strategic assumptions to find what could guarantee failure
+- `adversarial-hat` — systematically critiques the PMF evidence and GTM claims for accuracy
+
+Apply findings to the PMF and Strategy sections before writing.
 
 ### Step 4 — Write the Product Soul Document
 

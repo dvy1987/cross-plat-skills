@@ -142,6 +142,16 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ---
 
+### `adversarial-hat`
+**Triggers:** "stress test this", "red team this plan", "poke holes in this", "devil's advocate", "challenge my assumptions", "what could kill this", "find the flaws", "critique this rigorously" — or called by product-soul, brainstorming, prd-writing
+**What it does:** Structured adversarial critique across three phases: Diagnostic (are claims accurate? facts vs. hypotheses?), Creative (is the problem artificially constrained? what options weren't considered?), Challenge (are solutions robust? what failure conditions exist?). Every critique cites a specific reason — no generic pessimism. Always ends with what would need to be true for critiques to be resolved, and with the strongest elements to build on.
+**Called by:** `product-soul` (before writing), `brainstorming` (before design doc), `prd-writing` (before writing)
+**Complementary to:** `inversion` — inversion asks "what is the opposite?", adversarial hat asks "what is wrong with what we have?"
+**Output:** Adversarial report in chat (Critical/Significant/Minor findings + resolution conditions + strongest elements). Optionally integrated into the target document.
+**Impact report:** Phases run, critical/significant/minor counts, integrated yes/no
+
+---
+
 ### `inversion`
 **Triggers:** "invert this", "what could go wrong", "pre-mortem", "stress test this plan", "flip this problem", "think about this differently", "steelman the failure" — or called by brainstorming/prd-writing
 **What it does:** Applies inversion thinking to any problem, goal, or decision. Flips the question 180 degrees — asks what would guarantee failure, what the opposite looks like, what hidden assumptions haven't been examined — then translates findings back to forward actions. Uses the minimum questions needed (max 2 before inverting). Draws on five frames: Failure Inversion (Munger), Opposite Goal, Pre-mortem (Klein), Assumption Inversion, Socratic Decomposition.

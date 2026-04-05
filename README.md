@@ -104,6 +104,10 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 | [`prd-writing`](.agents/skills/prd-writing/) | Discovery interview then structured PRD in your chosen format | **File created:** `docs/prd/YYYY-MM-DD-<feature>-prd.md` + logged to `docs/skill-outputs/SKILL-OUTPUTS.md` | "write a PRD", "document requirements", "create a spec" |
 | [`implementation-plan`](.agents/skills/implementation-plan/) | Create a detailed, step-by-step implementation plan for a feature or project | **File created:** `docs/plans/YYYY-MM-DD-<feature>-plan.md` + logged | "plan a feature", "create a technical roadmap", "break down a PRD into tasks", "design an implementation strategy" |
 | [`test-driven-development`](.agents/skills/test-driven-development/) | Apply the Red-Green-Refactor cycle to software development | **File created:** `tests/` and `src/` updates + logged | "test-driven development", "write tests first", "TDD this feature", "Red-Green-Refactor" |
+| [`agent-system-architecture`](.agents/skills/agent-system-architecture/) | Design state-of-the-art multi-agent systems and orchestration patterns | **File created:** `docs/architecture/` + logged | "build an agent system", "design agent orchestration", "multi-agent wiring" |
+| [`architectural-decision-log`](.agents/skills/architectural-decision-log/) | Capture the "why" behind technical choices to prevent architectural drift | **File created:** `docs/adr/` + logged | "record a decision", "write an ADR", "why did we do this" |
+| [`technical-debt-audit`](.agents/skills/technical-debt-audit/) | Audit the project's technical health and identify "high-interest" debt | **File created:** `docs/reports/` + logged | "technical debt audit", "where is the code messy", "assess project health" |
+| [`changelog-generator`](.agents/skills/changelog-generator/) | Generate user-facing or internal release notes and changelogs | **File created:** `docs/changelogs/` + logged | "write a changelog", "prepare release notes", "summarize my commits" |
 
 
 ---

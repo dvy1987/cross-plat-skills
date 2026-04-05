@@ -222,6 +222,42 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ---
 
+### `agent-system-architecture`
+**Triggers:** "build an agent system", "design agent orchestration", "choose between sequential/parallel/hierarchical workflows", "multi-agent wiring"
+**What it does:** Design state-of-the-art multi-agent systems, orchestration patterns, and wiring
+**Output file:** `docs/architecture/YYYY-MM-DD-<system-name>-arch.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** Architecture designed, pattern chosen, number of agents, coordination complexity, observability strategy, ready for
+
+---
+
+### `architectural-decision-log`
+**Triggers:** "record a decision", "write an ADR", "why did we do this", "document this architectural choice", "architectural decision record"
+**What it does:** Capture the "why" behind technical choices to prevent architectural drift
+**Output file:** `docs/adr/ADR-NNN-<title-slug>.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** ADR recorded, number, status, alternatives considered, critical consequences, ready for
+
+---
+
+### `technical-debt-audit`
+**Triggers:** "technical debt audit", "where is the code messy", "assess project health", "find my hacks", "identify tech debt"
+**What it does:** Audit the project's technical health and identify "high-interest" debt
+**Output file:** `docs/reports/YYYY-MM-DD-tech-debt-audit.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** Audit complete, health score, high-interest items found, total TODOs/FIXMEs, refactoring roadmap created, ready for
+
+---
+
+### `changelog-generator`
+**Triggers:** "write a changelog", "prepare release notes", "what's new in this version", "summarize my commits", "create a release summary"
+**What it does:** Generate user-facing or internal release notes and changelogs
+**Output file:** `docs/changelogs/vX.X.X.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** Changelog generated, version, changes categorized, breaking changes found, user-facing value statements, ready for
+
+---
+
 ### `inversion`
 **Triggers:** "invert this", "what could go wrong", "pre-mortem", "stress test this plan", "flip this problem", "think about this differently", "steelman the failure" — or called by brainstorming/prd-writing
 **What it does:** Applies inversion thinking to any problem, goal, or decision. Flips the question 180 degrees — asks what would guarantee failure, what the opposite looks like, what hidden assumptions haven't been examined — then translates findings back to forward actions. Uses the minimum questions needed (max 2 before inverting). Draws on five frames: Failure Inversion (Munger), Opposite Goal, Pre-mortem (Klein), Assumption Inversion, Socratic Decomposition.

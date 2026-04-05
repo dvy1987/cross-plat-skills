@@ -49,14 +49,18 @@ Must answer before writing:
 4. What is explicitly out of scope?
 5. Hard constraints — tech stack, deadline, compliance?
 
-### Step 4 — Confirm Scope
+### Step 4 — Inversion Before Writing (optional but recommended)
+Before writing, offer: "Shall I run inversion on the requirements to surface hidden assumptions before we commit them to the PRD?"
+If yes — invoke `inversion` with the discovery findings as input. Incorporate surfaced assumptions and risks into the PRD's Risks section and Open Questions.
+
+### Step 5 — Confirm Scope
 > "I have enough to write the [format] PRD. Shall I proceed?"
 
-### Step 5 — Write the PRD
+### Step 6 — Write the PRD
 Use the schema for the chosen format from `references/prd-schemas.md`.
 Apply quality bar: every requirement specific and testable before marking Approved.
 
-### Step 6 — Self-Review
+### Step 7 — Self-Review
 - [ ] Every requirement is specific and testable
 - [ ] No vague language (fast/easy/intuitive)
 - [ ] Success metrics have baselines and targets
@@ -64,7 +68,7 @@ Apply quality bar: every requirement specific and testable before marking Approv
 - [ ] User stories have acceptance criteria
 - [ ] No hallucinated constraints
 
-### Step 7 — Present, Save, and Iterate
+### Step 8 — Present, Save, and Iterate
 Present the full PRD in chat.
 
 Save to file: `docs/prd/YYYY-MM-DD-<feature>-prd.md`

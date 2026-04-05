@@ -83,6 +83,8 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 | [`brainstorming`](.agents/skills/brainstorming/) | Turns ideas into approved design docs through structured dialogue — hard gate prevents any code until you sign off | **File created:** `docs/specs/YYYY-MM-DD-<topic>-design.md` committed to git + logged to `docs/skill-outputs/SKILL-OUTPUTS.md` | "brainstorm", "design this feature", "what's the best approach for" |
 | [`prd-writing`](.agents/skills/prd-writing/) | Discovery interview then structured PRD in your chosen format | **File created:** `docs/prd/YYYY-MM-DD-<feature>-prd.md` + logged to `docs/skill-outputs/SKILL-OUTPUTS.md` | "write a PRD", "document requirements", "create a spec" |
 
+| [`inversion`](.agents/skills/inversion/) | Flips any problem 180° to surface hidden assumptions and failure modes — max 2 questions before inverting, always returns forward actions | No files generated. Delivers inverted view + assumptions surfaced + forward actions in chat. Called by brainstorming and prd-writing. | "invert this", "pre-mortem", "stress test this plan", "what could go wrong" |
+
 ---
 
 ### Domain Skills

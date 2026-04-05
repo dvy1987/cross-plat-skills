@@ -130,6 +130,13 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 **Impact report:** Format, sections written, open questions remaining, success metrics defined
 **References:** `prd-schemas.md`, `metrics-frameworks.md` in `.agents/skills/prd-writing/references/`
 
+### `inversion`
+**Triggers:** "invert this", "what could go wrong", "pre-mortem", "stress test this plan", "flip this problem", "think about this differently", "steelman the failure" — or called by brainstorming/prd-writing
+**What it does:** Applies inversion thinking to any problem, goal, or decision. Flips the question 180 degrees — asks what would guarantee failure, what the opposite looks like, what hidden assumptions haven't been examined — then translates findings back to forward actions. Uses the minimum questions needed (max 2 before inverting). Draws on five frames: Failure Inversion (Munger), Opposite Goal, Pre-mortem (Klein), Assumption Inversion, Socratic Decomposition.
+**Called by:** `brainstorming` (before finalising design) and `prd-writing` (before writing, to surface hidden assumptions)
+**Output:** No files generated. Inverted view + hidden assumptions surfaced + forward actions delivered in chat.
+**Impact report:** Frames used, questions asked, hidden assumptions surfaced, forward actions derived
+
 ---
 
 ## Domain Skills

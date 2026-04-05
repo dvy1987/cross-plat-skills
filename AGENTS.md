@@ -57,13 +57,21 @@ install.sh               ← one-time global setup script
 - Every skill must pass `agentskills validate`
 - Every skill must have at least one example (input → output)
 - Every requirement must be specific and testable — no vague language
-- SKILL.md must be under 500 lines
+- SKILL.md must stay under ~200 lines / ~1,500 tokens for non-meta skills
+- Meta skills (name contains "creator", "architect", or "meta") are exempt
 - See `CONTRIBUTING.md` for the full checklist
 
 ### Never
 - Never put API keys, tokens, or secrets in any skill file
 - Never commit a skill that fails `agentskills validate`
 - Never use placeholder text (TBD, TODO) in a published skill
+
+### Auto-compression trigger
+After writing or editing any non-meta skill, check its line count:
+```bash
+wc -l .agents/skills/<skill-name>/SKILL.md
+```
+If it exceeds 200 lines — invoke the `skill-compressor` skill before committing.
 
 ---
 

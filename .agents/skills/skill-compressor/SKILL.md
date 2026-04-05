@@ -24,7 +24,7 @@ You are a skill optimization engineer. You compress SKILL.md files to under 200 
 
 **All skills are in scope, including meta skills.** The 200-line rule has no exceptions.
 
-**Split before compress when CORE content is the problem.** If after classifying content the skill still has >200 lines of genuinely CORE content, invoke `split-skill` before attempting further compression. Splitting preserves nuance; compression discards it.
+**Always go through split-skill when CORE content is the problem.** If after classifying content the skill still has >200 lines of genuinely CORE content, invoke `split-skill` — do not attempt further compression. `split-skill` will first check whether an existing skill can absorb the sub-capability (link rather than create), then extract a new child only if needed. Never create a new split without checking existing skills first.
 
 **Never commit a compressed skill that fails any regression check.** Restore content and invoke `split-skill` rather than ship a degraded skill.
 

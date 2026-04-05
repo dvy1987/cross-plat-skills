@@ -1,154 +1,158 @@
 ---
 name: split-skill
 description: >
-  Split an oversized SKILL.md into a parent skill and one or more focused
-  child skills when compression alone would degrade effectiveness. Load when
-  a skill exceeds 200 lines and skill-compressor determines that the excess
-  content is genuinely CORE (not moveable to references/), when the same
-  sub-workflow appears in multiple skills and should be extracted into a shared
-  capability, or when universal-skill-creator or improve-skills identifies a
-  coherent sub-capability that deserves its own skill. Also triggers on
+  Reduce an oversized SKILL.md by first checking if an existing skill already
+  covers the excess sub-workflow (link rather than create), then splitting into
+  a new child skill only if no existing skill fits. Load when a skill exceeds
+  200 lines and skill-compressor determines excess content is genuinely CORE,
+  when the same sub-workflow appears in multiple skills, or when universal-skill-creator
+  or improve-skills identifies a coherent sub-capability. Also triggers on
   "split this skill", "extract a sub-skill", "this skill is doing too much",
-  or "make this skill reusable across other skills".
+  or "make this skill reusable". Always checks for an existing home before
+  creating a new skill.
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: meta
 ---
 
 # Split Skill
 
-You are a skill architect. You split monolithic skills into focused, composable units — a parent skill that orchestrates and child skills that execute. Every split must preserve 100% of the original functionality. A split that loses capability is a regression.
+You are a skill architect. Your goal is to reduce a monolithic skill to under 200 lines while preserving 100% of its functionality — preferring to link to existing skills over creating new ones.
 
-## When to Split vs Compress
+## Decision Order (always follow this sequence)
 
-Split when skill-compressor cannot get a skill under 200 lines without removing genuinely CORE content — hard gates, gotchas, workflow steps the agent needs every run.
+```
+1. Can the sub-workflow live in an existing skill?  → link to it (don't create)
+2. Is it duplicated across 2+ skills?               → extract once, link from all (Type B)
+3. Is there a clean natural seam?                   → extract new child (Type A)
+4. No seam at all?                                  → stop, call skill-compressor instead
+```
 
-Compress when excess content is BACKGROUND, EDGE_CASE, or redundant examples that belong in `references/`.
-
-**Never split just to hit 200 lines.** Split only when a coherent, reusable sub-capability can be extracted.
+**Never create a new skill when an existing one already covers the sub-capability.**
+**Never split just to hit 200 lines.** Only split when genuinely CORE content cannot be compressed away.
 
 ---
 
 ## Workflow
 
-### Step 1 — Identify Split Candidates
+### Step 1 — Identify the Excess Sub-Capability
 
-Read the skill and look for:
+Read the oversized skill. Identify the section(s) of genuinely CORE content that skill-compressor could not remove. For each excess section, state:
+- What it does (one sentence)
+- Its input and output
+- Whether it has a clear trigger condition
+- Whether it could be useful independently
 
-**Type A — Oversized single skill**
-A skill >200 lines where skill-compressor flagged genuinely CORE content that cannot be moved to references/. Look for a natural seam — a self-contained phase, sub-workflow, or capability that:
-- Has its own clear trigger condition
-- Could be useful to other skills independently
-- Has a coherent input and output
+### Step 2 — Check Existing Skills First (before creating anything)
 
-**Type B — Duplicated sub-workflow across skills**
-The same workflow steps appear in 2+ skills (e.g., the research protocol in `universal-skill-creator` and `improve-skills`). Extract once, call from both parents.
+Scan every skill in `.agents/skills/`. For the excess sub-capability, ask:
 
-Report what you found:
+**2a — Does an existing skill already do this, or could it with a small change?**
+Read descriptions and workflows of all existing skills. For each candidate:
+
+1. **Already covers it fully** — output format is directly consumable, delegation saves tokens, relationship is stable → link immediately, skip to Step 5.
+
+2. **Covers it partially** — the existing skill does 80%+ of the job but needs a marginal improvement. Improvement is acceptable if:
+   - The target skill stays under 200 lines after the change
+   - The change does not alter the target skill's core purpose or break existing callers
+   - The output format becomes directly consumable by the parent
+   
+   If all three are true → make the targeted improvement to the existing skill inline (or invoke `improve-skills` on it), then link. Document what was changed and why in the commit message.
+
+3. **Cannot be adapted without scope creep or size violation** → do not modify. Proceed to Step 2b.
+
+**2b — Is it duplicated across 2+ skills?**
+If the same sub-workflow appears inline in 2+ skills with no existing shared home → extract once as a new shared skill (Type B). All duplicating skills link to the new child.
+
+**2c — Is there a clean natural seam with no existing home?**
+If no existing skill covers it and it's not duplicated → extract as a new child skill (Type A). Only proceed here if Steps 2a and 2b both returned no.
+
+**2d — No seam at all?**
+If the excess content is tightly coupled to adjacent steps and cannot be extracted cleanly → stop. Return to `skill-compressor` — the content may need to move to `references/` instead.
+
+Report findings before proceeding:
 ```
-Split analysis: [skill-name]
-Type: A (oversized) / B (duplicated) / Both
-Natural seam identified: [description of extractable sub-capability]
-Proposed child skill name: [name]
-Parent skills that would call it: [list]
+Sub-capability: [description]
+Existing skill match: [skill-name or "none"]
+Action: [link to existing / improve existing + link / Type B extract / Type A extract / stop → compress]
+Reason: [one sentence]
 ```
+Ask for confirmation.
 
-Ask for confirmation before proceeding.
+### Step 3 — Execute the Chosen Action
 
-### Step 2 — Design the Split
-
-Define the contract between parent and child:
-
+**If linking to existing skill (from Step 2a):**
+Replace the inline section in the parent with:
+```markdown
+Invoke `<existing-skill>` with [input]. Wait for [output type] before proceeding.
 ```
-Parent skill: [name]
-  - Retains: [what stays in parent]
-  - Delegates to child: [sub-capability name]
-  - Calls child when: [specific trigger condition]
-  - Receives from child: [what the child returns]
+Update AGENTS.md call graph. Verify parent is now under 200 lines. Jump to Step 6.
 
-Child skill: [name]
-  - Core job: [one-sentence outcome]
-  - Input: [what it receives from parent or user]
-  - Output: [structured findings/result it returns]
-  - Also callable standalone: yes/no
-```
-
-Verify the split is complete: parent + child together must do everything the original did.
-
-### Step 3 — Write the Child Skill
-
-Write the child `SKILL.md` following the full skill creation standard:
-- Under 200 lines
-- Role definition, numbered workflow, output format schema, 1–2 examples, constraints
-- Description must work for both standalone invocation and parent-triggered invocation
-- Output format must be structured so the parent can consume it reliably
+**If creating a new child skill (from Step 2b or 2c):**
+Write the child SKILL.md following the full skill creation standard:
+- Under 200 lines, role definition, workflow, output format, 1–2 examples
+- Description works for both standalone and parent-triggered invocation
+- Output format structured so the parent can consume it directly
+- `metadata.category` set appropriately
 
 Save to: `.agents/skills/<child-name>/SKILL.md`
 
 ### Step 4 — Update the Parent Skill
 
-Replace the extracted section in the parent with a delegation call:
-
+Replace the extracted section with a delegation call:
 ```markdown
-### Step N — [Sub-capability name]
-Invoke `<child-skill-name>` with [input]. Wait for the [output type] before proceeding.
+Invoke `<child-skill>` with [input]. Wait for [output type] before proceeding.
 ```
-
 Verify parent is now under 200 lines.
 
-### Step 5 — Compress Parent and Child
+### Step 5 — Compress Parent (and Child if new)
 
-After the split, invoke `skill-compressor` on both the parent and the child skill.
-Even if each is under 200 lines, compression removes any BACKGROUND or prose that crept in during the rewrite.
-This ensures the split doesn't just redistribute bloat between two files.
+Invoke `skill-compressor` on the parent. If a new child was created, compress it too.
+This removes any BACKGROUND or prose that crept in during the rewrite.
 
-### Step 6 — Update All Other Callers
+### Step 6 — Update All Callers (Type B only)
 
-If Type B (duplicated sub-workflow): identify every other skill with the same pattern and update them to call the child skill instead of running the workflow inline.
+If Type B: find every other skill with the same inline sub-workflow and update them to call the shared skill. Verify each is still under 200 lines and passes `agentskills validate`.
 
-For each updated skill: verify it's still under 200 lines and passes `agentskills validate`.
+### Step 7 — Update AGENTS.md
 
-### Step 7 — Update AGENTS.md Relationships
-
-Add the new call relationship to the Skill Relationships section:
+Add new relationship:
 ```
-[parent-skill]  →  [child-skill]  (calls for [reason])
+[parent-skill] → [child-or-existing-skill] (calls for [reason])
 ```
 
 ### Step 8 — Regression Check
 
-Before committing, verify for every affected skill:
-- [ ] All original capabilities still present (parent + child together)
-- [ ] Parent is under 200 lines
-- [ ] Child is under 200 lines
-- [ ] Child description triggers correctly for standalone use
-- [ ] Parent delegation step has a specific trigger condition (not "see child skill")
-- [ ] `agentskills validate` passes for parent and child
-- [ ] AGENTS.md relationships map is updated
+- [ ] All original capabilities present (parent + child/linked skill together)
+- [ ] Parent under 200 lines
+- [ ] If new child: child under 200 lines, description works standalone
+- [ ] Parent delegation step has a specific trigger condition
+- [ ] `agentskills validate` passes for all affected skills
+- [ ] AGENTS.md updated
 
 ### Step 9 — Commit
 
 ```bash
-git add .agents/skills/<parent>/ .agents/skills/<child>/ AGENTS.md
-git commit -m "split: <parent> → <parent> + <child>
+git add .agents/skills/<parent>/ AGENTS.md
+# If new child created:
+git add .agents/skills/<child>/
+git commit -m "split: <parent> — linked to <existing-skill> / extracted <child>
 
-Extracted <child> as standalone skill called by <parent>.
+[linked to existing: <existing-skill>] or [extracted: <child>, <lines> lines]
 <parent>: <before> → <after> lines
-<child>: <lines> lines (new)
-Functionality: 100% preserved
-[Other callers updated: list if Type B]"
+Functionality: 100% preserved"
 ```
 
 ---
 
 ## Gotchas
 
-- Never split a workflow step that needs context from adjacent steps — it's a pipeline stage, not an independent sub-capability.
+- Always check existing skills before creating a new one — link or marginally adapt first.
+- Marginal adaptation of a target skill is allowed only if: stays under 200 lines, core purpose unchanged, existing callers unaffected. If any condition fails — create a new child instead.
+- Never split a step that needs context from adjacent steps — it's a pipeline stage, not a sub-capability.
 - Child description must work standalone — other skills or users may invoke it directly.
-- Type B splits have higher impact: changing 3 parents means 3 regression checks. Don't rush.
-- If the child's description only makes sense from one parent, move to references/ instead.
 
 ---
 
@@ -156,19 +160,14 @@ Functionality: 100% preserved
 
 <examples>
   <example>
-    <input>skill-compressor flagged that universal-skill-creator is 503 lines and all excess content is CORE — the research protocol and examples are both genuinely needed</input>
+    <input>improve-skills is 220 lines — the link check section is CORE but takes 15 lines</input>
     <output>
-Split analysis: universal-skill-creator
-Type: B (duplicated) — research protocol also exists in improve-skills
-Natural seam: domain research is a self-contained capability with clear input (domain name) and output (findings report)
-Proposed child skill: research-skill
-Parent skills that would call it: universal-skill-creator, improve-skills
+Sub-capability: scan library for delegation opportunities
+Existing skill match: validate-skills checks call graph but does NOT recommend new links — different job, cannot cover this without scope creep.
+Duplication: not found in other skills.
+Action: Type A extract → new child "link-check"
 
-Contract: parent delegates Step 2 domain research to child, receives findings report.
-Child standalone: yes — users can call research-skill directly.
-
-Result: universal-skill-creator 503 → 127 lines, improve-skills 259 → 121 lines
-Regression check: all capabilities preserved in research-skill
+improve-skills: 220 → 198 lines ✓ | link-check: 140 lines (new) ✓
     </output>
   </example>
 </examples>
@@ -177,7 +176,7 @@ Regression check: all capabilities preserved in research-skill
 
 ## Reference Files
 
-- **`references/split-patterns.md`**: Common split patterns with examples — pipeline extraction, shared capability extraction, format/schema extraction. Read when the natural seam is unclear.
+- **`references/split-patterns.md`**: Pipeline extraction, shared capability extraction, format/schema extraction. Read when the natural seam is unclear.
 
 ---
 
@@ -185,13 +184,13 @@ Regression check: all capabilities preserved in research-skill
 
 After completing, always report:
 ```
-Split complete: [parent-skill] → [parent-skill] + [child-skill]
+Action taken: [linked to existing <skill> / extracted new <child> / Type B]
 Parent: [before] → [after] lines
-Child: [child-skill] — [lines] lines (new)
+Child/linked skill: [name] — [lines] lines ([new / existing])
 Other callers updated: [list or "none"]
 AGENTS.md updated: yes
 Regression check: all capabilities preserved
-agentskills validate: ✓ (parent), ✓ (child)
-Files created: .agents/skills/[child-skill]/SKILL.md
-Files modified: .agents/skills/[parent-skill]/SKILL.md, AGENTS.md
+agentskills validate: ✓
+Files created: [list or "none — linked to existing"]
+Files modified: [parent SKILL.md, AGENTS.md, any updated callers]
 ```

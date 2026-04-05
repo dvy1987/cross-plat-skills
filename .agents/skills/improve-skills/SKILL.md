@@ -61,17 +61,15 @@ From the validate-skills report, fix any structural flags for this skill:
 Score: Routing · Role Definition · Workflow · Gotchas · Output Format · Examples · Token Efficiency
 Report: `[skill]: X/14`
 
-**2d — Link Check** (new — scan before researching)
-Read all other skills in `.agents/skills/`. Ask for each:
-1. Does this skill duplicate a sub-workflow that another skill already does well?
-   → If yes and the other skill's output format is compatible: replace the inline section with a delegation call. Update AGENTS.md call graph.
-2. Does this skill do something that another skill could benefit from calling?
-   → If yes and the interface is clean: add a caller note to the other skill.
-3. Could a marginal improvement to an existing child skill serve this skill better than adding a new section?
-   → If yes: improve the child skill in its own cycle instead of expanding this one.
+**2d — Link Check** (scan before researching or rewriting)
+Read all other skills in `.agents/skills/`. For each section of this skill:
+1. Does another skill already do this sub-workflow well? → link to it, remove the inline section.
+2. Does another skill do it *partially*? Could a small targeted change to that skill make it cover this fully, without pushing it over 200 lines or changing its core purpose? → make the minimal change to the target skill, then link.
+3. Does another skill benefit from calling this one? → add a caller note to that skill.
 
-Link only when: (a) the called skill's output is directly consumable, (b) the delegation saves tokens overall, (c) the relationship is stable. If any condition fails — keep inline.
-Document new links in AGENTS.md Skill Relationships.
+Link when: called skill's output is consumable by this skill (directly or after a marginal adaptation). Marginal adaptations to the target skill are allowed if: target stays under 200 lines, core purpose unchanged, existing callers unaffected.
+Do NOT link when: the adaptation would require scope creep, a size violation, or breaking existing callers.
+Document new links in AGENTS.md. Document target skill changes in the commit message.
 
 **2e — Research via research-skill**
 Invoke `research-skill`. Use GOTCHAS → Gotchas, WORKFLOW PATTERNS → steps, FAILURE MODES → hard rules.
@@ -91,12 +89,12 @@ BACKGROUND and EDGE_CASE move to `references/` with specific load triggers.
 
 **2h — Post-Rewrite Score** — report delta: `X/14 → Y/14`
 
-**2i — Size Check: Split then Compress**
+**2i — Size Check**
 ```bash
 wc -l .agents/skills/<skill>/SKILL.md
 ```
 Under 200 → proceed to 2j.
-Over 200: duplication across skills → `split-skill` (Type B); natural seam → `split-skill` (Type A); no seam → `skill-compressor`.
+Over 200 → invoke `split-skill`. It will: first check existing skills for a link opportunity, then extract a new child only if no existing skill fits, then compress. Never call `skill-compressor` directly on an oversized skill without going through `split-skill` first.
 
 **2j — Validate and Commit**
 ```bash

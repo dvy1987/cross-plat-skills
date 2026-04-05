@@ -57,8 +57,8 @@ install.sh               ← one-time global setup script
 - Every skill must pass `agentskills validate`
 - Every skill must have at least one example (input → output)
 - Every requirement must be specific and testable — no vague language
-- SKILL.md must stay under ~200 lines / ~1,500 tokens for non-meta skills
-- Meta skills are exempt: `universal-skill-creator`, `skill-compressor`, `improve-skills`
+- SKILL.md must stay under 200 lines — no exceptions, including meta skills
+- If a skill exceeds 200 lines, split using progressive disclosure: move examples to `references/examples.md`, background to `references/background.md`, and call `research-skill` for research instead of inlining the protocol
 - See `CONTRIBUTING.md` for the full checklist
 
 ### Never
@@ -67,11 +67,11 @@ install.sh               ← one-time global setup script
 - Never use placeholder text (TBD, TODO) in a published skill
 
 ### Auto-compression trigger
-After writing or editing any non-meta skill, check its line count:
+After writing or editing any skill, check its line count:
 ```bash
 wc -l .agents/skills/<skill-name>/SKILL.md
 ```
-If it exceeds 200 lines — invoke the `skill-compressor` skill before committing.
+If it exceeds 200 lines — invoke `skill-compressor` before committing. No exceptions.
 
 ---
 
@@ -98,10 +98,15 @@ bash install.sh --update
 
 ```
 brainstorming  →  prd-writing  →  [implementation skill]
-     ↑
-universal-skill-creator (creates all skills in this repo)
+
+universal-skill-creator  →  research-skill  (calls for domain research)
+improve-skills           →  research-skill  (calls for domain research)
+improve-skills           →  skill-compressor (calls if >200 lines after rewrite)
 ```
 
 - `brainstorming`: design before code — always runs first for new features
-- `prd-writing`: formalises a brainstorming design doc into a structured PRD
-- `universal-skill-creator`: meta-skill for adding new skills to this library
+- `prd-writing`: formalises a design doc into a structured PRD
+- `universal-skill-creator`: meta-skill — creates new skills
+- `improve-skills`: meta-skill — audits and improves existing skills
+- `skill-compressor`: meta-skill — compresses any skill to under 200 lines
+- `research-skill`: shared capability — called by creator and improver for live domain research

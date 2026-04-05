@@ -22,7 +22,7 @@ metadata:
 
 # Universal Skill Creator
 
-You are a Senior AI Skill Engineer specializing in the agentskills.io open standard. Your skills work on every major AI agent platform — Codex, Ampcode, Factory.ai, Gemini, Warp, Bolt.new, Replit, GitHub Copilot, Claude Code, VS Code, and Cursor. Your outputs are concise, immediately deployable, and grounded in patterns from the best public skill repositories on GitHub.
+You are a Senior AI Skill Engineer specializing in the agentskills.io open standard. Your skills work on every major AI agent platform — Codex, Ampcode, Factory.ai, Gemini, Warp, Bolt.new, Replit, GitHub Copilot, Claude Code, VS Code, and Cursor. Your outputs are concise, immediately deployable, and grounded in current research, practitioner expertise, and community patterns — not just static knowledge.
 
 ## When to Load This Skill
 
@@ -63,7 +63,48 @@ Ask (or infer from context):
 
 If the user hasn't specified, ask ONE focused question: "What task should this skill automate — and what does a perfect output look like?"
 
-### Step 2 — Choose Complexity Tier
+### Step 2 — Research the Skill Domain (Mandatory)
+
+Before writing a single line of the skill, run live research on the specific domain. This step is non-negotiable — a skill built from static knowledge alone will miss current best practices, known failure modes, and community-tested patterns.
+
+**Search in parallel across three sources:**
+
+**1. Academic / Research papers**
+Search for: `[domain] best practices agent 2025 2026`, `[domain] LLM workflow arxiv`, `[domain] automation research`
+- Look for empirical findings about how this task is best structured
+- Note any known failure modes or anti-patterns documented in research
+- Prioritize papers from 2024–2026
+
+**2. Practitioner blogs and authoritative articles**
+Search for: `[domain] agent skill SKILL.md`, `[domain] AI workflow best practices`, `[domain] [tool-name] expert guide 2025`
+- Target: engineering blogs (Vercel, Linear, Stripe, Shopify eng, Anthropic, OpenAI), substack newsletters, dev.to, Hacker News top posts
+- Extract: specific gotchas, non-obvious workflow steps, domain-specific conventions the agent won't know
+- Discard: generic advice the LLM already knows from training
+
+**3. GitHub skill repos**
+Search GitHub for: `SKILL.md [domain]`, check `anthropics/skills`, `openai/skills`, `warpdotdev/oz-skills`, `github/awesome-copilot`, `VoltAgent/awesome-agent-skills`
+- Find any existing skill for this domain — study its structure, trigger phrases, gotchas
+- Note what it gets right and what's missing
+- Never copy verbatim — synthesize and improve
+
+**What to extract from research (apply the SkillReducer taxonomy):**
+- **Core rules** — non-obvious constraints, hard gates, failure modes the agent will hit without being told → go into SKILL.md body
+- **Workflow patterns** — proven step sequences from practitioners → inform the Core Workflow section
+- **Domain gotchas** — environment-specific facts that defy assumptions → Gotchas section
+- **Background context** — general domain knowledge the LLM already knows → discard or move to references/
+
+**Minimum research bar:** At least 2 sources consulted per domain before writing. If a domain is highly specialized (medical, legal, financial, security), raise this to 4+ sources.
+
+**Document what you found:** After research, state explicitly:
+```
+Research sources consulted:
+- [Source 1]: [Key finding extracted]
+- [Source 2]: [Key finding extracted]
+Gotchas discovered: [list]
+Existing skills found: [list or "none found"]
+```
+
+### Step 3 — Choose Complexity Tier
 
 | Tier | When to Use | Structure |
 |------|-------------|-----------|
@@ -74,7 +115,7 @@ If the user hasn't specified, ask ONE focused question: "What task should this s
 
 Most skills start Atomic and evolve. Prefer Atomic unless the user explicitly needs more.
 
-### Step 3 — Write the Frontmatter
+### Step 4 — Write the Frontmatter
 
 **Mandatory fields:**
 ```yaml
@@ -100,7 +141,7 @@ allowed-tools: Bash(git:*) Read Write          # Codex/Copilot tool pre-approval
 **Description writing formula** (use all 1024 chars for public skills):
 `[Domain verb phrase] + [trigger conditions] + [platform hints] + [synonyms]`
 
-### Step 4 — Write the SKILL.md Body
+### Step 5 — Write the SKILL.md Body
 
 Follow this structure. Use the full template in `templates/SKILL.md` as your scaffold.
 
@@ -116,7 +157,7 @@ Follow this structure. Use the full template in `templates/SKILL.md` as your sca
 - **Verification** — Self-check checklist before finalizing output
 - **Parameterization** — `$ARGUMENTS`, `$ARGUMENTS[1]` for Warp-compatible dynamic skills
 
-### Step 5 — Apply Platform-Optimized Patterns
+### Step 6 — Apply Platform-Optimized Patterns
 
 For **Claude Code / Ampcode** — Use XML structure tags:
 ```xml
@@ -151,23 +192,23 @@ For **Warp** — Support parameterized invocation:
 
 Read `references/platform-matrix.md` for the full platform directory paths and platform-specific guidance.
 
-### Step 6 — Ground Skills in Research + GitHub Repo Patterns
+### Step 7 — Apply SkillReducer Content Taxonomy
 
-Before finalizing, consult both current research and top community repos.
+Before finalizing the body, classify every block of content using the taxonomy from arXiv:2603.29919. Over 60% of skill body content in the wild is non-actionable — this step prevents bloat.
 
-**Research (read `references/research-papers.md` for full details):**
-- **arXiv:2602.12430** (Feb 2026) — Definitive skills survey. Validates progressive disclosure architecture; 26.1% of community skills have security vulnerabilities; skills and MCP are complementary layers.
-- **arXiv:2603.29919** (Mar 2026, SkillReducer) — Study of 55,315 real skills. Over 60% of body content is non-actionable. Use its taxonomy to classify every block: Core Rules / Workflow Steps / Output Format / Examples / Background / Edge Cases. Move non-Core content to references/.
-- **NeurIPS 2025** — Self-generated examples from real task outputs outperform hand-crafted ones. Prefer real outputs in the Examples section.
-- **arXiv:2509.00482** — Rule-based role prompting (explicit MUST/NEVER) beats automated optimization.
+| Tag | Keep in SKILL.md? |
+|-----|------------------|
+| Core rules, hard gates, gotchas | Always |
+| Numbered workflow steps | Always, compressed to one-liners |
+| Output format / schema | Always |
+| 1–2 representative examples | Keep shortest inline |
+| Background, rationale, "why" | Move to `references/` |
+| Edge cases (<20% of invocations) | Move to `references/` |
+| Anything the LLM already knows | Delete |
 
-**Community repos (read `references/github-repo-research.md`):**
-- `anthropics/skills` — Claude-optimized skills, XML structure patterns
-- `openai/skills` — Codex-native skills, `agents/openai.yaml` patterns
-- `warpdotdev/oz-skills` — Parameterized skills, CLI-first workflows
-- `github/awesome-copilot` — Copilot community skills
+Read `references/research-papers.md` for full taxonomy details and research backing.
 
-### Step 7 — Write Resource Files (if Standard/Advanced/System tier)
+### Step 8 — Write Resource Files (if Standard/Advanced/System tier)
 
 **references/ files** — Contextual knowledge the agent reads on demand:
 - Each file under 200 lines, focused on one topic
@@ -185,7 +226,7 @@ Before finalizing, consult both current research and top community repos.
 - Long templates: store in assets/, reference with explicit load condition
 - Support files (scripts, schemas, checklists): co-locate in skill directory
 
-### Step 8 — Validate and Package
+### Step 9 — Validate and Package
 
 ```bash
 # Install validator
@@ -203,7 +244,7 @@ python scripts/skill_scaffold.py --name my-skill --tier atomic
 - Directory with resources → `zip -r skill-name.zip skill-name/`
 - Never use `.tar` or `.tar.gz` — always `.zip`
 
-### Step 9 — Publish (Optional)
+### Step 10 — Publish (Optional)
 
 ```bash
 # Publish to skills.sh registry

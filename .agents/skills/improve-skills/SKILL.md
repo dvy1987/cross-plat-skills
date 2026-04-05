@@ -48,7 +48,7 @@ Invoke `prune-skill` on the skill. Wait for the prune report.
 Pruning removes wrong or outdated content before anything else touches the skill.
 Do not proceed to 2b until the prune report is complete and changes are applied.
 
-**2b — Baseline Score** (read `references/scoring-rubric.md` for 0–2 per criterion)
+**2b — Baseline Score** (read `validate-skills/references/validation-rubric.md` for 0–2 per criterion)
 Score against: Routing · Role Definition · Workflow · Gotchas · Output Format · Examples · Token Efficiency
 Report score before touching anything else: `[skill]: X/14`
 
@@ -133,4 +133,4 @@ Summary: 2 skills improved, avg +3 pts, sources: obra/superpowers, awesome-copil
 
 ## Reference Files
 
-- **`references/scoring-rubric.md`**: Full 0/1/2 scoring guide with examples for all 7 criteria. Read when a score is ambiguous.
+- **`validate-skills/references/validation-rubric.md`**: Single source of truth for the 7-criterion scoring rubric. Read when a score is ambiguous during Step 2b.

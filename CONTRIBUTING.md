@@ -129,15 +129,30 @@ When adding a skill, consider how it chains with existing ones:
 # Domain skill chain
 brainstorming → prd-writing → [your skill here]
 
-# Meta skill chain (automatic — you don't call these manually)
-universal-skill-creator → research-skill → (findings)
-                        → split-skill → skill-compressor
-improve-skills          → research-skill, split-skill, skill-compressor
+# Meta skill chain (called automatically — you don't invoke these directly)
+universal-skill-creator → research-skill, validate-skills, publish-skill (optional)
+improve-skills          → validate-skills, prune-skill, research-skill,
+                           split-skill, skill-compressor, deprecate-skill
 ```
 
 If your skill naturally follows or precedes an existing skill, add a handoff note at the end of your SKILL.md. Example: "Once the design is approved, invoke the `prd-writing` skill."
 
 If your new skill duplicates a sub-workflow from an existing skill, flag it — `split-skill` should extract it into a shared child skill so both parents call the same thing.
+
+## Meta Skills Available to You
+
+You don't need to manage these manually — they're called by `improve-skills` and `universal-skill-creator`. But you can invoke any of them directly:
+
+| Meta skill | What it does | When to call directly |
+|---|---|---|
+| `validate-skills` | Read-only health check, scores all skills | Before committing any skill change |
+| `improve-skills` | Full improvement cycle for one or all skills | When skills feel stale or weak |
+| `prune-skill` | Removes outdated/disproven content | When a model update makes techniques obsolete |
+| `research-skill` | Live domain research | When you want evidence before writing a skill |
+| `skill-compressor` | Trims skill to under 200 lines | When a skill grows past the limit |
+| `split-skill` | Extracts a child skill | When a skill has a reusable sub-workflow |
+| `deprecate-skill` | Retires a redundant skill cleanly | When two skills overlap or a domain is model-native |
+| `publish-skill` | Publishes to skills.sh | When you want to share a skill publicly |
 
 ---
 

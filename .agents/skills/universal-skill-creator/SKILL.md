@@ -106,8 +106,6 @@ agentskills validate .agents/skills/<skill-name>/
 Ask the user: "Would you like to publish this skill to skills.sh?"
 If yes — invoke `publish-skill`. It handles packaging, README, and registry submission.
 
-
-
 ---
 
 ## Output Format

@@ -6,6 +6,18 @@ This is the single source of truth for scoring. The same rubric is referenced by
 
 ---
 
+## Frontmatter Checks (before scoring)
+
+These are checked first. Any failure here is a structural issue — fix before scoring.
+
+| Check | Pass | Fail | Fix |
+|-------|------|------|-----|
+| `metadata.category` present | `meta`, `project-specific`, or `domain` | Missing or wrong value | Add field; see `docs/SKILL-INDEX.md` for definitions |
+| `## Impact Report` section | Present at end of SKILL.md | Missing | Add section specific to what this skill produces |
+| File-output logging | Present if skill generates project files | Missing | Add `docs/skill-outputs/SKILL-OUTPUTS.md` append instruction |
+
+---
+
 ## 1. Routing (0–2)
 Does the description trigger on the phrases users actually say?
 

@@ -44,9 +44,10 @@ wc -l .agents/skills/<name>/SKILL.md      # must be ≤200
 agentskills validate .agents/skills/<name>/
 ```
 
-If >200 lines → check `docs/SKILL-INDEX.md` for split vs compress decision:
-- Duplication across 2+ skills or natural seam → `split-skill`
-- Only BACKGROUND/EDGE_CASE excess → `skill-compressor`
+If >200 lines → invoke `split-skill` (see `docs/SKILL-INDEX.md` for full decision logic):
+- split-skill first checks if an existing skill can absorb the sub-capability (link or marginally adapt)
+- Only extracts a new child skill if no existing skill fits
+- Calls `skill-compressor` after every split
 
 ---
 

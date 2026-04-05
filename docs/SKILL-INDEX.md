@@ -39,7 +39,7 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 **What it does:** Full improvement cycle for every skill (or a named subset). Per-skill sequence: prune → fix structural gaps → link check → research → rewrite → resize.
 **Calls:** `validate-skills` (pre-flight) → `deprecate-skill` (if 0–5/14) → `prune-skill` → [fix gaps] → [link check] → `research-skill` → [rewrite] → `split-skill`/`skill-compressor` → validate + commit
 **Structural gap fixing (Step 2b):** Automatically fixes every flag from validate-skills — missing category, missing Impact Report, missing file-output logging, stale rubric references, orphaned reference files, missing load triggers.
-**Link check (Step 2d):** Scans the full library to find skills that could delegate to each other. Links only when: output format is directly consumable, delegation saves tokens overall, relationship is stable. Documents new links in AGENTS.md.
+**Link check (Step 2d):** Scans the full library for delegation opportunities. Links when output is directly consumable OR when a marginal adaptation to the target skill would make it consumable (allowed if target stays ≤200 lines, core purpose unchanged, existing callers unaffected). Documents new links and any target skill changes in AGENTS.md and commit message.
 **Output:** Modified SKILL.md files for every improved skill
 **Impact report:** Per-skill score deltas, structural gaps fixed, new links created, sources used, all files modified
 
@@ -73,7 +73,7 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ### `skill-compressor`
 **Triggers:** "compress this skill", called by `split-skill` and `improve-skills` when skill >200 lines and no natural seam exists
-**What it does:** Classifies every content block (CORE/WORKFLOW/FORMAT/EXAMPLE/BACKGROUND/EDGE_CASE/DUPLICATE) then moves non-core content to `references/` with specific load triggers. Calls `split-skill` if CORE content alone still exceeds 200 lines after classification.
+**What it does:** Classifies every content block (CORE/WORKFLOW/FORMAT/EXAMPLE/BACKGROUND/EDGE_CASE/DUPLICATE) then moves non-core content to `references/` with specific load triggers. If CORE content alone still exceeds 200 lines, invokes `split-skill` — which first checks if an existing skill can absorb the sub-capability before creating a new child.
 **Output:** SKILL.md trimmed + new `references/` files created as needed
 **Impact report:** Lines before/after, reduction %, files created, regression check result
 
@@ -81,9 +81,9 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ### `split-skill`
 **Triggers:** "split this skill", "extract a sub-skill", "this skill is doing too much" — or called automatically
-**What it does:** Extracts a self-contained sub-capability from a parent into a new child skill. Handles Type A (natural phase in one skill) and Type B (same sub-workflow duplicated across 2+ skills). Always calls `skill-compressor` on both parent and child after splitting. Updates AGENTS.md and all callers.
-**Output:** New `.agents/skills/<child>/SKILL.md` + parent SKILL.md and AGENTS.md modified
-**Impact report:** Parent/child line counts, callers updated, regression check result
+**What it does:** Reduces an oversized skill by first checking if an existing skill can absorb the excess sub-capability (link or marginally adapt, rather than create). Only creates a new child if no existing skill fits. Decision order: (1) link to existing skill → (2) marginally improve existing + link → (3) extract new child (Type A/B) → (4) stop, call skill-compressor. Marginal adaptation of the target skill is allowed if it stays under 200 lines, core purpose is unchanged, and existing callers are unaffected.
+**Output:** If linked: parent SKILL.md updated + AGENTS.md modified. If new child: `.agents/skills/<child>/SKILL.md` created + parent SKILL.md + AGENTS.md modified.
+**Impact report:** Action taken (linked/adapted/extracted), parent/child line counts, callers updated, regression check
 **Patterns:** `.agents/skills/split-skill/references/split-patterns.md`
 
 ---

@@ -77,6 +77,18 @@ Only use a full child skill split if the schema itself requires workflow steps t
 
 ---
 
+## Check Existing Skills Before Splitting (Always Do This First)
+
+Before any split decision, scan `.agents/skills/` for an existing skill that already covers the excess sub-capability:
+
+1. **Already covers it fully** → link immediately. No new skill needed.
+2. **Covers it ~80%** → make a targeted improvement to the existing skill, then link. Allowed if: stays ≤200 lines, core purpose unchanged, existing callers unaffected.
+3. **Cannot be adapted without scope creep or size violation** → proceed with Type A or B split below.
+
+Creating a new skill when an existing one could be adapted is an anti-pattern — see Anti-Patterns below.
+
+---
+
 ## Anti-Patterns (Do Not Split These)
 
 | Situation | Why not to split | What to do instead |
@@ -86,3 +98,4 @@ Only use a full child skill split if the schema itself requires workflow steps t
 | Child would only ever be called by one parent | Not truly reusable | Move to `references/` instead |
 | Split would require parent to pass >5 variables to child | Tight coupling | Keep inline |
 | Sub-capability is <10 lines | Too small to be a skill | Keep inline |
+| Existing skill covers it with a small change | Creating a new skill is wasteful | Adapt the existing skill and link |

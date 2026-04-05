@@ -92,12 +92,13 @@ wc -l .agents/skills/<skill-name>/SKILL.md
 ```
 If under 200 lines → proceed to Step 8.
 
-If over 200 lines, apply in this order:
-1. **Check for duplication first** — does any sub-workflow in this skill also appear in another skill? If yes, invoke `split-skill` (Type B extraction). Split preserves nuance; compress can lose it.
-2. **Check for a natural seam** — is there a self-contained phase that could be a child skill? If yes, invoke `split-skill` (Type A extraction).
-3. **If no seam exists** — all excess is BACKGROUND/EDGE_CASE → invoke `skill-compressor` to move it to references/.
+If over 200 lines → invoke `split-skill`. It follows this decision order automatically:
+1. Can an existing skill absorb the excess sub-capability? → link to it (or marginally adapt it, if: stays ≤200 lines, core purpose unchanged, callers unaffected)
+2. Is the sub-workflow duplicated across 2+ skills? → extract once, link from all (Type B)
+3. Is there a clean natural seam with no existing home? → extract new child (Type A)
+4. No seam — excess is only BACKGROUND/EDGE_CASE → `skill-compressor` instead
 
-`split-skill` will call `skill-compressor` on the resulting parent and child automatically.
+`split-skill` calls `skill-compressor` on the output automatically.
 
 ### Step 8 — Validate via validate-skills
 Invoke `validate-skills` on the new skill. It must score ≥10/14 before the skill is committed.

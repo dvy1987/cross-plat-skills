@@ -44,7 +44,7 @@ Open `.agents/skills/your-skill-name/SKILL.md` and fill in:
 - No vague language: "fast", "easy", "intuitive", "modern", "robust" → replace with specific, testable criteria
 - No negative constraints: "don't do X" → rewrite as "do Y instead"
 - No placeholder text in published skills: TBD, TODO, `[fill in]`
-- SKILL.md body under 200 lines — no exceptions. If it grows over 200 lines, invoke `split-skill` first (check for duplication or natural seam), then `skill-compressor` if no seam exists
+- SKILL.md body under 200 lines — no exceptions. If it grows over 200 lines: invoke `split-skill`, which will first check if an existing skill can absorb the excess (link or marginally adapt), then extract a new child only if no existing skill fits, then call `skill-compressor`
 
 ### 3. Validate it
 
@@ -115,7 +115,7 @@ Before every commit:
 - [ ] Output format defined as schema or template (not prose)
 - [ ] Verification checklist included
 - [ ] All constraints phrased positively
-- [ ] Under 200 lines — invoke `split-skill` or `skill-compressor` if over
+- [ ] Under 200 lines — invoke `split-skill` if over (it handles link-first, then extract, then compress)
 - [ ] `## Impact Report` section present at end of SKILL.md
 - [ ] If skill generates files: `docs/skill-outputs/SKILL-OUTPUTS.md` logging instruction included
 
@@ -144,7 +144,7 @@ improve-skills          → validate-skills, prune-skill, research-skill,
 
 If your skill naturally follows or precedes an existing skill, add a handoff note at the end of your SKILL.md. Example: "Once the design is approved, invoke the `prd-writing` skill."
 
-If your new skill duplicates a sub-workflow from an existing skill, flag it — `split-skill` should extract it into a shared child skill so both parents call the same thing.
+If your new skill duplicates a sub-workflow from an existing skill, flag it — `split-skill` will first check if one of the existing skills can be linked to or marginally adapted, and only extracts a new shared child if no existing skill fits.
 
 ## Meta Skills Available to You
 
@@ -157,7 +157,7 @@ You don't need to manage these manually — they're called by `improve-skills` a
 | `prune-skill` | Removes outdated/disproven content | When a model update makes techniques obsolete |
 | `research-skill` | Live domain research | When you want evidence before writing a skill |
 | `skill-compressor` | Trims skill to under 200 lines | When a skill grows past the limit |
-| `split-skill` | Extracts a child skill | When a skill has a reusable sub-workflow |
+| `split-skill` | Links to existing skill or extracts a new child — always checks existing skills first | When a skill is >200 lines and CORE content can't be compressed away |
 | `deprecate-skill` | Retires a redundant skill cleanly | When two skills overlap or a domain is model-native |
 | `publish-skill` | Publishes to skills.sh | When you want to share a skill publicly |
 

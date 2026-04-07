@@ -115,6 +115,19 @@ secure_skills_run: [list of secure-* skills that scanned]
 
 **Conflict detection:** Content contradicting the secure baseline (secure-* rules, AGENTS.md security policies) is BLOCKED regardless of other verdicts.
 
+## Contamination Rollback
+
+If a previously-approved skill or pattern is later found to be compromised:
+
+1. **Identify** — Search provenance records for all content from the suspect source (repo URL or commit hash).
+2. **Isolate** — Remove or quarantine every installed file traced to that source. Use provenance `installed_to` paths.
+3. **Add to no-go list** — Add the source repo to `references/no-go-repos.md` with the finding details.
+4. **Re-scan neighbors** — Invoke ALL `secure-*` skills on every skill that was modified in the same session or improvement pass as the compromised content. Contamination can spread through `improve-skills` batches.
+5. **Verify baseline** — Confirm `secure-*` skills themselves were not modified by the compromised source. If they were, restore from the last known-good commit.
+6. **Report** — Log the rollback: what was removed, what was re-scanned, what was clean.
+
+Rollback is always available because provenance is append-only — the full chain of what came from where is never lost.
+
 ---
 
 ## Report Format

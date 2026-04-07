@@ -101,13 +101,12 @@ If over 200 lines → invoke `split-skill`. It follows this decision order autom
 
 `split-skill` calls `skill-compressor` on the output automatically.
 
-### Step 8 — Validate via validate-skills
-Invoke `validate-skills` on the new skill. It must score ≥10/14 before the skill is committed.
-If score is below 10 — revise the weak sections and re-validate before proceeding.
+### Step 8 — Validate and Security-Scan Output
+Invoke `validate-skills` on the new skill. Must score ≥10/14.
+Then invoke ALL `secure-*` skills (discover via `ls .agents/skills/secure-*`) to scan the GENERATED skill — not just the inputs. This catches cases where external patterns were absorbed into the output. BLOCKED = revise and re-scan before committing.
 
 ```bash
 agentskills validate .agents/skills/<skill-name>/
-# Package if needed: zip -r skill-name.zip skill-name/
 ```
 
 ### Step 9 — Publish (Optional)

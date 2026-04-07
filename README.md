@@ -2,7 +2,18 @@
 
 > A personal library of agent skills that work across every major AI coding tool — write once, run everywhere.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![agentskills.io](https://img.shields.io/badge/standard-agentskills.io-blue)](https://agentskills.io/specification)
+
 Skills follow the [agentskills.io](https://agentskills.io/specification) open standard and work with Codex CLI, Ampcode, Claude Code, Warp, Gemini CLI, GitHub Copilot, Cursor, VS Code, Replit, Factory.ai, and Bolt.new.
+
+---
+
+## What is this?
+
+AI coding tools like Codex, Claude Code, Warp, and Cursor all support "skills" — reusable instruction files that teach agents how to do specific tasks (write a PRD, run a pre-mortem, create an ADR). The problem: every tool uses a slightly different format, and you end up copying the same prompt files into every project, on every machine.
+
+**cross-plat-skills solves this.** Install once, and the same skills are globally available in every tool, in every project, on every machine — no per-project setup, no copy-pasting. Add a new skill to this repo and it's instantly live everywhere via symlinks.
 
 ---
 
@@ -10,10 +21,18 @@ Skills follow the [agentskills.io](https://agentskills.io/specification) open st
 
 Clone the repo once and run the install script. Your skills become globally available in every tool, in every project — no per-project setup needed.
 
+**macOS / Linux:**
 ```bash
 git clone https://github.com/dvy1987/cross-plat-skills.git ~/.cross-plat-skills
 cd ~/.cross-plat-skills
 bash install.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+git clone https://github.com/dvy1987/cross-plat-skills.git $HOME\.cross-plat-skills
+cd $HOME\.cross-plat-skills
+.\install.ps1
 ```
 
 That's it. Open any project in Codex, Warp, Claude Code, Gemini — your skills are already there.
@@ -47,18 +66,20 @@ Every platform reads `~/.agents/skills/` as the global user-level skills folder.
 
 A symlink means `git pull` is all you ever need — platforms see the updated skill immediately.
 
-| Platform | Reads global skills from |
-|----------|--------------------------|
-| Codex CLI | `~/.agents/skills/` |
-| Ampcode | `~/.agents/skills/` |
-| Claude Code | `~/.claude/skills/` or `~/.agents/skills/` |
-| Warp | `~/.agents/skills/` |
-| Gemini CLI | `~/.agents/skills/` |
-| GitHub Copilot CLI | `~/.agents/skills/` |
-| Cursor | `~/.agents/skills/` |
-| Factory.ai | `~/.factory/skills/` or `~/.agents/skills/` |
-| Replit | Project-level only (`/.agents/skills/`) |
-| Bolt.new | Project-level only (`/.agents/skills/`) |
+| Platform | Reads global skills from | Notes |
+|----------|--------------------------|-------|
+| Codex CLI | `~/.agents/skills/` | |
+| Ampcode | `~/.agents/skills/` | |
+| Claude Code | `~/.claude/skills/` or `~/.agents/skills/` | |
+| Warp | `~/.agents/skills/` | |
+| Gemini CLI | `~/.agents/skills/` | |
+| GitHub Copilot CLI | `~/.agents/skills/` | |
+| Cursor | `~/.agents/skills/` | |
+| Factory.ai | `~/.factory/skills/` or `~/.agents/skills/` | |
+| Replit | Project-level only (`/.agents/skills/`) | No global install — copy skills into each project |
+| Bolt.new | Project-level only (`/.agents/skills/`) | No global install — copy skills into each project |
+
+> **Note:** Replit and Bolt.new don't read a global `~/.agents/skills/` folder, so the "run everywhere" claim has limits on those two platforms. For team sharing on those tools, see [Adding Skills to a Specific Project](#adding-skills-to-a-specific-project).
 
 ---
 
@@ -152,7 +173,7 @@ universal-skill-creator            improve-skills
 ```
 
 **Full ordering rationale:**
-- **Validate first** — know what you’re dealing with before touching anything
+- **Validate first** — know what you're dealing with before touching anything
 - **Prune before research** — remove wrong content before adding new content
 - **Research before rewrite** — ground improvements in current evidence
 - **Split before compress** — splitting preserves nuance; compression discards permanently
@@ -233,7 +254,7 @@ git add .agents/skills/prd-writing
 git commit -m "chore: add prd-writing skill for team"
 ```
 
-Any teammate using Codex, Warp, Ampcode etc. in that repo gets the skill automatically.
+Any teammate using Codex, Warp, Ampcode etc. in that repo gets the skill automatically. This is also the recommended approach for **Replit and Bolt.new**, which don't support global skill installs.
 
 ---
 

@@ -71,8 +71,9 @@ Link when: called skill's output is consumable by this skill (directly or after 
 Do NOT link when: the adaptation would require scope creep, a size violation, or breaking existing callers.
 Document new links in AGENTS.md. Document target skill changes in the commit message.
 
-**2e — Research via research-skill**
-Invoke `research-skill`. Use GOTCHAS → Gotchas, WORKFLOW PATTERNS → steps, FAILURE MODES → hard rules.
+**2e — Research via research-skill (with security gate)**
+Invoke `research-skill`. **Mandatory:** any external SKILL.md content fetched from GitHub must be scanned by `secure-skill` before use. If BLOCKED, discard the source. This gate cannot be skipped.
+Use GOTCHAS → Gotchas, WORKFLOW PATTERNS → steps, FAILURE MODES → hard rules.
 
 **2f — Classify with SkillReducer Taxonomy**
 Tag every block: `CORE` · `WORKFLOW` · `FORMAT` · `EXAMPLE` · `BACKGROUND` · `EDGE_CASE` · `DUPLICATE` · `STALE`

@@ -48,6 +48,15 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ---
 
+### `secure-skill`
+**Triggers:** "audit skill security", "scan for injection", "check if this skill is safe", "review skill security" — or called automatically as a mandatory gate by research-skill, universal-skill-creator, and improve-skills
+**What it does:** Security audit for agent skills. Scans for 6 threat categories: prompt injection, data exfiltration, credential theft, privilege escalation, supply chain risks, and obfuscation. Treats every external skill as untrusted until proven safe. Based on Snyk ToxicSkills (Feb 2026, 13.4% critical rate), arXiv:2602.12430 (26.1% vulnerability rate), and AISA Group research. Self-protecting: cannot be modified by automated processes or other skills.
+**Output:** Security report (CRITICAL/HIGH/MEDIUM/LOW findings + SAFE/BLOCKED/REQUIRES REVIEW verdict)
+**Impact report:** Files scanned, findings by severity, verdict
+**References:** `references/threat-patterns.md` — locally-maintained only, never updated from external sources
+
+---
+
 ### `validate-skills`
 **Triggers:** "validate skills", "skill health check", "check all skills", "are my skills ok"
 **What it does:** Read-only audit. Scores every skill on 7 criteria (max 14/14). Flags P0 failures, >200-line violations, broken caller references, orphaned reference files, duplicate trigger phrases.

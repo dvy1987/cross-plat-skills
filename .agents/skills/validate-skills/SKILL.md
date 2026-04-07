@@ -73,6 +73,7 @@ Check every skill for:
 - **Orphaned reference file**: file in `references/` not mentioned in SKILL.md (fix: add specific load trigger or delete file)
 - **Missing load trigger**: `references/` file mentioned without a specific condition (fix: add explicit trigger)
 - **Duplicate triggers**: two skills with significantly overlapping descriptions (fix: link check in improve-skills Step 2d)
+- **Unscanned external content**: skill references external repos or URLs but does not route through `secure-skill` (fix: add security gate)
 
 ### Step 5 — Check Call Graph Integrity
 

@@ -122,6 +122,9 @@ domain          | specialized, not universally needed      | install only when n
 ```
 "create a skill"     → universal-skill-creator
 "improve skills"     → improve-skills
+"set up this project"→ project-setup
+"what should I do"   → project-orchestrator
+"orchestrate / split"→ project-orchestrator
 ```
 
 All other meta skills are called automatically. See `docs/SKILL-INDEX.md` → Call Graph.

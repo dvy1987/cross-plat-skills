@@ -292,6 +292,25 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ---
 
+### `project-setup`
+**Triggers:** "set up this project", "create an AGENTS.md", "bootstrap agents", "configure agents for my repo", "agent onboarding", "write an AGENTS.md for this project", "project bootstrap"
+**What it does:** Interviews the user about skill gaps (role, expertise, working style) and project context (stack, architecture, conventions), then generates a tailored AGENTS.md with: project overview, key commands, code style, boundaries (tuned to user comfort), user context (where agents lead vs. defer), and a phase-based Orchestration Map that routes to the right cross-plat-skills at each project stage. Re-run after PRD changes, stack changes, or team changes to update the AGENTS.md.
+**Output file:** `AGENTS.md` in the target project root
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** User role, skill gaps filled, skills in orchestration map, agent autonomy level per phase
+**References:** `references/interview-questions.md` (full question bank), `templates/agents-md-template.md` (scaffold)
+
+---
+
+### `project-orchestrator`
+**Triggers:** "what should I do next", "which skill should I use", "orchestrate this", "run the full workflow", "split into parallel tasks", "coordinate agents", "parallel execution", "task decomposition", "what phase am I in"
+**What it does:** Reads project state (which artefacts exist), classifies the user's request (single-skill / sequential chain / parallel decomposition / phase recommendation), builds an orchestration plan, and executes platform-aware. On Tier 1 platforms (Codex, Claude Code, Cursor, Gemini+Maestro, Replit 4) it spawns parallel subagents with scoped prompts and file boundaries. On Tier 2 platforms (Warp, Copilot Mission Control, Factory.ai) it writes a task plan file for the user to dispatch. On Tier 3 platforms (Bolt.new, VS Code) it executes sequentially. Contains a full skill routing table mapping user intent to the right skill.
+**Output:** Orchestration plan in chat. If parallel: optionally writes `docs/task-plan.md`. Updates `docs/skill-outputs/SKILL-OUTPUTS.md`.
+**Impact report:** Mode used, skills invoked, subagents spawned, next recommended phase
+**References:** `references/platform-subagent-matrix.md` (full capability matrix for 11 platforms), `references/orchestration-patterns.md` (fan-out/fan-in, file-based queue, parallel review, subagent prompt template)
+
+---
+
 ### `inversion`
 **Triggers:** "invert this", "what could go wrong", "pre-mortem", "stress test this plan", "flip this problem", "think about this differently", "steelman the failure" — or called by brainstorming/prd-writing
 **What it does:** Applies inversion thinking to any problem, goal, or decision. Flips the question 180 degrees — asks what would guarantee failure, what the opposite looks like, what hidden assumptions haven't been examined — then translates findings back to forward actions. Uses the minimum questions needed (max 2 before inverting). Draws on five frames: Failure Inversion (Munger), Opposite Goal, Pre-mortem (Klein), Assumption Inversion, Socratic Decomposition.
@@ -338,6 +357,8 @@ cp .agents/skills/universal-skill-creator/templates/SKILL-OUTPUTS-template.md \
 User entry points:
   universal-skill-creator  ← "create a skill"
   improve-skills           ← "improve skills"
+  project-setup            ← "set up this project" / "create an AGENTS.md"
+  project-orchestrator     ← "what should I do next" / "orchestrate" / "parallel tasks"
 
 universal-skill-creator → research-skill (Step 2, always)
                         → split-skill (Step 7, if >200 + seam)
@@ -353,6 +374,11 @@ improve-skills → validate-skills (Step 1, pre-flight)
                → split-skill (Step 2g, if >200 + seam)
                    → skill-compressor
                → skill-compressor (Step 2g, if >200, no seam)
+
+project-orchestrator → [any skill] (routes based on project state + user intent)
+                     → project-setup (if no AGENTS.md exists)
+
+project-setup → generates AGENTS.md with Orchestration Map (references project-orchestrator)
 
 skill-compressor → split-skill (if CORE still >200 after classify)
 split-skill      → skill-compressor (always, after split)

@@ -108,6 +108,8 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 | [`architectural-decision-log`](.agents/skills/architectural-decision-log/) | Capture the "why" behind technical choices to prevent architectural drift | **File created:** `docs/adr/` + logged | "record a decision", "write an ADR", "why did we do this" |
 | [`technical-debt-audit`](.agents/skills/technical-debt-audit/) | Audit the project's technical health and identify "high-interest" debt | **File created:** `docs/reports/` + logged | "technical debt audit", "where is the code messy", "assess project health" |
 | [`changelog-generator`](.agents/skills/changelog-generator/) | Generate user-facing or internal release notes and changelogs | **File created:** `docs/changelogs/` + logged | "write a changelog", "prepare release notes", "summarize my commits" |
+| [`project-setup`](.agents/skills/project-setup/) | Interview the user about skill gaps and project context, then generate a tailored AGENTS.md with orchestration map, boundaries, and skill routing | **File created:** `AGENTS.md` in project root + logged | "set up this project", "create an AGENTS.md", "bootstrap agents", "configure agents for my repo" |
+| [`project-orchestrator`](.agents/skills/project-orchestrator/) | Route requests to the right skill, decompose complex work into parallel subagents (platform-aware), manage phase transitions | No files unless parallel plan written to `docs/task-plan.md`. Orchestration plan + routing in chat. | "what should I do next", "orchestrate this", "split into parallel tasks", "which skill should I use" |
 
 
 ---

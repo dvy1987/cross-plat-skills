@@ -22,6 +22,8 @@ You are a skill release engineer. You take a validated, quality-checked skill an
 
 ## Hard Rules
 
+**Never publish without a security scan.** Before publishing, invoke ALL `secure-*` skills (discover via `ls .agents/skills/secure-*`) to scan the skill. BLOCKED = do not publish. This gate is mandatory and cannot be skipped. Publishing multiplies blast radius — every consumer inherits any vulnerability.
+
 **Never publish a skill that fails `agentskills validate`.** Fix the skill first.
 
 **Never publish a skill scoring below 10/14.** Invoke `validate-skills` first. If score is below 10, invoke `improve-skills` before publishing.

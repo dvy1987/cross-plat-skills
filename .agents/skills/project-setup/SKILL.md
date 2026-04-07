@@ -107,9 +107,25 @@ Append to `docs/skill-outputs/SKILL-OUTPUTS.md`. Tell the user:
 
 ---
 
-## When to Re-Run
+## Update Mode (called by project-orchestrator)
 
-Re-invoke when: PRD written or changed → tech stack changes → new team member joins → user says "update agents" or "refresh AGENTS.md". On re-run: read existing AGENTS.md, identify changes, show diff, get approval.
+When invoked with `UPDATE_ONLY=true`, skip the full interview. Only update sections of AGENTS.md that are actually affected. The orchestrator calls this only when it detects a change that affects agent behaviour — not for every new artefact.
+
+**What to update (only the sections that changed):**
+- **Key Commands** — if `package.json` / `Cargo.toml` / `pyproject.toml` / `go.mod` changed and build/test/lint commands are different
+- **Non-Obvious Patterns** — if a spec, ADR, or architecture doc introduced a new counterintuitive convention agents must follow
+- **Orchestration Map parallel hints** — if an implementation plan revealed independent tracks that can be parallelised
+- **Boundaries** — if new protected dirs, "never touch" files, or permission gates emerged from architectural decisions
+
+**What to preserve (never touch in update mode):**
+User Context, Code Style, Project Overview, Boundaries (unless explicitly affected).
+
+**Process:** Read existing AGENTS.md → update only affected sections → show brief diff → commit.
+
+**Full re-run triggers** (bypass update mode, run the full interview):
+- New team member joins (changes User Context)
+- User says "redo the setup" or "re-interview me"
+- Major pivot (product-soul rewritten from scratch)
 
 ---
 

@@ -82,9 +82,32 @@ Execute sequentially. Present one skill at a time.
 
 Read `references/orchestration-patterns.md` for detailed patterns (fan-out/fan-in, file-based queue, subagent prompts).
 
-### Step 5 — Synthesise
+### Step 5 — Synthesise and Check for AGENTS.md Refresh
 
-After all tasks: verify outputs exist, summarise what was produced, update `docs/skill-outputs/SKILL-OUTPUTS.md`, recommend next phase.
+After all tasks complete:
+1. Verify outputs exist at expected locations
+2. Summarise what was produced
+3. Update `docs/skill-outputs/SKILL-OUTPUTS.md`
+4. **Check if AGENTS.md needs a refresh** (see below)
+5. Recommend next phase
+
+#### AGENTS.md Refresh Check
+
+Most artefact changes do NOT require an AGENTS.md update. Skills already read PRDs, specs, and plans directly from the files — the AGENTS.md doesn't need to duplicate that content. Only refresh when the artefact changes something the AGENTS.md itself controls.
+
+**Refresh AGENTS.md only when:**
+- **Stack changed** — `package.json` / `Cargo.toml` / `pyproject.toml` / `go.mod` has new dependencies that change Key Commands or build steps
+- **New non-obvious pattern emerged** — a spec, ADR, or architecture doc introduces a counterintuitive convention agents must follow (e.g., "all state in Zustand, never component state")
+- **Implementation plan reveals parallel tracks** — the Orchestration Map needs new parallel decomposition hints that weren't there before
+- **Boundaries need updating** — new protected directories, new "never touch" files, or new permission gates from architectural decisions
+
+**Do NOT refresh when:**
+- A PRD, spec, or plan was simply created — skills read those directly
+- Product-soul was written or updated — brainstorming and prd-writing already read it from `docs/product-soul.md`
+- An ADR was logged that doesn't affect coding conventions
+- Content changed but no agent behaviour needs to change
+
+**When refresh is needed:** Invoke `project-setup` with `UPDATE_ONLY=true`. This skips the interview and only updates the affected sections (Key Commands, Non-Obvious Patterns, Orchestration Map parallel hints, or Boundaries). Show a brief diff to the user.
 
 ---
 

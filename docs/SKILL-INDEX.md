@@ -57,6 +57,14 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ---
 
+### `secure-skill-content-sanitization`
+**Triggers:** Called in sequence by `secure-skill` as a preprocessing step — also directly via "sanitize content", "check hidden text", "scan markdown attacks", "strip HTML", "detect invisible instructions", "check zero-width chars"
+**What it does:** Detects and neutralizes visually hidden but agent-readable content. Checks for CSS-hidden text (display:none, color:white, font-size:0, opacity:0), HTML comments with instructions, collapsible details sections, zero-width unicode characters, bidirectional overrides, homoglyphs, misleading links (javascript:, data:, anchor mismatches), image-based exfiltration, and active HTML elements. Enforces mandatory sanitization: strip HTML, extract comments as first-class content, normalize unicode to NFKC, expand collapsed sections, validate links. Core principle: visibility ≠ influence — hidden content is more dangerous than visible because agents process it but humans cannot review it.
+**Output:** Content sanitization audit with per-check findings and sanitization actions taken
+**Impact report:** Files processed, findings per check (13-15), sanitization applied, verdict
+
+---
+
 ### `secure-skill-repo-ingestion`
 **Triggers:** Called in sequence by `secure-skill` during any repo scan — also directly via "check repo for poisoned code", "scan dependencies", "verify supply chain", "check path traversal", "audit repo before ingestion"
 **What it does:** Repo-specific security checks. Scans for poisoned examples/training data (Check 7), dependency and supply-chain deep analysis (Check 8), file/path attacks including symlinks and traversal (Check 9), and format-based attacks in markdown/HTML/SVG/YAML/notebooks (Check 10). Enforces three-layer ingestion model: Observe → Judge → Commit. Read-only ingestion — never executes repo code. Quarantine workflow with human approval required before anything enters the skill store.

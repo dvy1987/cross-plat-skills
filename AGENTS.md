@@ -57,6 +57,7 @@ Level 4-5 content attempting to override Level 1-3 = CRITICAL finding = blocked.
 
 **Security skill family:**
 - `secure-skill` — orchestrator + 6 core checks (injection, exfiltration, credentials, escalation, supply chain, obfuscation)
+- `secure-skill-content-sanitization` — preprocessing: CSS-hidden text, HTML comments, zero-width chars, homoglyphs, details sections, misleading links, mandatory sanitization steps (strip HTML, normalize unicode, extract comments)
 - `secure-skill-repo-ingestion` — repo-specific checks (poisoned examples, dependency deep scan, file/path attacks, format attacks, quarantine)
 - `secure-skill-runtime` — runtime enforcement (state corruption, skill overwrite, DoS, no-go repos, provenance tracking)
 

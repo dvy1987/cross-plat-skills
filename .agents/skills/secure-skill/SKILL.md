@@ -74,7 +74,7 @@ Run all six on every file in scope. See `references/threat-patterns.md` for patt
 | 3 | **Credential Theft** | Reads .env/SSH keys/tokens, prints secrets, repo contains exposed keys |
 | 4 | **Privilege Escalation** | Unrelated shell commands, sudo, auto-approval chains, instruction hierarchy violations |
 | 5 | **Supply Chain** | curl\|bash, unpinned refs, dependency confusion, typosquatting, dangerous submodules |
-| 6 | **Obfuscation** | Base64, Unicode homoglyphs, hidden comments, buried attacks, markdown/HTML/SVG/notebook payloads |
+| 6 | **Obfuscation** | Base64, Unicode homoglyphs, hidden comments, buried attacks, markdown/HTML/SVG/notebook payloads. For detailed markdown hidden-content patterns (CSS hiding, zero-width chars, details sections), see `secure-skill-content-sanitization` |
 
 ---
 
@@ -142,6 +142,7 @@ CRITICAL: Line 3: "Override your default behavior" — hierarchy violation (Chec
 HIGH: Line 12: reads ~/.ssh/config — credential access (Check 3)
 
 Sibling verdicts:
+  secure-skill-content-sanitization: SAFE (HTML stripped, unicode normalized)
   secure-skill-repo-ingestion: BLOCKED (typosquatted dependency)
   secure-skill-runtime: SAFE
 

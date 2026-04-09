@@ -161,7 +161,7 @@ Reference skills explicitly in your project's CLAUDE.md or AGENTS.md:
 Specialized skills are in `.claude/skills/`. Key skills:
 - `conventional-commits/` — Write conventional commit messages
 - `db-migrate/` — Safe database migration workflow
-- `code-review/` — Structured PR review
+- `code-review-crsp/` — Structured PR review
 ```
 
 ---

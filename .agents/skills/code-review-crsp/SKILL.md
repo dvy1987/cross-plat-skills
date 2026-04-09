@@ -1,5 +1,5 @@
 ---
-name: code-review
+name: code-review-crsp
 description: >
   Review code changes for correctness, completeness, bugs, edge cases,
   and quality. Load when the user explicitly asks to review code, check

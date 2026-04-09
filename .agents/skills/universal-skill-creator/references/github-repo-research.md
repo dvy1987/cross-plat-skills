@@ -269,6 +269,6 @@ When to move logic from inline instructions to a bundled `scripts/` file:
 | `check-broken-links` | agentskills.io docs | Script bundling + validation loop |
 | `db-migrate` | community | Plan-validate-execute safety pattern |
 | `conventional-commits` | community | Format enforcement + gotchas |
-| `code-review` | community | Structured analysis with scope constraints |
+| `code-review-crsp` | community | Structured analysis with scope constraints |
 
 To study any of these, search GitHub for `SKILL.md` + skill name.

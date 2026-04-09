@@ -318,7 +318,7 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ---
 
-### `code-review`
+### `code-review-crsp`
 **Triggers:** "review this code", "check this PR", "review my changes", "code review", "did this implement correctly", "audit this diff"
 **What it does:** Reviews code changes against 6 criteria (correctness, completeness, security, conventions, tests, performance). Reads full diff + surrounding context + PRD/spec if available. Presents findings as a numbered list grouped by severity (critical → low) with file paths and line numbers. Offers to fix issues with user approval — one at a time, verified after each.
 **Output:** No files generated. Structured review with severity-classified findings in chat.

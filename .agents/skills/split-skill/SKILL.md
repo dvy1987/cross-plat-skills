@@ -4,7 +4,7 @@ description: >
   Reduce an oversized SKILL.md by first checking if an existing skill already
   covers the excess sub-workflow (link rather than create), then splitting into
   a new child skill only if no existing skill fits. Load when a skill exceeds
-  200 lines and skill-compressor determines excess content is genuinely CORE,
+  200 lines and compress-skill determines excess content is genuinely CORE,
   when the same sub-workflow appears in multiple skills, or when universal-skill-creator
   or improve-skills identifies a coherent sub-capability. Also triggers on
   "split this skill", "extract a sub-skill", "this skill is doing too much",
@@ -27,7 +27,7 @@ You are a skill architect. Your goal is to reduce a monolithic skill to under 20
 1. Can the sub-workflow live in an existing skill?  → link to it (don't create)
 2. Is it duplicated across 2+ skills?               → extract once, link from all (Type B)
 3. Is there a clean natural seam?                   → extract new child (Type A)
-4. No seam at all?                                  → stop, call skill-compressor instead
+4. No seam at all?                                  → stop, call compress-skill instead
 ```
 
 **Never create a new skill when an existing one already covers the sub-capability.**
@@ -40,7 +40,7 @@ You are a skill architect. Your goal is to reduce a monolithic skill to under 20
 
 ### Step 1 — Identify the Excess Sub-Capability
 
-Read the oversized skill. Identify the section(s) of genuinely CORE content that skill-compressor could not remove. For each excess section, state:
+Read the oversized skill. Identify the section(s) of genuinely CORE content that compress-skill could not remove. For each excess section, state:
 - What it does (one sentence)
 - Its input and output
 - Whether it has a clear trigger condition
@@ -71,7 +71,7 @@ If the same sub-workflow appears inline in 2+ skills with no existing shared hom
 If no existing skill covers it and it's not duplicated → extract as a new child skill (Type A). Only proceed here if Steps 2a and 2b both returned no.
 
 **2d — No seam at all?**
-If the excess content is tightly coupled to adjacent steps and cannot be extracted cleanly → stop. Return to `skill-compressor` — the content may need to move to `references/` instead.
+If the excess content is tightly coupled to adjacent steps and cannot be extracted cleanly → stop. Return to `compress-skill` — the content may need to move to `references/` instead.
 
 Report findings before proceeding:
 ```
@@ -108,10 +108,9 @@ Invoke `<child-skill>` with [input]. Wait for [output type] before proceeding.
 ```
 Verify parent is now under 200 lines.
 
-### Step 5 — Compress Parent (and Child if new)
+### Step 5 — Verify Line Counts
 
-Invoke `skill-compressor` on the parent. If a new child was created, compress it too.
-This removes any BACKGROUND or prose that crept in during the rewrite.
+Check parent is under 200 lines. If a new child was created, check it too. If either is still over 200 lines, flag to the user — do NOT invoke `compress-skill` (it would create a loop since `compress-skill` calls `split-skill`).
 
 ### Step 6 — Update All Callers (Type B only)
 

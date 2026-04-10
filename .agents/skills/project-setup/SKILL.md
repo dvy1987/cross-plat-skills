@@ -69,7 +69,7 @@ Based on the interview, identify which cross-plat-skills fill the user's gaps:
 | Strategic thinking | `deep-thinking`, `inversion`, `pre-mortem` |
 | Tech debt awareness | `technical-debt-audit` |
 | Planning | `implementation-plan` |
-| Release management | `changelog-generator` |
+| Release management | `generate-changelog` |
 
 ### Step 4 — Generate the AGENTS.md
 

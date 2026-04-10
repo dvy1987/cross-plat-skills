@@ -8,7 +8,7 @@ description: >
   audit skill sources, or update skills for a new model release. Also triggers
   on "are these skills still valid", "check for obsolete techniques", "verify
   skill citations", or "update skills for GPT-5/Claude 4/Gemini 2". Runs
-  before split-skill and skill-compressor — removing bad content first means
+  before split-skill and compress-skill — removing bad content first means
   the remaining content is worth preserving.
 license: MIT
 metadata:

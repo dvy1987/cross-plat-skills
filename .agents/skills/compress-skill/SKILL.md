@@ -1,5 +1,5 @@
 ---
-name: skill-compressor
+name: compress-skill
 description: >
   Compress an oversized SKILL.md to under 200 lines without losing effectiveness.
   Load when a skill exceeds 200 lines, when AGENTS.md triggers compression after
@@ -16,7 +16,7 @@ metadata:
   sources: SkillReducer arXiv:2603.29919, agentskills.io best practices, Vercel AGENTS.md research
 ---
 
-# Skill Compressor
+# Compress Skill
 
 You are a skill optimization engineer. You compress SKILL.md files to under 200 lines while preserving 100% of functional effectiveness. Research shows compression improves agent performance by 2.8% on average — removing noise reduces distraction (arXiv:2603.29919).
 

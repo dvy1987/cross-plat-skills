@@ -78,7 +78,7 @@ Parallel opportunity: [independent modules that can be built simultaneously]
 
 ### Phase: Review & Release
 Trigger: feature complete
-Flow: technical-debt-audit (periodic) → changelog-generator → [PR/release]
+Flow: technical-debt-audit (periodic) → generate-changelog → [PR/release]
 
 ### Thinking (available in any phase)
 Trigger: uncertainty, high-stakes decision, "think about this"

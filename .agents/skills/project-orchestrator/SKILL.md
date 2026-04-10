@@ -121,7 +121,7 @@ Most artefact changes do NOT require an AGENTS.md update. Skills already read PR
 | "plan implementation" / "break this down" | `implementation-plan` | PRD |
 | "build this" / "implement" | Implementation + `test-driven-development` | Plan |
 | "technical debt" / "code health" | `technical-debt-audit` | Code exists |
-| "changelog" / "release notes" | `changelog-generator` | Commits exist |
+| "changelog" / "release notes" | `generate-changelog` | Commits exist |
 | "think through this" / "I'm stuck" | `deep-thinking` | — |
 | "stress test this plan" | `adversarial-hat` or `pre-mortem` | Plan/doc |
 | "architect the agent system" | `agent-system-architecture` | Requirements |

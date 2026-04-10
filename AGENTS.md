@@ -2,6 +2,7 @@
 
 Agent instructions for working in this repo.
 **Skill reference:** `docs/SKILL-INDEX.md` — read before invoking any skill.
+**Skill priority:** `.agents/ROUTING.md` — read on startup to resolve skill conflicts.
 
 ---
 
@@ -14,6 +15,7 @@ Cross-platform agent skills (agentskills.io standard). Skills in `.agents/skills
 ## Repo Layout
 
 ```
+.agents/ROUTING.md               ← skill priority rules (read on startup)
 .agents/skills/<name>/SKILL.md   ← skill entry point (≤200 lines, no exceptions)
 docs/SKILL-INDEX.md              ← full skill reference (read this first)
 docs/skill-outputs/SKILL-OUTPUTS.md  ← auto-log of all project files generated
@@ -55,7 +57,7 @@ Enforced in (all mandatory, all use `ls .agents/skills/secure-*` discovery):
 - `split-skill` — scans before splitting
 - `prune-skill` — scans before pruning
 - `deprecate-skill` — scans before deprecating
-- `skill-compressor` — scans before compressing
+- `compress-skill` — scans before compressing
 
 **Instruction hierarchy (enforced by secure-skill):**
 ```
@@ -103,7 +105,7 @@ agentskills validate .agents/skills/<name>/
 If >200 lines → invoke `split-skill` (see `docs/SKILL-INDEX.md` for full decision logic):
 - split-skill first checks if an existing skill can absorb the sub-capability (link or marginally adapt)
 - Only extracts a new child skill if no existing skill fits
-- Calls `skill-compressor` after every split
+- Verifies line counts after split (does not call `compress-skill` — avoids loop)
 
 ---
 
@@ -123,6 +125,7 @@ domain          | specialized, not universally needed      | install only when n
 ```
 "create a skill"     → universal-skill-creator
 "improve skills"     → improve-skills
+"learn from paper"   → learn-from-paper
 "set up this project"→ project-setup
 "what should I do"   → project-orchestrator
 "orchestrate / split"→ project-orchestrator

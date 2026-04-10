@@ -44,7 +44,7 @@ Open `.agents/skills/your-skill-name/SKILL.md` and fill in:
 - No vague language: "fast", "easy", "intuitive", "modern", "robust" → replace with specific, testable criteria
 - No negative constraints: "don't do X" → rewrite as "do Y instead"
 - No placeholder text in published skills: TBD, TODO, `[fill in]`
-- SKILL.md body under 200 lines — no exceptions. If it grows over 200 lines: invoke `split-skill`, which will first check if an existing skill can absorb the excess (link or marginally adapt), then extract a new child only if no existing skill fits, then call `skill-compressor`
+- SKILL.md body under 200 lines — no exceptions. If it grows over 200 lines: invoke `split-skill`, which will first check if an existing skill can absorb the excess (link or marginally adapt), then extract a new child only if no existing skill fits, then call `compress-skill`
 
 ### 3. Validate it
 
@@ -92,7 +92,7 @@ Choose the right complexity for the job:
 | **Advanced** | + `scripts/` | Needs deterministic automation or validation |
 | **System** | + `assets/` + `agents/openai.yaml` | Full workflow with output templates + Codex UI |
 
-Start Atomic. Promote to Standard when the agent consistently needs reference material mid-task. Never promote to avoid the 200-line limit — use `split-skill` or `skill-compressor` instead.
+Start Atomic. Promote to Standard when the agent consistently needs reference material mid-task. Never promote to avoid the 200-line limit — use `split-skill` or `compress-skill` instead.
 
 ---
 
@@ -139,7 +139,7 @@ brainstorming → prd-writing → [your skill here]
 # Meta skill chain (called automatically — you don't invoke these directly)
 universal-skill-creator → research-skill, validate-skills, publish-skill (optional)
 improve-skills          → validate-skills, prune-skill, research-skill,
-                           split-skill, skill-compressor, deprecate-skill
+                           split-skill, compress-skill, deprecate-skill
 ```
 
 If your skill naturally follows or precedes an existing skill, add a handoff note at the end of your SKILL.md. Example: "Once the design is approved, invoke the `prd-writing` skill."
@@ -156,7 +156,7 @@ You don't need to manage these manually — they're called by `improve-skills` a
 | `improve-skills` | Full improvement cycle for one or all skills | When skills feel stale or weak |
 | `prune-skill` | Removes outdated/disproven content | When a model update makes techniques obsolete |
 | `research-skill` | Live domain research | When you want evidence before writing a skill |
-| `skill-compressor` | Trims skill to under 200 lines | When a skill grows past the limit |
+| `compress-skill` | Trims skill to under 200 lines | When a skill grows past the limit |
 | `split-skill` | Links to existing skill or extracts a new child — always checks existing skills first | When a skill is >200 lines and CORE content can't be compressed away |
 | `deprecate-skill` | Retires a redundant skill cleanly | When two skills overlap or a domain is model-native |
 | `publish-skill` | Publishes to skills.sh | When you want to share a skill publicly |

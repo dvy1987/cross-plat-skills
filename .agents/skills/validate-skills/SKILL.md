@@ -63,7 +63,7 @@ For each skill, score against the rubric (full details in `references/validation
 These flags feed directly into `improve-skills` Step 2b — every flag is a concrete fix, not just an observation.
 
 Check every skill for:
-- **Over limit**: SKILL.md > 200 lines → flag with exact count (fix: split-skill or skill-compressor)
+- **Over limit**: SKILL.md > 200 lines → flag with exact count (fix: split-skill or compress-skill)
 - **Missing category**: `metadata.category` not set to `meta`, `project-specific`, or `domain` (fix: add field, see `docs/SKILL-INDEX.md`)
 - **Missing Impact Report**: no `## Impact Report` section at end of SKILL.md (fix: add section specific to what the skill produces)
 - **Missing file-output logging**: skill generates project files but no `docs/skill-outputs/SKILL-OUTPUTS.md` append instruction (fix: add logging + terminal notification)
@@ -125,7 +125,7 @@ DUPLICATE TRIGGER RISK
 RECOMMENDED ACTIONS (priority order)
 ──────────────────────────────────────
 P0 [skill]: fails agentskills validate — fix before anything else
-P1 [skill]: 203 lines — invoke split-skill or skill-compressor
+P1 [skill]: 203 lines — invoke split-skill or compress-skill
 P2 [skill]: score 9/14 — invoke improve-skills
 P3 [skill]: no prune log — invoke prune-skill
 ```
@@ -153,7 +153,7 @@ Skills checked: 8
 
 VALIDATION STATUS
 ✓ brainstorming, improve-skills, prd-writing, prune-skill
-✓ research-skill, skill-compressor, split-skill, universal-skill-creator
+✓ research-skill, compress-skill, split-skill, universal-skill-creator
 
 SIZE CHECK
 ✓ All skills under 200 lines

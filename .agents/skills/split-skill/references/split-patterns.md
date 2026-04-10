@@ -13,8 +13,8 @@ Read when the natural seam in a skill is unclear. These are the three proven spl
 **Structure:**
 ```
 research-skill     ← extracted from universal-skill-creator + improve-skills
-skill-compressor   ← called by improve-skills when >200 lines
-split-skill        ← called by skill-compressor + universal-skill-creator + improve-skills
+compress-skill   ← called by improve-skills when >200 lines
+split-skill        ← called by compress-skill + universal-skill-creator + improve-skills
 ```
 
 **How to extract:**
@@ -43,7 +43,7 @@ split-skill        ← called by skill-compressor + universal-skill-creator + im
 parent-skill (orchestrator — under 200 lines)
   → phase-1-skill (e.g., research-skill)
   → phase-2-skill (e.g., skill-writer — hypothetical)
-  → phase-3-skill (e.g., skill-compressor)
+  → phase-3-skill (e.g., compress-skill)
 ```
 
 **How to extract:**

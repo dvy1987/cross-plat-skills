@@ -85,7 +85,7 @@ Every platform reads `~/.agents/skills/` as the global user-level skills folder.
 ├── brainstorming/             → ~/.cross-plat-skills/.agents/skills/brainstorming/
 ├── prd-writing/               → ~/.cross-plat-skills/.agents/skills/prd-writing/
 ├── research-skill/            → ~/.cross-plat-skills/.agents/skills/research-skill/
-├── skill-compressor/          → ~/.cross-plat-skills/.agents/skills/skill-compressor/
+├── compress-skill/          → ~/.cross-plat-skills/.agents/skills/compress-skill/
 └── split-skill/               → ~/.cross-plat-skills/.agents/skills/split-skill/
 ```
 
@@ -153,7 +153,7 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 | [`agent-system-architecture`](.agents/skills/agent-system-architecture/) | Design state-of-the-art multi-agent systems and orchestration patterns | **File created:** `docs/architecture/` + logged | "build an agent system", "design agent orchestration", "multi-agent wiring" |
 | [`architectural-decision-log`](.agents/skills/architectural-decision-log/) | Capture the "why" behind technical choices to prevent architectural drift | **File created:** `docs/adr/` + logged | "record a decision", "write an ADR", "why did we do this" |
 | [`technical-debt-audit`](.agents/skills/technical-debt-audit/) | Audit the project's technical health and identify "high-interest" debt | **File created:** `docs/reports/` + logged | "technical debt audit", "where is the code messy", "assess project health" |
-| [`changelog-generator`](.agents/skills/changelog-generator/) | Generate user-facing or internal release notes and changelogs | **File created:** `docs/changelogs/` + logged | "write a changelog", "prepare release notes", "summarize my commits" |
+| [`generate-changelog`](.agents/skills/generate-changelog/) | Generate user-facing or internal release notes and changelogs | **File created:** `docs/changelogs/` + logged | "write a changelog", "prepare release notes", "summarize my commits" |
 | [`project-setup`](.agents/skills/project-setup/) | Interview the user about skill gaps and project context, then generate a tailored AGENTS.md with orchestration map, boundaries, and skill routing | **File created:** `AGENTS.md` in project root + logged | "set up this project", "create an AGENTS.md", "bootstrap agents", "configure agents for my repo" |
 | [`debug-and-fix`](.agents/skills/debug-and-fix/) | Systematically reproduce, root-cause, fix, and verify bugs — supports Linear issue integration and batch triage | No files. Root cause + fix + verification summary in chat. Linear updated if applicable. | "this is broken", "fix this bug", "why is this failing", "debug this" |
 | [`codebase-understanding`](.agents/skills/codebase-understanding/) | Map architecture, trace key flows, surface complexity hotspots — build a mental model before making changes | No files. Architecture overview + component map + hotspots in chat. | "understand this repo", "how does this work", "explain the architecture", "onboard me" |
@@ -182,9 +182,10 @@ You interact with two meta skills directly. The rest call each other automatical
 | [`validate-skills`](.agents/skills/validate-skills/) | Read-only health check — scores every skill, flags failures, size violations, duplicate triggers | **No files modified.** Structured quality report with P0/P1/P2/P3 actions | Pre-flight for `improve-skills`; quality gate after creation |
 | [`prune-skill`](.agents/skills/prune-skill/) | Removes wrong, outdated, or poorly-cited content — every removal cites a source | **Files modified:** target SKILL.md pruned + Prune Log appended. Impact report: items pruned, corrected, flagged | First step of every `improve-skills` per-skill cycle |
 | [`research-skill`](.agents/skills/research-skill/) | Searches papers, practitioner blogs, and GitHub skill repos — returns structured findings | **No files modified.** Returns findings report (GOTCHAS, WORKFLOW PATTERNS, FAILURE MODES) | Called by `universal-skill-creator` and `improve-skills` before writing |
-| [`skill-compressor`](.agents/skills/skill-compressor/) | Moves non-core content to `references/` to bring SKILL.md under 200 lines | **Files modified:** SKILL.md trimmed + new references/ files created. Impact report: line reduction, files created | After `split-skill`, or directly when only background needs trimming |
+| [`compress-skill`](.agents/skills/compress-skill/) | Moves non-core content to `references/` to bring SKILL.md under 200 lines | **Files modified:** SKILL.md trimmed + new references/ files created. Impact report: line reduction, files created | After `split-skill`, or directly when only background needs trimming |
 | [`split-skill`](.agents/skills/split-skill/) | Extracts a reusable sub-capability into a new child skill | **Files created:** child SKILL.md. **Files modified:** parent SKILL.md, AGENTS.md. Impact report: line counts, callers updated | Before compression when a natural seam or duplication exists |
 | [`deprecate-skill`](.agents/skills/deprecate-skill/) | Retires redundant or superseded skills — archives, updates callers, logs reason | **Files moved:** to `.agents/skills/.deprecated/`. **Files modified:** AGENTS.md, README, callers. Impact report: archive path, recovery command | When a skill scores 0-5/14 or is fully subsumed |
+| [`library-skill`](.agents/skills/library-skill/) | Maintains library consistency — syncs SKILL-INDEX, AGENTS.md, README, skill graph after structural changes | **Files modified:** SKILL-INDEX.md, AGENTS.md, README.md, docs/skill-graph.md. Impact report: entries added/removed, cross-refs validated | Auto-called after skill creation, rename, deprecation, or restructure |
 | [`publish-skill`](.agents/skills/publish-skill/) | Validates, packages, writes README if missing, publishes to skills.sh | **External action:** skill live on skills.sh. Impact report: registry URL, install command, score at publish | Optional after `universal-skill-creator` creates a skill |
 
 ### How the Meta Skills Work Together
@@ -195,12 +196,13 @@ User: "create a skill for X"          User: "improve all skills"
 universal-skill-creator            improve-skills
   → research-skill                    0. validate-skills  ← pre-flight, score all
   → split-skill (if >200, seam)          └ deprecate-skill ← if score 0-5/14
-      → skill-compressor              Per skill:
-  → skill-compressor (if no seam)     1. prune-skill       ← remove wrong content
-  → validate-skills  (quality gate)   2. research-skill    ← add current research
+  → compress-skill (if no seam)     Per skill:
+  → validate-skills  (quality gate)   1. prune-skill       ← remove wrong content
+  → library-skill (sync indexes)          2. research-skill    ← add current research
   → publish-skill    (optional)       3. rewrite
                                        4. split/compress
                                        5. validate + commit
+                                       6. library-skill → generate-changelog
 ```
 
 **Full ordering rationale:**

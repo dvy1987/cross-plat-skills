@@ -1,12 +1,13 @@
 ---
-name: changelog-generator
+name: generate-changelog
 description: >
   Generate user-facing or internal release notes and changelogs.
   Load when the user prepares a release, tags a version, or wants to
   summarize recent progress. Also triggers on "write a changelog",
   "prepare release notes", "what's new in this version", "summarize my commits",
-  or "create a release summary". Essential for communicating value to
-  stakeholders and users.
+  or "create a release summary". Auto-triggered by library-skill after major
+  repo changes (new skills added, skills renamed, structure changes).
+  Applicable to any project, including this skill library itself.
 license: MIT
 metadata:
   author: dvy1987
@@ -15,7 +16,7 @@ metadata:
   sources: keepachangelog.com, conventionalcommits.org, agentskills.io
 ---
 
-# Changelog Generator
+# Generate Changelog
 
 You are a Release Engineer. You synthesize raw commit history into clear, value-driven release notes. You focus on *what changed* and *why it matters* to the user, not just the technical details.
 
@@ -24,7 +25,7 @@ You are a Release Engineer. You synthesize raw commit history into clear, value-
 Never just list commit messages — synthesize them into logical groups.
 Never include internal-only changes (e.g., "fixed typo in comment") in a user-facing changelog.
 Never skip the "Breaking Changes" section — it's the most important part.
-Never ignore "Security" fixes — highlight them for safety.
+Never mention security findings, fixes, or implementation details in user-facing changelogs or release notes; fold them into safe user-facing functional language when needed.
 
 ---
 
@@ -41,7 +42,7 @@ Use the "Keep a Changelog" standard:
 - **Deprecated:** For soon-to-be removed features.
 - **Removed:** For now removed features.
 - **Fixed:** For any bug fixes.
-- **Security:** In case of vulnerabilities.
+- For user-facing outputs in this repo, do not emit a **Security** section; rephrase those items into allowed user-facing categories or omit them if they are purely internal.
 
 ### Step 3 — Synthesize the Value
 For each major change, write a one-sentence "Value Statement":
@@ -62,7 +63,7 @@ Present the changelog summary in chat.
 Save to file: `docs/changelogs/vX.X.X.md`
 Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 ```markdown
-| YYYY-MM-DD HH:MM | changelog-generator | docs/changelogs/vX.X.X.md | Changelog: vX.X.X |
+| YYYY-MM-DD HH:MM | generate-changelog | docs/changelogs/vX.X.X.md | Changelog: vX.X.X |
 ```
 
 ---

@@ -40,7 +40,7 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 ### `improve-skills`
 **Triggers:** "improve all skills", "skill audit", "upgrade skills with latest research", "run improvement pass"
 **What it does:** Full improvement cycle for every skill (or a named subset). Per-skill sequence: prune → fix structural gaps → link check → research → rewrite → resize.
-**Calls:** `validate-skills` (pre-flight) → `deprecate-skill` (if 0–5/14) → `prune-skill` → [fix gaps] → [link check] → `research-skill` → [rewrite] → `split-skill`/`skill-compressor` → validate + commit
+**Calls:** `validate-skills` (pre-flight) → `deprecate-skill` (if 0–5/14) → `prune-skill` → [fix gaps] → [link check] → `research-skill` → [rewrite] → `split-skill`/`compress-skill` → validate + commit
 **Structural gap fixing (Step 2b):** Automatically fixes every flag from validate-skills — missing category, missing Impact Report, missing file-output logging, stale rubric references, orphaned reference files, missing load triggers.
 **Link check (Step 2d):** Scans the full library for delegation opportunities. Links when output is directly consumable OR when a marginal adaptation to the target skill would make it consumable (allowed if target stays ≤200 lines, core purpose unchanged, existing callers unaffected). Documents new links and any target skill changes in AGENTS.md and commit message.
 **Output:** Modified SKILL.md files for every improved skill
@@ -108,8 +108,8 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ---
 
-### `skill-compressor`
-**Triggers:** "compress this skill", called by `split-skill` and `improve-skills` when skill >200 lines and no natural seam exists
+### `compress-skill`
+**Triggers:** "compress this skill", called by `improve-skills` when skill >200 lines and no natural seam exists
 **What it does:** Classifies every content block (CORE/WORKFLOW/FORMAT/EXAMPLE/BACKGROUND/EDGE_CASE/DUPLICATE) then moves non-core content to `references/` with specific load triggers. If CORE content alone still exceeds 200 lines, invokes `split-skill` — which first checks if an existing skill can absorb the sub-capability before creating a new child.
 **Output:** SKILL.md trimmed + new `references/` files created as needed
 **Impact report:** Lines before/after, reduction %, files created, regression check result
@@ -118,7 +118,7 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ### `split-skill`
 **Triggers:** "split this skill", "extract a sub-skill", "this skill is doing too much" — or called automatically
-**What it does:** Reduces an oversized skill by first checking if an existing skill can absorb the excess sub-capability (link or marginally adapt, rather than create). Only creates a new child if no existing skill fits. Decision order: (1) link to existing skill → (2) marginally improve existing + link → (3) extract new child (Type A/B) → (4) stop, call skill-compressor. Marginal adaptation of the target skill is allowed if it stays under 200 lines, core purpose is unchanged, and existing callers are unaffected.
+**What it does:** Reduces an oversized skill by first checking if an existing skill can absorb the excess sub-capability (link or marginally adapt, rather than create). Only creates a new child if no existing skill fits. Decision order: (1) link to existing skill → (2) marginally improve existing + link → (3) extract new child (Type A/B) → (4) stop, call compress-skill. Marginal adaptation of the target skill is allowed if it stays under 200 lines, core purpose is unchanged, and existing callers are unaffected.
 **Output:** If linked: parent SKILL.md updated + AGENTS.md modified. If new child: `.agents/skills/<child>/SKILL.md` created + parent SKILL.md + AGENTS.md modified.
 **Impact report:** Action taken (linked/adapted/extracted), parent/child line counts, callers updated, regression check
 **Patterns:** `.agents/skills/split-skill/references/split-patterns.md`
@@ -131,6 +131,26 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 **Output:** Skill moved to `.agents/skills/.deprecated/<name>-deprecated-YYYY-MM-DD/`. AGENTS.md, README, callers modified.
 **Impact report:** Archive path, recovery command, callers updated, deprecation log entry
 **Log:** `.agents/skills/deprecate-skill/references/deprecation-log.md`
+
+---
+
+### `learn-from-paper`
+**Triggers:** "learn from this paper", "skill from paper", "paper to skill", "extract from this research", "apply this paper", "read this paper and improve my skills"
+**What it does:** Reads an academic paper (uploaded PDF or linked URL), rigorously assesses credibility using a 6-dimension rubric (≥7/12 required), runs the full `secure-*` security scan pipeline, then extracts actionable insights. Routes to five outcomes: improve existing skills (one or many), create new skills (with anti-sprawl gate), improve the current project codebase (via `apply-paper-to-project`), any combination, or learnings-only report with path forward.
+**Calls:** `secure-*` skills (mandatory gate) → `universal-skill-creator` (if creating new) → `apply-paper-to-project` (if improving project) → `validate-skills` (post-apply)
+**Output:** Credibility report + security verdicts + extracted insights + application plan in chat. Modified SKILL.md files committed with citations. Optionally saves learnings report to `docs/research-learnings/`.
+**Impact report:** Paper title, credibility score/verdict, security verdict, insights extracted, skills modified/created, project changes, learnings saved, score deltas
+**References:** `references/credibility-rubric.md` (6-dimension scoring rubric with trust tiers, recency windows, quick-reject criteria)
+
+---
+
+### `library-skill`
+**Triggers:** "update the skill index", "sync skill references", "refresh the skill graph", "fix broken skill cross-references", "update docs after skill change" — or called automatically after structural changes
+**What it does:** Maintains skill library consistency whenever a structural change occurs — new skill added, skill renamed, skill deprecated, call graph rewired, or category changed. Scans all SKILL.md files, updates SKILL-INDEX.md, AGENTS.md, README.md, generates/updates the skill call graph (`docs/skill-graph.md`), validates cross-references, and invokes `generate-changelog`.
+**Called by:** `universal-skill-creator` (after creating), `split-skill` (after extracting child), `deprecate-skill` (after retiring), `improve-skills` (after structural changes)
+**Calls:** `generate-changelog` (after completing all updates)
+**Output:** Updated SKILL-INDEX.md, AGENTS.md, README.md, docs/skill-graph.md. Logged to `docs/skill-outputs/SKILL-OUTPUTS.md`.
+**Impact report:** Skills scanned, entries added/removed/updated, files modified, broken cross-references, orphaned entries
 
 ---
 
@@ -283,8 +303,8 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ---
 
-### `changelog-generator`
-**Triggers:** "write a changelog", "prepare release notes", "what's new in this version", "summarize my commits", "create a release summary"
+### `generate-changelog`
+**Triggers:** "write a changelog", "prepare release notes", "what's new in this version", "summarize my commits", "create a release summary", auto-triggered by library-skill after major repo changes
 **What it does:** Generate user-facing or internal release notes and changelogs
 **Output file:** `docs/changelogs/vX.X.X.md`
 **Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
@@ -307,6 +327,16 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 **What it does:** Systematically reproduces issues, isolates root causes, applies minimal fixes, and verifies the result. Supports Linear issue integration — fetches issues, cross-references against actual codebase, and updates status with user approval. Handles batch triage for multiple bugs (one at a time, full cycle each).
 **Output:** No files generated. Root cause + fix + verification summary in chat. Linear issue updated if applicable.
 **Impact report:** Bug fixed, root cause, files changed, tests run, Linear updated, next bug in queue
+
+---
+
+### `apply-paper-to-project`
+**Triggers:** "apply paper findings to this project", "improve this codebase with research", "use this paper to improve my project", "apply this to my project", "how can this paper help my codebase"
+**What it does:** Takes validated, security-cleared insights from `learn-from-paper` and applies them to the current project codebase — improving architecture, code patterns, testing strategies, documentation, or workflows based on empirical evidence. Reads project context (AGENTS.md, source files, tests, docs) before proposing changes. Presents a structured improvement plan, applies with user approval, and offers ADR creation for architectural changes.
+**Called by:** `learn-from-paper` (outcome 4 — improve current project). Never ingests papers directly.
+**Calls:** `architectural-decision-log` (optional, for significant architectural changes)
+**Output:** Project improvement plan in chat. Modified project files. Optional ADR. Logged to `docs/skill-outputs/SKILL-OUTPUTS.md`.
+**Impact report:** Paper applied, project path, changes applied, files modified, deferred items, ADR created, tests status
 
 ---
 
@@ -381,14 +411,15 @@ cp .agents/skills/universal-skill-creator/templates/SKILL-OUTPUTS-template.md \
 User entry points:
   universal-skill-creator  ← "create a skill"
   improve-skills           ← "improve skills"
+  learn-from-paper         ← "learn from this paper" / "paper to skill"
   project-setup            ← "set up this project" / "create an AGENTS.md"
   project-orchestrator     ← "what should I do next" / "orchestrate" / "parallel tasks"
 
 universal-skill-creator → research-skill (Step 2, always)
                         → split-skill (Step 7, if >200 + seam)
-                            → skill-compressor (always after split)
-                        → skill-compressor (Step 7, if >200, no seam)
+                        → compress-skill (Step 7, if >200, no seam)
                         → validate-skills (Step 8, quality gate)
+                        → library-skill (after creation, to sync indexes)
                         → publish-skill (Step 9, optional)
 
 improve-skills → validate-skills (Step 1, pre-flight)
@@ -396,17 +427,26 @@ improve-skills → validate-skills (Step 1, pre-flight)
                → prune-skill (Step 2a, per skill)
                → research-skill (Step 2c, per skill)
                → split-skill (Step 2g, if >200 + seam)
-                   → skill-compressor
-               → skill-compressor (Step 2g, if >200, no seam)
+               → compress-skill (Step 2g, if >200, no seam)
+               → library-skill (after structural changes)
 
 project-orchestrator → [any skill] (routes based on project state + user intent)
                      → project-setup (if no AGENTS.md exists)
 
+learn-from-paper → secure-* skills (Step 3, mandatory)
+                 → universal-skill-creator (Step 6, if creating new skill)
+                 → apply-paper-to-project (Step 6, if improving project)
+                 → validate-skills (Step 6, post-apply)
+
+apply-paper-to-project → architectural-decision-log (optional, for significant changes)
+
 project-setup → generates AGENTS.md with Orchestration Map (references project-orchestrator)
 
-skill-compressor → split-skill (if CORE still >200 after classify)
-split-skill      → skill-compressor (always, after split)
+compress-skill → split-skill (if CORE still >200 after classify)
+split-skill      → library-skill (after extracting child skill)
+deprecate-skill  → library-skill (after retiring skill)
+library-skill        → generate-changelog (final step, always)
 
 Leaf nodes (call nothing):
-  validate-skills  research-skill  prune-skill  deprecate-skill  publish-skill
+  validate-skills  research-skill  prune-skill  publish-skill  generate-changelog
 ```

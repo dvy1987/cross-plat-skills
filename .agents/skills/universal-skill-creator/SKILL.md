@@ -78,6 +78,7 @@ Category rules:
 Required sections: Role definition · Numbered workflow (imperative one-liners) · Output format schema · 1–2 examples · Constraints.
 Optional: Gotchas (from research-skill findings) · Verification checklist · Parameterization (`$ARGUMENTS[1]`).
 Read `references/advanced-patterns.md` for XML tags (Claude), openai.yaml (Codex), Factory frontmatter, Warp arguments.
+If the draft starts getting bloated while writing, stop and classify the excess immediately instead of finishing a 250-line first draft.
 
 ### Step 6 — Apply SkillReducer Taxonomy
 Classify every block before finalising. Over 60% of skill bodies in the wild are non-actionable — cut ruthlessly.
@@ -87,19 +88,18 @@ Classify every block before finalising. Over 60% of skill bodies in the wild are
 | Numbered workflow steps | Edge cases (<20% of invocations) | Duplicate content |
 | Output format / schema | Extra examples beyond 2 | — |
 
-### Step 7 — Size Check, Split, then Compress
+### Step 7 — Size Check and Resize
 ```bash
 wc -l .agents/skills/<skill-name>/SKILL.md
 ```
 If under 200 lines → proceed to Step 8.
 
-If over 200 lines → invoke `split-skill`. It follows this decision order automatically:
-1. Can an existing skill absorb the excess sub-capability? → link to it (or marginally adapt it, if: stays ≤200 lines, core purpose unchanged, callers unaffected)
-2. Is the sub-workflow duplicated across 2+ skills? → extract once, link from all (Type B)
-3. Is there a clean natural seam with no existing home? → extract new child (Type A)
-4. No seam — excess is only BACKGROUND/EDGE_CASE → `skill-compressor` instead
+If over 200 lines:
+1. If the excess is mostly BACKGROUND, EDGE_CASE, rationale, or extra examples → invoke `compress-skill` immediately
+2. If the excess is a distinct sub-capability or duplicated sub-workflow → invoke `split-skill`
+3. If unsure → invoke `compress-skill` first; if CORE content still exceeds 200 lines, `compress-skill` must escalate to `split-skill`
 
-`split-skill` calls `skill-compressor` on the output automatically.
+Never rely on `split-skill` to compress automatically. `split-skill` verifies line counts after splitting; `compress-skill` owns the compression path.
 
 ### Step 8 — Validate and Security-Scan Output
 Invoke `validate-skills` on the new skill. Must score ≥10/14.

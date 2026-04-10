@@ -76,7 +76,7 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: project-specific
-  sources: cross-plat-skills design spec 2026-04-10
+  sources: agent-loom design spec 2026-04-10
 ---
 
 # Skill Finder
@@ -216,7 +216,7 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: project-specific
-  sources: cross-plat-skills design spec 2026-04-10
+  sources: agent-loom design spec 2026-04-10
 ---
 
 # Tool Finder
@@ -365,7 +365,7 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: project-specific
-  sources: cross-plat-skills design spec 2026-04-10, arXiv:2601.02577
+  sources: agent-loom design spec 2026-04-10, arXiv:2601.02577
 ---
 
 # Create Agent Prompt
@@ -548,7 +548,7 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: project-specific
-  sources: cross-plat-skills design spec 2026-04-10
+  sources: agent-loom design spec 2026-04-10
 ---
 
 # Process Decomposer
@@ -707,7 +707,7 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: project-specific
-  sources: cross-plat-skills design spec 2026-04-10, arXiv:2601.02577, Addy-Osmani-Code-Agent-Orchestra
+  sources: agent-loom design spec 2026-04-10, arXiv:2601.02577, Addy-Osmani-Code-Agent-Orchestra
 ---
 
 # Agent Architect
@@ -868,7 +868,7 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: project-specific
-  sources: cross-plat-skills design spec 2026-04-10
+  sources: agent-loom design spec 2026-04-10
 ---
 
 # Setup Evaluation

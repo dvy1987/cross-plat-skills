@@ -58,7 +58,7 @@ Read `references/interview-questions.md` for the full question bank when deeper 
 
 ### Step 3 — Map Skill Gaps
 
-Based on the interview, identify which cross-plat-skills fill the user's gaps:
+Based on the interview, identify which agent-loom fill the user's gaps:
 
 | User Gap | Skills That Fill It |
 |----------|-------------------|

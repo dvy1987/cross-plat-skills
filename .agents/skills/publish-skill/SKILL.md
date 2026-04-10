@@ -110,7 +110,7 @@ npx skills <skill-name> -a codex --dry-run
 
 ### Step 6 — Optionally Push to GitHub
 
-If the user wants the skill in a public GitHub repo (e.g., `dvy1987/cross-plat-skills`):
+If the user wants the skill in a public GitHub repo (e.g., `dvy1987/agent-loom`):
 ```bash
 git add .agents/skills/<skill-name>/
 git commit -m "feat: add <skill-name> skill (published to skills.sh)"
@@ -123,7 +123,7 @@ git push origin main
 Published: <skill-name>
 Registry URL: https://skills.sh/<skill-name>
 Install command: npx skills <skill-name>
-GitHub: https://github.com/dvy1987/cross-plat-skills (if pushed)
+GitHub: https://github.com/dvy1987/agent-loom (if pushed)
 Platforms: all agentskills.io-compatible
 ```
 

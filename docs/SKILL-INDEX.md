@@ -227,14 +227,6 @@ Install globally: `~/.agents/skills/`. Apply to any domain — product, engineer
 ## Project-Specific Skills
 
 Install globally: `~/.agents/skills/`. Output files land inside the current project.
-**Triggers:** "brainstorm", "design this feature", "what's the best approach for", "let's think through", "before we build", "I have an idea for", "explore options"
-**What it does:** Turns a rough idea into an approved design through structured dialogue. One question at a time. Hard gate — no code or implementation until the user reviews and approves a written design doc. Decomposes oversized requests into sub-projects.
-**Output file:** `docs/specs/YYYY-MM-DD-<topic>-design.md` (committed to git)
-**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
-**Terminal notification:** "Design doc saved to `docs/specs/YYYY-MM-DD-<topic>-design.md`. Logged in `docs/skill-outputs/SKILL-OUTPUTS.md`."
-**Impact report:** Approach chosen, key decisions, open questions resolved, next step (prd-writing or implementation)
-
----
 
 ### `prd-writing`
 **Triggers:** "write a PRD", "document requirements", "create a spec", "I need a PRD for", "turn this into requirements", "define acceptance criteria"
@@ -314,7 +306,7 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ### `project-setup`
 **Triggers:** "set up this project", "create an AGENTS.md", "bootstrap agents", "configure agents for my repo", "agent onboarding", "write an AGENTS.md for this project", "project bootstrap"
-**What it does:** Interviews the user about skill gaps (role, expertise, working style) and project context (stack, architecture, conventions), then generates a tailored AGENTS.md with: project overview, key commands, code style, boundaries (tuned to user comfort), user context (where agents lead vs. defer), and a phase-based Orchestration Map that routes to the right cross-plat-skills at each project stage. Re-run after PRD changes, stack changes, or team changes to update the AGENTS.md.
+**What it does:** Interviews the user about skill gaps (role, expertise, working style) and project context (stack, architecture, conventions), then generates a tailored AGENTS.md with: project overview, key commands, code style, boundaries (tuned to user comfort), user context (where agents lead vs. defer), and a phase-based Orchestration Map that routes to the right agent-loom at each project stage. Re-run after PRD changes, stack changes, or team changes to update the AGENTS.md.
 **Output file:** `AGENTS.md` in the target project root
 **Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
 **Impact report:** User role, skill gaps filled, skills in orchestration map, agent autonomy level per phase

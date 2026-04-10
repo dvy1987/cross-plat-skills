@@ -1,4 +1,4 @@
-# cross-plat-skills
+# agent-loom
 
 > A skill library for AI coding tools that maintains itself — stays current with research, prunes outdated advice, and improves over time.
 
@@ -13,7 +13,7 @@ Skills follow the [agentskills.io](https://agentskills.io/specification) open st
 
 AI coding tools like Codex, Claude Code, Warp, and Cursor all support "skills" — reusable instruction files that teach agents how to do specific tasks (write a PRD, run a pre-mortem, create an ADR). So, agent skills form a crucial part of agent infra. The problem: best practices are rapidly evolving.  Models have moved on. Better techniques exist. Your skill library meanwhile has remained the same.
 
-**cross-plat-skills fixes this.** A self-improving meta layer researches current papers and practitioner patterns, prunes outdated content with a cited reason, rewrites from evidence, and validates before every commit. The library stays current without manual upkeep. It also installs once globally — available in every tool, every project, via symlinks.
+**agent-loom fixes this.** A self-improving meta layer researches current papers and practitioner patterns, prunes outdated content with a cited reason, rewrites from evidence, and validates before every commit. The library stays current without manual upkeep. It also installs once globally — available in every tool, every project, via symlinks.
 
 The library now also includes a process-and-agent design layer for more complex work. Instead of jumping straight from user request to execution, it can decompose a task into a reusable process, decide whether a single skill or a broader agent structure is needed, validate the setup, and then execute through the orchestrator. See [docs/architecture.md](docs/architecture.md) for the current repo architecture.
 
@@ -25,15 +25,15 @@ Clone the repo once and run the install script. Your skills become globally avai
 
 **macOS / Linux:**
 ```bash
-git clone https://github.com/dvy1987/cross-plat-skills.git ~/.cross-plat-skills
-cd ~/.cross-plat-skills
+git clone https://github.com/dvy1987/agent-loom.git ~/.agent-loom
+cd ~/.agent-loom
 bash install.sh
 ```
 
 **Windows (PowerShell):**
 ```powershell
-git clone https://github.com/dvy1987/cross-plat-skills.git $HOME\.cross-plat-skills
-cd $HOME\.cross-plat-skills
+git clone https://github.com/dvy1987/agent-loom.git $HOME\.agent-loom
+cd $HOME\.agent-loom
 .\install.ps1
 ```
 
@@ -44,7 +44,7 @@ That's it. Open any project in Codex, Warp, Claude Code, Gemini — your skills 
 When new skills are added to this repo:
 
 ```bash
-bash ~/.cross-plat-skills/install.sh --update
+bash ~/.agent-loom/install.sh --update
 ```
 
 Pulls the latest from git and refreshes all symlinks instantly. No reinstall, no restart needed (except Codex CLI which needs one restart if already running).
@@ -55,12 +55,12 @@ To cleanly remove all repo-managed skills from your global directories (revertin
 
 **macOS / Linux:**
 ```bash
-bash ~/.cross-plat-skills/uninstall.sh
+bash ~/.agent-loom/uninstall.sh
 ```
 
 **Windows (PowerShell):**
 ```powershell
-cd $HOME\.cross-plat-skills
+cd $HOME\.agent-loom
 .\uninstall.ps1
 ```
 
@@ -68,8 +68,8 @@ Only removes symlinks/junctions that point into this repo — any skills you add
 
 After uninstalling, you can optionally delete the cloned repo itself:
 ```bash
-rm -rf ~/.cross-plat-skills           # macOS / Linux
-Remove-Item -Recurse $HOME\.cross-plat-skills  # Windows
+rm -rf ~/.agent-loom           # macOS / Linux
+Remove-Item -Recurse $HOME\.agent-loom  # Windows
 ```
 
 > **Note:** Project-level skill copies (e.g., skills copied into a repo's `.agents/skills/` for Replit or teammates) are not affected by uninstall — they live in each project and must be removed manually if desired.
@@ -82,13 +82,13 @@ Every platform reads `~/.agents/skills/` as the global user-level skills folder.
 
 ```
 ~/.agents/skills/
-├── universal-skill-creator/   → ~/.cross-plat-skills/.agents/skills/universal-skill-creator/
-├── improve-skills/            → ~/.cross-plat-skills/.agents/skills/improve-skills/
-├── brainstorming/             → ~/.cross-plat-skills/.agents/skills/brainstorming/
-├── prd-writing/               → ~/.cross-plat-skills/.agents/skills/prd-writing/
-├── research-skill/            → ~/.cross-plat-skills/.agents/skills/research-skill/
-├── compress-skill/          → ~/.cross-plat-skills/.agents/skills/compress-skill/
-└── split-skill/               → ~/.cross-plat-skills/.agents/skills/split-skill/
+├── universal-skill-creator/   → ~/.agent-loom/.agents/skills/universal-skill-creator/
+├── improve-skills/            → ~/.agent-loom/.agents/skills/improve-skills/
+├── brainstorming/             → ~/.agent-loom/.agents/skills/brainstorming/
+├── prd-writing/               → ~/.agent-loom/.agents/skills/prd-writing/
+├── research-skill/            → ~/.agent-loom/.agents/skills/research-skill/
+├── compress-skill/          → ~/.agent-loom/.agents/skills/compress-skill/
+└── split-skill/               → ~/.agent-loom/.agents/skills/split-skill/
 ```
 
 A symlink means `git pull` is all you ever need — platforms see the updated skill immediately.

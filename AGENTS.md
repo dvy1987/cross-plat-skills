@@ -1,4 +1,4 @@
-# AGENTS.md — cross-plat-skills
+# AGENTS.md — agent-loom
 
 Agent instructions for working in this repo.
 **Skill reference:** `docs/SKILL-INDEX.md` — read before invoking any skill.

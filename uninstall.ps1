@@ -1,4 +1,4 @@
-# uninstall.ps1 -- Remove cross-plat-skills from global skill directories
+# uninstall.ps1 -- Remove agent-loom from global skill directories
 #
 # Only removes junctions/symlinks that point into this repo. User-owned skills
 # (real directories or links pointing elsewhere) are never touched.
@@ -23,7 +23,7 @@ $Targets = @(
 )
 
 Write-Host ""
-Write-Host "cross-plat-skills uninstaller (Windows)"
+Write-Host "agent-loom uninstaller (Windows)"
 Write-Host "========================================"
 Write-Host "Source : $SkillsSrc"
 if ($DryRun) {

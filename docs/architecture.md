@@ -1,11 +1,11 @@
 # Architecture
 
-Current-state architecture for `cross-plat-skills`.
+Current-state architecture for `agent-loom`.
 This document reflects what is implemented in the repo on 2026-04-10. It distinguishes live repo structure from draft or evolving design ideas.
 
 ## Overview
 
-`cross-plat-skills` is a cross-platform skill library built around the `agentskills.io` model. The repo has two main architectural concerns:
+`agent-loom` is a cross-platform skill library built around the `agentskills.io` model. The repo has two main architectural concerns:
 
 1. The skill library itself: reusable skills stored in `.agents/skills/`, plus the docs and control files that keep the library consistent.
 2. The process-and-agent design layer: a newer planning layer that reasons about process structure before execution and feeds execution into `project-orchestrator`.
@@ -196,4 +196,4 @@ The most important distinction is that `docs/specs/` contains design intent, whi
 
 The simplest accurate mental model for this repo is:
 
-`cross-plat-skills` is a globally installable skill library with a control plane for routing and a newer planning layer for reusable process decomposition and agent-structure design before execution.
+`agent-loom` is a globally installable skill library with a control plane for routing and a newer planning layer for reusable process decomposition and agent-structure design before execution.

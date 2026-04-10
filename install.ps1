@@ -1,4 +1,4 @@
-# install.ps1 -- Windows global setup for cross-plat-skills
+# install.ps1 -- Windows global setup for agent-loom
 #
 # Run this once on any Windows machine. Skills become available in Codex CLI,
 # Ampcode, Claude Code, Warp, Gemini CLI, GitHub Copilot, and any other
@@ -37,7 +37,7 @@ if ($Update) {
 }
 
 Write-Host ""
-Write-Host "cross-plat-skills installer (Windows)"
+Write-Host "agent-loom installer (Windows)"
 Write-Host "======================================"
 Write-Host "Source : $SkillsSrc"
 Write-Host "Mode   : $Mode"

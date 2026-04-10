@@ -1,6 +1,6 @@
 # Skill Routing — Priority Rules
 
-**Scope:** All agents reading skills from this library (cross-plat-skills).
+**Scope:** All agents reading skills from this library (agent-loom).
 
 ---
 
@@ -32,7 +32,7 @@ If the user's intent is ambiguous, **default to this library's skill**.
 
 When a conflict is detected, the agent **must** briefly notify the user:
 
-> Using **[this library's skill]** (cross-plat-skills) over **[other skill name]** ([source]).
+> Using **[this library's skill]** (agent-loom) over **[other skill name]** ([source]).
 > To use the other skill instead, say "use [other skill name]" or "use builtin".
 
 This notification should be a single line — not disruptive. Skip the notification when there is no conflict (i.e., only one skill matches).

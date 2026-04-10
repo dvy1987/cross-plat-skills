@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# uninstall.sh — Remove cross-plat-skills from global skill directories
+# uninstall.sh — Remove agent-loom from global skill directories
 #
 # Only removes symlinks that point into this repo. User-owned skills
 # (real directories or symlinks pointing elsewhere) are never touched.
@@ -23,7 +23,7 @@ DRY_RUN=false
 if [[ "$1" == "--dry-run" ]]; then DRY_RUN=true; fi
 
 echo ""
-echo "cross-plat-skills uninstaller"
+echo "agent-loom uninstaller"
 echo "============================="
 echo "Source : $SKILLS_SOURCE"
 if $DRY_RUN; then echo "Mode   : dry-run (no changes will be made)"; fi

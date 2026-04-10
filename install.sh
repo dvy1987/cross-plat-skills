@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install.sh — One-time global setup for cross-plat-skills
+# install.sh — One-time global setup for agent-loom
 #
 # Run this once on any machine. Skills become available in Codex CLI,
 # Ampcode, Claude Code, Warp, Gemini CLI, GitHub Copilot, and any other
@@ -30,7 +30,7 @@ if [[ "$1" == "--update" ]]; then
 fi
 
 echo ""
-echo "cross-plat-skills installer"
+echo "agent-loom installer"
 echo "==========================="
 echo "Source : $SKILLS_SOURCE"
 echo "Mode   : $MODE"

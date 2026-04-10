@@ -85,5 +85,5 @@ Trigger: uncertainty, high-stakes decision, "think about this"
 Flow: deep-thinking (auto-selects: inversion, pre-mortem, assumption-mapping, etc.)
 
 ## Skill Reference
-Available skills: [list installed cross-plat-skills relevant to this project]
+Available skills: [list installed agent-loom relevant to this project]
 Orchestrator: invoke `project-orchestrator` when unsure which skill to use or to decompose complex work.

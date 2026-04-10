@@ -12,7 +12,7 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: project-specific
-  sources: cross-plat-skills design spec 2026-04-10, arXiv:2601.02577, Addy-Osmani-Code-Agent-Orchestra
+  sources: agent-loom design spec 2026-04-10, arXiv:2601.02577, Addy-Osmani-Code-Agent-Orchestra
 ---
 
 # Agent Architect

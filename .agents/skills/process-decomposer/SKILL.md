@@ -14,7 +14,7 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: project-specific
-  sources: cross-plat-skills design spec 2026-04-10
+  sources: agent-loom design spec 2026-04-10
 ---
 
 # Process Decomposer

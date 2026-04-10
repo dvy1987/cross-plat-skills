@@ -1,4 +1,4 @@
-# Product Requirements Document — cross-plat-skills
+# Product Requirements Document — agent-loom
 
 **Date:** 2026-04-10  
 **Author:** Divya  
@@ -21,7 +21,7 @@ A third problem is emerging as agent use matures: **complex workflows are still 
 
 ## 2. Product Vision
 
-**cross-plat-skills** is a self-maintaining, cross-platform agent skill library with a lightweight process-reasoning layer — a global skill layer that installs once, works everywhere, stays current without manual upkeep, and can reason about complex execution structure before running.
+**agent-loom** is a self-maintaining, cross-platform agent skill library with a lightweight process-reasoning layer — a global skill layer that installs once, works everywhere, stays current without manual upkeep, and can reason about complex execution structure before running.
 
 The library operates on three principles:
 1. **Cross-platform by default** — one install, all tools
@@ -173,19 +173,19 @@ Specialized skills for specific project types (story writing, academic structuri
 
 **macOS / Linux:**
 ```bash
-git clone https://github.com/dvy1987/cross-plat-skills.git ~/.cross-plat-skills
-cd ~/.cross-plat-skills
+git clone https://github.com/dvy1987/agent-loom.git ~/.agent-loom
+cd ~/.agent-loom
 bash install.sh
 ```
 
 **Windows (PowerShell):**
 ```powershell
-git clone https://github.com/dvy1987/cross-plat-skills.git $HOME\.cross-plat-skills
-cd $HOME\.cross-plat-skills
+git clone https://github.com/dvy1987/agent-loom.git $HOME\.agent-loom
+cd $HOME\.agent-loom
 .\install.ps1
 ```
 
-The install script creates symlinks from `~/.agents/skills/<skill-name>/` → `~/.cross-plat-skills/.agents/skills/<skill-name>/`. Because every major platform reads `~/.agents/skills/` as the global user-level skills folder, a single `git pull` is all that's ever needed — platforms see the updated skill immediately.
+The install script creates symlinks from `~/.agents/skills/<skill-name>/` → `~/.agent-loom/.agents/skills/<skill-name>/`. Because every major platform reads `~/.agents/skills/` as the global user-level skills folder, a single `git pull` is all that's ever needed — platforms see the updated skill immediately.
 
 ### 6.2 Platform Coverage
 
@@ -205,7 +205,7 @@ The install script creates symlinks from `~/.agents/skills/<skill-name>/` → `~
 ### 6.3 Updating
 
 ```bash
-bash ~/.cross-plat-skills/install.sh --update
+bash ~/.agent-loom/install.sh --update
 ```
 
 Pulls latest from git and refreshes all symlinks. No reinstall or restart needed (Codex CLI requires one restart if currently running).

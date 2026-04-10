@@ -9,7 +9,7 @@
 
 ## Problem
 
-When this skill library (cross-plat-skills) is installed alongside platform-native or user-defined skills, multiple skills may match the same user intent. For example:
+When this skill library (agent-loom) is installed alongside platform-native or user-defined skills, multiple skills may match the same user intent. For example:
 
 - User says "fix this bug" → matches both `debug-and-fix` (this library) and Amp's builtin `fixing-bugs`
 - User says "review this code" → matches both `code-review-crsp` (this library) and Amp's builtin `code-review`

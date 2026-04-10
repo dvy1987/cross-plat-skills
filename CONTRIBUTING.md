@@ -1,4 +1,4 @@
-# Contributing to cross-plat-skills
+# Contributing to agent-loom
 
 ---
 

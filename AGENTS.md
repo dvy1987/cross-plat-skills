@@ -123,15 +123,18 @@ domain          | specialized, not universally needed      | install only when n
 ## User Entry Points
 
 ```
-"create a skill"     → universal-skill-creator
-"improve skills"     → improve-skills
-"learn from paper"   → learn-from-paper
-"set up this project"→ project-setup
-"what should I do"   → project-orchestrator
-"orchestrate / split"→ project-orchestrator
+"create a skill"      → universal-skill-creator
+"improve skills"      → improve-skills
+"learn from paper"    → learn-from-paper
+"set up this project" → project-setup
+"what should I do"    → project-orchestrator
+"orchestrate / split" → project-orchestrator
+"break this down"     → process-decomposer (triage + decompose)
+"design an agent"     → agent-architect
+"find a skill for"    → skill-finder
 ```
 
-All other meta skills are called automatically. See `docs/SKILL-INDEX.md` → Call Graph.
+All other meta and supporting skills are called automatically. See `docs/SKILL-INDEX.md` → Call Graph.
 
 ---
 

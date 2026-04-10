@@ -3,7 +3,7 @@
 **Date:** 2026-04-10  
 **Author:** Divya  
 **Status:** Draft  
-**Version:** 1.1
+**Version:** 1.2
 
 ---
 
@@ -15,16 +15,21 @@ The core problem: **agent skill libraries go stale**. Best practices for AI-assi
 
 A secondary problem: **skills are not portable**. Developers using multiple AI tools must maintain separate skill installs per tool or per project. There is no global standard that works across all platforms at once.
 
+A third problem is emerging as agent use matures: **complex workflows are still hand-designed from scratch**. A user describes a business process, an engineer decides how to break it down, someone wires agent roles and tool choices together, and the setup is rebuilt again when the workflow changes. There is no lightweight pre-execution reasoning layer that can decompose a task, decide the right execution structure, and make that reasoning reusable.
+
 ---
 
 ## 2. Product Vision
 
-**cross-plat-skills** is a self-maintaining, cross-platform agent skill library — a global skill layer that installs once, works everywhere, and stays current without manual upkeep.
+**cross-plat-skills** is a self-maintaining, cross-platform agent skill library with a lightweight process-reasoning layer — a global skill layer that installs once, works everywhere, stays current without manual upkeep, and can reason about complex execution structure before running.
 
 The library operates on three principles:
 1. **Cross-platform by default** — one install, all tools
 2. **Self-improving** — a meta layer of skills manages the library itself
 3. **Evidence-grounded** — every improvement is backed by research, every removal is cited
+
+And one architectural direction:
+4. **Process reasoning before execution** — reusable process decomposition and agent-structure design for complex workflows
 
 ---
 
@@ -45,6 +50,7 @@ The library operates on three principles:
 - Provide a cross-platform skill library that installs once globally and works in Codex CLI, Claude Code, Warp, Gemini CLI, GitHub Copilot, Cursor, Ampcode, Factory.ai, and VS Code
 - Provide a self-improving meta layer that researches current papers and practitioner patterns, prunes outdated content with cited reasons, rewrites from evidence, and validates before committing
 - Cover four categories of work: meta (library management), thinking (reasoning frameworks), project-specific (development workflows), and domain-specific (specialized, built on demand)
+- Add a reusable process-and-agent design layer for complex workflows: process decomposition, complexity triage, agent architecture, setup validation, and execution feedback
 - Enforce a strict quality standard: every skill ≤200 lines, agentskills.io validation passing, score ≥10/14
 - Provide clean install and uninstall scripts for macOS/Linux (bash) and Windows (PowerShell)
 - Follow the [agentskills.io](https://agentskills.io/specification) open standard for interoperability
@@ -53,6 +59,7 @@ The library operates on three principles:
 - Building a proprietary skill format or platform-specific solution
 - Hosting a skill registry (publishing to skills.sh is optional, not core)
 - GUI tooling — this is a CLI/agent-native workflow
+- Building a full standalone agent runtime or enterprise workflow engine
 - Supporting Replit and Bolt.new at the global level (project-level install is the workaround; these platforms do not support global `~/.agents/skills/`)
 
 ---
@@ -134,6 +141,14 @@ Installed globally; outputs always land inside the current project. Covers the f
 - `project-setup` — Interviews user, generates tailored `AGENTS.md`
 - `codebase-understanding` — Maps architecture, traces flows, surfaces hotspots
 - `project-orchestrator` — Routes requests to the right skill; decomposes complex work into parallel subagents
+
+**Process And Agent Design:**
+- `process-decomposer` → `docs/processes/` entries + `docs/processes/process.md` registry updates
+- `agent-architect` → architecture specs by skill contract in `docs/architecture/`
+- `setup-evaluation` — PASS / FAIL quality gate before execution for `agent-chain` workflows
+- `skill-finder` — checks whether a capability already exists in the library before new skill creation
+- `tool-finder` — checks tool availability, CLI fit, and MCP setup needs
+- `create-agent-prompt` — creates role prompts for agents in multi-agent topologies
 
 **Research / Learning:**
 - `learn-from-paper` — Ingests a research paper and extracts structured findings into the agent's context; triggers: "learn from paper"
@@ -313,6 +328,18 @@ Ampcode:  "implement the PRD we just wrote"
 
 The entire idea → design → spec → code flow is version-controlled, portable across machines, and tool-agnostic.
 
+For more complex work, the architecture now supports:
+
+```
+User: "Design and run a reusable review workflow"
+        ↓
+process-decomposer     → reusable process entry + complexity class
+agent-architect        → execution structure if needed
+setup-evaluation       → validate before execution
+project-orchestrator   → execute + collect feedback
+docs/processes/        ← write back actual outcome and execution delta
+```
+
 ---
 
 ## 11. Repo Structure
@@ -323,6 +350,8 @@ The entire idea → design → spec → code flow is version-controlled, portabl
 docs/SKILL-INDEX.md              ← full skill reference (triggers, outputs, call graph)
 docs/prd/                        ← product requirement documents
 docs/specs/                      ← design documents from brainstorming skill
+docs/processes/                  ← reusable process entries and process registry
+docs/architecture.md             ← current-state architecture overview
 docs/changelogs/                 ← release notes
 docs/skill-outputs/SKILL-OUTPUTS.md  ← auto-log of all generated files
 AGENTS.md                        ← agent instructions for working in this repo
@@ -354,7 +383,7 @@ uninstall.sh / uninstall.ps1     ← clean removal scripts
 - **Versioning strategy** — Should individual skills carry version numbers in addition to the overall repo version? Useful for teams pinning to a specific skill version.
 - **Community contributions** — What is the review and quality-gate process for accepting externally contributed skills? `CONTRIBUTING.md` covers quality standards but not the full PR workflow.
 - **skills.sh publishing** — Should all skills be published to skills.sh by default, or remain opt-in via `publish-skill`?
-- **`learn-from-paper` / `apply-paper-to-project` positioning** — These two skills form a research → apply workflow but are not yet documented in the README skill tables. Should they be promoted to a named category (e.g., "Research Skills") or remain undocumented sub-skills?
+- **Research skill positioning** — `learn-from-paper` / `apply-paper-to-project` now exist in the repo. Should they be promoted to a named category (e.g. "Research Skills") in the public docs, or remain under project-specific workflows?
 
 ---
 

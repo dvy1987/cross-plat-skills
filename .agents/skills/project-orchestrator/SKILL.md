@@ -53,9 +53,11 @@ Also read: `AGENTS.md` Orchestration Map (if present), `docs/skill-outputs/SKILL
 ### Step 2 — Classify the Request
 
 **Single-skill routing:** Request maps to one skill → route directly.
-**Sequential chain:** Multiple skills in order → present chain, execute one at a time.
-**Parallel decomposition:** Independent parts → spawn subagents (platform-aware).
+**Process-backed execution:** Process entry exists in `docs/processes/` → read complexity_class, follow the process.
+**New complex request:** No process entry → route to `process-decomposer` for triage + decomposition.
 **Phase recommendation:** User asks "what next?" → recommend based on Step 1.
+
+If `process-decomposer` returns `agent-chain`: wait for `agent-architect` and `setup-evaluator` to complete before proceeding to execution.
 
 ### Step 3 — Plan and Present
 
@@ -93,21 +95,20 @@ After all tasks complete:
 
 #### AGENTS.md Refresh Check
 
-Most artefact changes do NOT require an AGENTS.md update. Skills already read PRDs, specs, and plans directly from the files — the AGENTS.md doesn't need to duplicate that content. Only refresh when the artefact changes something the AGENTS.md itself controls.
+Only refresh AGENTS.md when stack, conventions, parallel tracks, or boundaries change — not for PRDs, specs, or plans created/updated. Full rules: `references/agents-md-refresh-check.md`.
 
-**Refresh AGENTS.md only when:**
-- **Stack changed** — `package.json` / `Cargo.toml` / `pyproject.toml` / `go.mod` has new dependencies that change Key Commands or build steps
-- **New non-obvious pattern emerged** — a spec, ADR, or architecture doc introduces a counterintuitive convention agents must follow (e.g., "all state in Zustand, never component state")
-- **Implementation plan reveals parallel tracks** — the Orchestration Map needs new parallel decomposition hints that weren't there before
-- **Boundaries need updating** — new protected directories, new "never touch" files, or new permission gates from architectural decisions
+**When refresh is needed:** Invoke `project-setup` with `UPDATE_ONLY=true`. Show a brief diff to the user.
 
-**Do NOT refresh when:**
-- A PRD, spec, or plan was simply created — skills read those directly
-- Product-soul was written or updated — brainstorming and prd-writing already read it from `docs/product-soul.md`
-- An ADR was logged that doesn't affect coding conventions
-- Content changed but no agent behaviour needs to change
+### Step 6 — Execution Feedback (Learning Loop)
 
-**When refresh is needed:** Invoke `project-setup` with `UPDATE_ONLY=true`. This skips the interview and only updates the affected sections (Key Commands, Non-Obvious Patterns, Orchestration Map parallel hints, or Boundaries). Show a brief diff to the user.
+After execution completes (all skills/agents finish), update the process entry:
+
+1. Read `docs/processes/YYYY-MM-DD-<task>.md`
+2. Fill execution section: `actual_steps`, `deviations`, `outcome_achieved`, `duration`, `topology_used`, `architecture_spec_ref`
+3. Update `docs/processes/process*.md` registry entry status
+4. Re-evaluate outcome cluster membership if nuance changed
+
+**This step is mandatory.** Every executed process entry must have its execution section filled. Entries stuck at `status: executing` for 24h+ are flagged as stale.
 
 ---
 
@@ -118,7 +119,7 @@ Most artefact changes do NOT require an AGENTS.md update. Skills already read PR
 | "new feature" / "I have an idea" | `brainstorming` (→ `product-soul` if missing) | — |
 | "product strategy" / "product soul" | `product-soul` | — |
 | "write a PRD" | `prd-writing` | Design spec |
-| "plan implementation" / "break this down" | `implementation-plan` | PRD |
+| "plan implementation" | `implementation-plan` | PRD |
 | "build this" / "implement" | Implementation + `test-driven-development` | Plan |
 | "technical debt" / "code health" | `technical-debt-audit` | Code exists |
 | "changelog" / "release notes" | `generate-changelog` | Commits exist |
@@ -129,6 +130,12 @@ Most artefact changes do NOT require an AGENTS.md update. Skills already read PR
 | "set up this project" | `project-setup` | — |
 | "create a skill" | `universal-skill-creator` | — |
 | "what should I do next" | Phase recommendation from Step 1 | — |
+| "decompose" / "break this down" / "what steps" | `process-decomposer` | — |
+| "design agent" / "architect this" / "multi-agent" | `agent-architect` | Process entry |
+| "find a skill for" / "which skill handles" | `skill-finder` | — |
+| "what tool" / "is [tool] available" | `tool-finder` | — |
+| "create agent prompt" / "write role prompt" | `create-agent-prompt` | Agent spec |
+| "evaluate setup" / "validate architecture" | `setup-evaluation` | Process + arch spec |
 
 ---
 

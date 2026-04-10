@@ -4,7 +4,7 @@ Complete reference for all skills in this repo.
 Agents: read this when deciding which skill to invoke or checking what a skill produces.
 Humans: read this for a full picture of what's available and what each skill outputs.
 
-Last updated: 2026-04-05
+Last updated: 2026-04-10
 
 ---
 
@@ -371,6 +371,73 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 **Called by:** `brainstorming` (before finalising design) and `prd-writing` (before writing, to surface hidden assumptions)
 **Output:** No files generated. Inverted view + hidden assumptions surfaced + forward actions delivered in chat.
 **Impact report:** Frames used, questions asked, hidden assumptions surfaced, forward actions derived
+
+---
+
+### Agent & Process Design Skills
+
+### `process-decomposer`
+**Triggers:** "decompose this", "break this down", "what steps do I need", "plan this out", "what's the process for", "how do I approach this"
+**What it does:** Complexity triage (Layer 1) + task decomposition into structured process entries. Checks process.md for reusable matches first. Classifies as exact-match, single-skill, skill-chain, or agent-chain. Stores entries in docs/processes/ for future reuse. Hard gate: requires measurable outcome before decomposition.
+**Calls:** `skill-finder`, `tool-finder`, `research-skill` (for knowledge gaps)
+**Output file:** `docs/processes/YYYY-MM-DD-<task-slug>.md`
+**Registry:** `docs/processes/process.md` (volume-split at 500 lines)
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** Complexity class, process entry path, steps count, knowledge gaps flagged, next layer
+
+---
+
+### `agent-architect`
+**Triggers:** "design an agent for this", "what agent structure do I need", "architect this", "should this be multi-agent", "what's the right execution structure"
+**What it does:** Designs execution structure for decomposed processes. Decides single agent or multi-agent topology. For multi-agent: defines boundaries, chooses topology (sequential/parallel/hierarchical), specifies handoff protocols. Persists architecture specs for the learning loop and triggers setup evaluation before orchestration.
+**Calls:** `agent-system-architecture` (complex topology), `create-agent-prompt` (role prompts), `setup-evaluation` (via setup-evaluator agent), `project-orchestrator` (downstream)
+**Output file:** `docs/architecture/YYYY-MM-DD-<task-slug>-arch.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** Structure chosen, agents defined, architecture spec path, process entry linked
+
+---
+
+### `setup-evaluation`
+**Triggers:** "evaluate this setup", "check the decomposition", "validate the architecture", "is this plan sound"
+**What it does:** Validates process decomposition and architecture design before execution. Checks step coverage, tool availability, parallelism consistency, agent boundaries, handoff protocols, and cross-validates spec linkage. Returns PASS or FAIL with specific issues. Runs from setup-evaluator agent (separate from agent-architect to avoid confirmation bias).
+**Output:** PASS/FAIL verdict in chat with issues list
+**Impact report:** Verdict, issues count, checks passed/total, next step
+
+---
+
+### `skill-finder`
+**Triggers:** "what skill does this need", "find a skill for", "is there a skill that", "which skill handles"
+**What it does:** Searches the skill library for capability matches. Decides: use existing (full overlap), extend existing (partial overlap), or create new (no overlap). The single gatekeeper for all skill creation — prevents skill sprawl.
+**Calls:** `universal-skill-creator` (if create/extend needed), `library-skill` (sync indexes)
+**Output:** Skill name + action taken (existing/extended/created)
+**Impact report:** Action, skill name, library size before/after
+
+---
+
+### `tool-finder`
+**Triggers:** "what tool", "do I need an MCP", "is [tool] available", "which tool handles"
+**What it does:** Identifies tools for process steps. Confirms CLI compatibility, checks MCP server config. Guides user through setup if needed. Categorises tools: File I/O, Web, Bash, API, MCP, Custom CLI.
+**Output:** Tool name, status (available/needs-setup/unavailable), setup instructions
+**Impact report:** Tool, status, platform
+
+---
+
+### `create-agent-prompt`
+**Triggers:** "create an agent prompt", "write a role prompt", "define agent identity"
+**What it does:** Creates focused role prompts for agents in multi-agent topologies. Defines identity, responsibilities, boundaries, handoff protocol, and failure behavior. Scope: agent role prompts only (v1). System prompts, task prompts, skill prompts are future TODOs.
+**Called by:** `agent-architect`, user (direct)
+**Output:** Prompt text ready to embed in AGENTS.md or architecture spec
+**Impact report:** Agent name, topology role, handoff defined, failure behavior defined
+
+---
+
+### Agents
+
+### `setup-evaluator` (agent)
+**Spawned by:** `agent-architect` after it writes the architecture spec for `agent-chain` processes
+**Skills:** `setup-evaluation`
+**What it does:** Runs between architecture design and orchestration config. Validates the setup independently from the architect. On FAIL: returns issues to agent-architect. On PASS: hands off to project-orchestrator.
+**Why an agent:** Independence from agent-architect prevents confirmation bias.
 
 ---
 

@@ -15,6 +15,8 @@ AI coding tools like Codex, Claude Code, Warp, and Cursor all support "skills" �
 
 **cross-plat-skills fixes this.** A self-improving meta layer researches current papers and practitioner patterns, prunes outdated content with a cited reason, rewrites from evidence, and validates before every commit. The library stays current without manual upkeep. It also installs once globally — available in every tool, every project, via symlinks.
 
+The library now also includes a process-and-agent design layer for more complex work. Instead of jumping straight from user request to execution, it can decompose a task into a reusable process, decide whether a single skill or a broader agent structure is needed, validate the setup, and then execute through the orchestrator. See [docs/architecture.md](docs/architecture.md) for the current repo architecture.
+
 ---
 
 ## Installation (One Time, Any Machine)
@@ -159,6 +161,22 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 | [`codebase-understanding`](.agents/skills/codebase-understanding/) | Map architecture, trace key flows, surface complexity hotspots — build a mental model before making changes | No files. Architecture overview + component map + hotspots in chat. | "understand this repo", "how does this work", "explain the architecture", "onboard me" |
 | [`code-review-crsp`](.agents/skills/code-review-crsp/) | Review code changes against 6 criteria (correctness, completeness, conventions, tests, performance, completeness) with severity-classified findings | No files. Structured review with findings by severity in chat. | "review this code", "check this PR", "code review", "audit this diff" |
 | [`project-orchestrator`](.agents/skills/project-orchestrator/) | Route requests to the right skill, decompose complex work into parallel subagents (platform-aware), manage phase transitions | No files unless parallel plan written to `docs/task-plan.md`. Orchestration plan + routing in chat. | "what should I do next", "orchestrate this", "split into parallel tasks", "which skill should I use" |
+
+#### Agent & Process Design
+| Skill | What it does |
+|-------|-------------|
+| [`process-decomposer`](.agents/skills/process-decomposer/) | Complexity triage + task decomposition into reusable process entries in `docs/processes/` |
+| [`agent-architect`](.agents/skills/agent-architect/) | Designs single-agent or multi-agent execution structures from decomposed processes |
+| [`setup-evaluation`](.agents/skills/setup-evaluation/) | Validates decomposition + architecture before execution for agent-chain workflows |
+| [`skill-finder`](.agents/skills/skill-finder/) | Maps capabilities to existing skills and prevents unnecessary skill creation |
+| [`tool-finder`](.agents/skills/tool-finder/) | Tool discovery, availability checking, and MCP setup guidance |
+| [`create-agent-prompt`](.agents/skills/create-agent-prompt/) | Creates focused role prompts for agents in multi-agent topologies |
+
+This design layer sits above execution. The current flow is:
+
+`process-decomposer` → `agent-architect` (if needed) → `setup-evaluation` (for agent-chain) → `project-orchestrator` → execution → execution feedback
+
+That gives the repo a reusable process-memory layer instead of treating every complex request as a one-off.
 
 
 ---
@@ -329,6 +347,18 @@ The meta layer researches current papers and practitioner patterns, prunes anyth
 
 ---
 
+## Architecture
+
+The repo now has three practical layers:
+
+- Skill library: reusable skills in `.agents/skills/`
+- Control plane: `.agents/ROUTING.md` and `docs/SKILL-INDEX.md`
+- Process-and-agent design layer: reusable process decomposition, agent structure design, setup validation, and orchestrated execution
+
+This keeps the project lightweight. It is still a portable skill library, not a full agent runtime or workflow engine. The current-state architecture is documented in [docs/architecture.md](docs/architecture.md).
+
+---
+
 ## Resources
 
 - [agentskills.io specification](https://agentskills.io/specification)
@@ -340,6 +370,17 @@ The meta layer researches current papers and practitioner patterns, prunes anyth
 - [obra/superpowers](https://github.com/obra/superpowers) — Battle-tested brainstorming + dev workflow skills
 - [SkillReducer paper (arXiv:2603.29919)](https://arxiv.org/abs/2603.29919) — Research backing the 200-line limit and compression approach
 - [Agent Skills survey (arXiv:2602.12430)](https://arxiv.org/abs/2602.12430) — 2026 comprehensive survey on agent skill architecture
+
+---
+
+## Deferred / TODO
+
+These skills are still deferred and will be created via `skill-finder` when demand emerges:
+
+- `knowledge-indexer` — indexes project knowledge sources; deferred until RAG is ready
+- `create-system-prompt` — system prompts for agent identity + constraints
+- `create-task-prompt` — one-time instructions for specific execution steps
+- `create-skill-prompt` — prompts for invoking skills correctly
 
 ---
 

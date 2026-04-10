@@ -48,3 +48,48 @@ This notification should be a single line — not disruptive. Skip the notificat
 | "use the builtin code-review" | Uses the platform's builtin `code-review` skill. No conflict note needed. |
 | "use my local debug skill" | Uses the user's own skill. No conflict note needed. |
 | "brainstorm this feature" | Uses `brainstorming` (this library). No note if no other skill matches. |
+
+---
+
+## Process & Agent Design Layer
+
+- "decompose" | "break down" | "plan this out" | "what steps"
+    → `process-decomposer` (triage fires first — may short-circuit)
+    Fires BEFORE `agent-architect` — decomposition must precede architecture.
+
+- "design an agent" | "what agent structure" | "architect this" | "multi-agent"
+    → `agent-architect`
+    If no process entry exists, `agent-architect` calls `process-decomposer` first.
+
+- "what skill does this need" | "find a skill for" | "is there a skill that"
+    → `skill-finder`
+    NOT `universal-skill-creator` directly — always go through `skill-finder` first.
+
+- "what tool" | "do I need an MCP" | "is [tool] available"
+    → `tool-finder`
+
+- "create an agent prompt" | "write a role prompt for this agent"
+    → `create-agent-prompt`
+
+- "evaluate this setup" | "check the decomposition" | "validate the architecture"
+    → `setup-evaluation`
+    Also auto-invoked by setup-evaluator agent after `agent-architect` writes the architecture spec for agent-chain tasks.
+
+## Hard Boundaries
+
+- `process-decomposer` does NOT replace `brainstorming`.
+  brainstorming = design approval (upstream). process-decomposer = execution planning (downstream).
+- `setup-evaluator` agent is auto-spawned by `agent-architect` after the architecture spec exists for agent-chain only (not keyword-routed).
+
+## Triage Short-Circuits (process-decomposer Step 0)
+
+| Complexity Class | Route |
+|-----------------|-------|
+| `exact-match` | Skip design layers, replay via `project-orchestrator` |
+| `single-skill` | Route directly to skill, no decomposition |
+| `skill-chain` | Decompose (Layer 2), skip architecture (Layer 3), execute via `project-orchestrator` |
+| `agent-chain` | Full pipeline + setup-evaluator after architecture spec exists |
+
+## Full Firing Order (agent-chain)
+
+brainstorming (if needed) → process-decomposer → agent-architect → setup-evaluator → project-orchestrator → execution → execution feedback

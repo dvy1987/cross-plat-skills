@@ -102,7 +102,7 @@ Output to: docs/handoffs/<name>-output.md
 **Topology rules:**
 - **Parallel:** All agents receive same input, run concurrently. Wait for all before proceeding.
 - **Sequential:** Chain outputs — Agent N's output becomes Agent N+1's input.
-- **Hierarchical:** First agent is orchestrator with explicit sub-agent dispatch in its prompt.
+- **Hierarchical:** Launch only the orchestrator from this skill. Do not emit one spawn block per worker. Include the worker list under the orchestrator block and let the orchestrator dispatch them.
 
 ### Step 5 — Monitor and Hand Off
 
@@ -110,7 +110,13 @@ Poll docs/handoffs/ for output files:
 - Present and non-empty → agent complete
 - Empty or error → agent failed
 
-**On failure:** Retry once via Task tool. If retry fails → write `docs/handoffs/<name>-FAILED.md`. Blocking agent failure (sequential dependency) → halt, surface to user. Non-blocking → continue, note in Impact Report.
+**On failure:** Follow the architecture spec's extracted failure handling rules first. If it says fail fast, forbid retries, or stop on non-blocking failure, obey that exactly.
+
+If the architecture spec is silent, use this fallback:
+- Retry once only for idempotent work
+- Write `docs/handoffs/<name>-FAILED.md` if retry fails or retry is not allowed
+- Halt on blocking failures
+- Continue on non-blocking failures and note them in the Impact Report
 
 When all outputs present (or failures logged) → hand off to `project-orchestrator` for synthesis.
 
@@ -125,8 +131,9 @@ When all outputs present (or failures logged) → hand off to `project-orchestra
 - Prompt files must exist on disk before spawning — in-memory prompts do
   not work with the Task tool.
 - The launch manifest is the audit trail — never skip it even for two-agent runs.
-- Hierarchical topologies require the orchestrator agent's prompt to include
-  explicit sub-agent dispatch instructions — verify before spawning.
+- Hierarchical topologies require the orchestrator prompt to include explicit
+  sub-agent dispatch instructions — verify before spawning, and never eagerly
+  launch those workers from this skill.
 
 ---
 

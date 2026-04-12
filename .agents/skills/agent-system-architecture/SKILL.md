@@ -40,7 +40,7 @@ Choose the most efficient pattern based on the task:
 | Pattern | Best For | Why? |
 | :--- | :--- | :--- |
 | **Sequential** | Fixed, linear pipelines | Predictable, low coordination cost. |
-| **Concurrent** | Diverse perspectives / Speed | Reduces wall-clock time, ensemble reasoning. |
+| **Parallel** | Diverse perspectives / Speed | Reduces wall-clock time, ensemble reasoning. |
 | **Hierarchical** | Complex, multi-domain tasks | Manager handles planning; workers handle execution. |
 | **Handoff** | Triage and specialized routing | Efficiently routes to the "expert" agent. |
 | **Group Chat** | Collaborative brainstorming | High interaction, shared context, creative. |
@@ -96,7 +96,7 @@ Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:
     <output>
 **System Overview:** Parallel review pipeline — three specialist agents analyze a PR independently, results merged by a lightweight aggregator.
 
-**Orchestration Pattern:** Concurrent (3 agents share same input, produce independent outputs).
+**Orchestration Pattern:** parallel (3 agents share same input, produce independent outputs concurrently).
 
 **Agent Definitions:**
 | Agent | Role | Tools | Input | Output |
@@ -112,7 +112,7 @@ Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 **Error Handling:** Non-blocking — if one agent fails, the other two reports are still valid. Aggregator notes the gap. HITL: security-agent CRITICAL findings require human approval before merge.
 
 Architecture designed: pr-review-pipeline
-Pattern chosen: Concurrent
+Pattern chosen: parallel
 Number of agents: 3 + aggregator
 Coordination complexity: Low
 Observability strategy: Token usage + latency per agent logged to manifest

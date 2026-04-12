@@ -87,22 +87,39 @@ Launched: YYYY-MM-DD HH:MM
 
 Output structured spawn instructions. Do NOT generate code.
 
+**Template for parallel or sequential topologies:**
+
 ```
 SPAWN SUBAGENTS:
-Topology: [parallel | sequential | hierarchical]
+Topology: [parallel | sequential]
 
 Agent: <name>
 Role prompt: docs/agents/<name>-prompt.md
 Input: <source — task-input.md or prior agent output>
 Output to: docs/handoffs/<name>-output.md
 
-[Repeat for each agent]
+[Repeat one block per launched agent]
+```
+
+**Template for hierarchical topologies:**
+
+```
+SPAWN SUBAGENTS:
+Topology: hierarchical
+
+Agent: <orchestrator-name>
+Role prompt: docs/agents/<orchestrator-name>-prompt.md
+Input: <source — task-input.md>
+Output to: docs/handoffs/<orchestrator-name>-output.md
+Dispatch workers:
+  - <worker-name> → docs/agents/<worker-name>-prompt.md
+  - <worker-name> → docs/agents/<worker-name>-prompt.md
 ```
 
 **Topology rules:**
-- **Parallel:** All agents receive same input, run concurrently. Wait for all before proceeding.
-- **Sequential:** Chain outputs — Agent N's output becomes Agent N+1's input.
-- **Hierarchical:** Launch only the orchestrator from this skill. Do not emit one spawn block per worker. Include the worker list under the orchestrator block and let the orchestrator dispatch them.
+- **Parallel:** Emit one spawn block per launched agent. All agents receive same input, run concurrently. Wait for all before proceeding.
+- **Sequential:** Emit one spawn block per launched agent. Chain outputs — Agent N's output becomes Agent N+1's input.
+- **Hierarchical:** Emit exactly one spawn block for the orchestrator. Never emit separate spawn blocks for workers from this skill. List workers under `Dispatch workers:` and let the orchestrator dispatch them.
 
 ### Step 5 — Monitor and Hand Off
 

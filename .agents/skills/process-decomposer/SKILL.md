@@ -5,10 +5,10 @@ description: >
   complexity triage. Load when user says "decompose this", "break this down",
   "what steps do I need", "plan this out", "what's the process for", "how do I
   approach this", or when any complex task needs structured execution planning.
-  Includes Layer 1 triage: checks process.md for exact matches, assesses
-  complexity (single-skill / skill-chain / agent-chain), and routes
-  accordingly. Does NOT replace brainstorming — brainstorming is design
-  approval (upstream), this is execution planning (downstream).
+  Includes conversational problem understanding (Step 0) before triage.
+  Routes to `problem-to-plan` when the user needs planning deliverables
+  (spec + plan + TODO). Does NOT replace brainstorming — brainstorming is
+  design approval (upstream), this is execution planning (downstream).
 license: MIT
 metadata:
   author: dvy1987
@@ -33,42 +33,54 @@ Never write to `process.md` from any other skill — this skill owns the registr
 
 ## Workflow
 
-### Step 0 — Complexity Triage (Layer 1)
+### Step 0 — Understand the Problem
 
-**0a. Check process registry.** Read all `docs/processes/process*.md` volumes.
+Before triaging or decomposing, **understand what the user actually needs.** Read what they provided. Scan relevant codebase files to build context silently.
+
+Then summarize your understanding back to the user in 2-3 sentences and ask **1-2 focused questions** (only what you cannot infer from code or context):
+- "What does done look like?" (if no clear success criteria)
+- "Which part of the system should this touch?" (if scope is ambiguous)
+- "Are there constraints — things to avoid, dependencies, or deadlines?" (if risk is unclear)
+
+If the problem is already clear from context, state your understanding and ask for confirmation instead of asking questions. **Do not proceed until the user confirms you understand the problem correctly.**
+
+### Step 1 — Complexity Triage (Layer 1)
+
+**1a. Check process registry.** Read all `docs/processes/process*.md` volumes.
 
 | Match | Action |
 |-------|--------|
 | **Exact match** (same outcome cluster + nuance) | Present to user. If confirmed: skip design layers and hand the matched process entry to `project-orchestrator` for replay + write-back. DONE. |
-| **Partial match** (same cluster, different nuance) | Present to user: "Found related process. Adapt it?" Proceed to Step 1 with match as scaffold. |
-| **No match** | Proceed to Step 1 fresh. |
+| **Partial match** (same cluster, different nuance) | Present to user: "Found related process. Adapt it?" Proceed to Step 2 with match as scaffold. |
+| **No match** | Proceed to Step 2 fresh. |
 
-**0b. Assess complexity** (if no exact match):
+**1b. Assess complexity** (if no exact match):
 
 | Complexity | Route |
 |------------|-------|
 | Single skill sufficient | Route directly to skill. No decomposition. DONE. Output: `complexity_class: single-skill` |
-| Multi-step, sequential, no specialization | Mark as `skill-chain`. Proceed to Steps 1-4, then hand `process_entry_ref` to `project-orchestrator` for execution + write-back. |
-| Parallel steps or distinct specialization | Mark as `agent-chain`. Proceed to Steps 1-4, then hand off to `agent-architect` for architecture, setup evaluation, and downstream orchestration. |
+| Needs planning deliverables (spec + plan + TODO) | Route to `problem-to-plan` with the confirmed problem statement. DONE. |
+| Multi-step, sequential, no specialization | Mark as `skill-chain`. Proceed to Steps 2-5. |
+| Parallel steps or distinct specialization | Mark as `agent-chain`. Proceed to Steps 2-5, then hand off to `agent-builder`. |
 
-### Step 1 — Define Outcome (Hard Gate)
+### Step 2 — Define Outcome (Hard Gate)
 
-Ask: "What does done look like? What is the measurable outcome?"
-Do NOT proceed without an answer. This is non-negotiable.
+Use the outcome from Step 0 conversation. If not yet measurable, ask: "Can you make the success criteria specific — what can we check to know this is done?"
+Do NOT proceed without a measurable outcome. This is non-negotiable.
 
-### Step 2 — Decompose Into Steps
+### Step 3 — Decompose Into Steps
 
 For each step define: description, skill (via `skill-finder`), tool (via `tool-finder`), knowledge needed, parallel markers.
 
-### Step 3 — Knowledge Gap Resolution
+### Step 4 — Knowledge Gap Resolution
 
 For each gap: ask user to provide (file, doc, URL). If unavailable: flag as `[KNOWLEDGE-GAP: web-scrape-needed]`. Do not block.
 
-### Step 4 — Write Process Entry
+### Step 5 — Write Process Entry
 
 Write to `docs/processes/YYYY-MM-DD-<task-slug>.md` using the schema from the design spec (Section 6.2). Append summary to latest `docs/processes/process*.md` volume (split at 500 lines). Return `process_entry_ref` and `complexity_class`.
 
-### Step 5 — Pattern Learning
+### Step 6 — Pattern Learning
 
 If adapted from existing process: store as variant, link to original, log changes.
 Execution feedback is owned by `project-orchestrator` (Section 4.1 of design spec).
@@ -81,6 +93,7 @@ Execution feedback is owned by `project-orchestrator` (Section 4.1 of design spe
 - "Exact match" means same outcome cluster AND same nuance — same cluster alone is partial.
 - `skill-chain` tasks still execute under `project-orchestrator` so the learning loop stays intact.
 - This skill does NOT replace `brainstorming` or `implementation-plan`. Brainstorming = what to build. This = how to execute.
+- When the user brings a problem that needs planning artifacts (spec, plan, TODO), route to `problem-to-plan` — do not try to produce those deliverables here.
 
 ---
 
@@ -88,25 +101,34 @@ Execution feedback is owned by `project-orchestrator` (Section 4.1 of design spe
 
 <examples>
   <example>
-    <input>Break down: "Add dark mode to the React app"</input>
+    <input>Add dark mode to the React app</input>
     <output>
-[Triage] Checked process.md — no match found.
-[Triage] Complexity: skill-chain (sequential, no agent specialization needed).
+Let me make sure I understand: you want a dark/light theme toggle for the React frontend. I scanned the codebase — you're using Tailwind CSS with no existing theme system.
 
-Before I decompose, one question: **What does done look like?** For example: "Dark mode toggle in settings, persists across sessions, all components themed."
+Two quick questions:
+1. **What does done look like?** e.g., toggle in settings, persists across sessions, all components themed?
+2. **Should this follow the OS preference by default**, or always start in light mode?
+
+[After user answers]
+
+[Triage] Checked process.md — no match found.
+Complexity: skill-chain (sequential, no agent specialization needed).
+Proceeding to decompose...
     </output>
   </example>
   <example>
-    <input>Decompose: "Build a multi-agent code review pipeline"</input>
+    <input>I want to plan out building a multi-agent code review pipeline. Can you spec it out and create tasks?</input>
     <output>
+Here's my understanding: you want a pipeline where multiple specialized agents (e.g., security, code quality, test coverage) review PRs in parallel, then aggregate results. Is that right?
+
+One question: **Should agents block the PR merge on critical findings**, or just report?
+
+[After user confirms]
+
 [Triage] Checked process.md — partial match found:
-- proc-2026-04-08-012: "Code review automation" (documentation/code-review cluster)
-  Nuance differs: that was single-reviewer, this is multi-agent.
+- proc-2026-04-08-012: "Code review automation" (single-reviewer variant)
 
-Complexity: agent-chain (parallel agents with specialization). Full pipeline will fire.
-`agent-architect` will design the topology, then `setup-evaluation` will validate it before `project-orchestrator` executes.
-
-**What does done look like?** Define the measurable outcome before we proceed.
+This needs planning deliverables (spec + plan + TODO). Routing to `problem-to-plan` with confirmed problem statement.
     </output>
   </example>
 </examples>
@@ -122,5 +144,5 @@ Process entry: docs/processes/YYYY-MM-DD-<slug>.md
 Registry updated: docs/processes/process.md (volume N)
 Steps: [N] ([M] parallel)
 Knowledge gaps: [N] flagged
-Next: [execution | agent-architect | skill routing]
+Next: [execution | agent-builder | skill routing]
 ```

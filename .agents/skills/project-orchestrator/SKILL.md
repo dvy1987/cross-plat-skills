@@ -57,7 +57,7 @@ Also read: `AGENTS.md` Orchestration Map (if present), `docs/skill-outputs/SKILL
 **New complex request:** No process entry → route to `process-decomposer` for triage + decomposition.
 **Phase recommendation:** User asks "what next?" → recommend based on Step 1.
 
-If `process-decomposer` returns `agent-chain`: wait for `agent-architect` and `setup-evaluator` to complete before proceeding to execution.
+If `process-decomposer` returns `agent-chain`: wait for `agent-builder` and `setup-evaluator` to complete before proceeding to execution.
 
 ### Step 3 — Plan and Present
 
@@ -120,6 +120,7 @@ After execution completes (all skills/agents finish), update the process entry:
 | "product strategy" / "product soul" | `product-soul` | — |
 | "write a PRD" | `prd-writing` | Design spec |
 | "plan implementation" | `implementation-plan` | PRD |
+| "plan this change" / "spec this out" / "create TODO" | `problem-to-plan` | — |
 | "build this" / "implement" | Implementation + `test-driven-development` | Plan |
 | "technical debt" / "code health" | `technical-debt-audit` | Code exists |
 | "changelog" / "release notes" | `generate-changelog` | Commits exist |
@@ -131,7 +132,7 @@ After execution completes (all skills/agents finish), update the process entry:
 | "create a skill" | `universal-skill-creator` | — |
 | "what should I do next" | Phase recommendation from Step 1 | — |
 | "decompose" / "break this down" / "what steps" | `process-decomposer` | — |
-| "design agent" / "architect this" / "multi-agent" | `agent-architect` | Process entry |
+| "design agent" / "architect this" / "multi-agent" | `agent-builder` | Process entry |
 | "find a skill for" / "which skill handles" | `skill-finder` | — |
 | "what tool" / "is [tool] available" | `tool-finder` | — |
 | "create agent prompt" / "write role prompt" | `create-agent-prompt` | Agent spec |

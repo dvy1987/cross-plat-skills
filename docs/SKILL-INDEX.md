@@ -332,6 +332,16 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ---
 
+### `reality-check`
+**Triggers:** "reality-check", "evaluate claims", "assess a project", "score these claims", "what's real vs marketing", "validate product claims", "is this real", "does this work as claimed", "evaluate this project", "assess the gap between claims and reality", "how credible is this", "investor assessment"
+**What it does:** Evaluates any project, product, or system's claims against its actual implementation. Reads code, docs, commit history, and artifacts to verify every claim. Scores each claim numerically (1-10) with cited evidence. Identifies architectural gaps classified by severity. Compares against 3-5 competitors. Proposes creative solutions (lightweight/medium/heavyweight) for each gap. Produces two deliverables: a findings report and an actionable roadmap.
+**Calls:** `adversarial-hat` (Step 7 — pressure-test strongest claims), `assumption-mapping` (Step 4 — surface hidden beliefs), `codebase-understanding` (Step 1 — map architecture), `implementation-plan` (Step 8 — structure roadmap)
+**Output files:** `docs/YYYY-MM-DD-reality-check-findings.md` + `docs/YYYY-MM-DD-roadmap-and-implementation-plan.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** Project name, claims evaluated, composite score, gaps by severity, competitors compared, solutions proposed, file paths
+
+---
+
 ### `codebase-understanding`
 **Triggers:** "understand this repo", "how does this project work", "explain the architecture", "what does this repo do", "show me the structure", "onboard me", "walk me through this codebase"
 **What it does:** Maps project architecture, identifies major layers and components, traces 2-3 key data flows through the codebase, and surfaces complexity hotspots (high complexity, missing tests, convention deviations). Reads actual source files to verify every claim. Platform-agnostic — works without builtin walkthrough tools.
@@ -379,7 +389,7 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ---
 
-### `agent-architect`
+### `agent-builder`
 **Triggers:** "design an agent for this", "what agent structure do I need", "architect this", "should this be multi-agent", "what's the right execution structure"
 **What it does:** Designs execution structure for decomposed processes. Decides single agent or multi-agent topology. For multi-agent: defines boundaries, chooses topology (sequential/parallel/hierarchical), specifies handoff protocols. Persists architecture specs for the learning loop and triggers setup evaluation before orchestration.
 **Calls:** `agent-system-architecture` (complex topology), `create-agent-prompt` (role prompts), `setup-evaluation` (via setup-evaluator agent), `project-orchestrator` (downstream)
@@ -391,7 +401,7 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ### `setup-evaluation`
 **Triggers:** "evaluate this setup", "check the decomposition", "validate the architecture", "is this plan sound"
-**What it does:** Validates process decomposition and architecture design before execution. Checks step coverage, tool availability, parallelism consistency, agent boundaries, handoff protocols, and cross-validates spec linkage. Returns PASS or FAIL with specific issues. Runs from setup-evaluator agent (separate from agent-architect to avoid confirmation bias).
+**What it does:** Validates process decomposition and architecture design before execution. Checks step coverage, tool availability, parallelism consistency, agent boundaries, handoff protocols, and cross-validates spec linkage. Returns PASS or FAIL with specific issues. Runs from setup-evaluator agent (separate from agent-builder to avoid confirmation bias).
 **Output:** PASS/FAIL verdict in chat with issues list
 **Impact report:** Verdict, issues count, checks passed/total, next step
 
@@ -417,7 +427,7 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 ### `create-agent-prompt`
 **Triggers:** "create an agent prompt", "write a role prompt", "define agent identity"
 **What it does:** Creates focused role prompts for agents in multi-agent topologies. Defines identity, responsibilities, boundaries, handoff protocol, and failure behavior. Scope: agent role prompts only (v1). System prompts, task prompts, skill prompts are future TODOs.
-**Called by:** `agent-architect`, user (direct)
+**Called by:** `agent-builder`, user (direct)
 **Output:** Prompt text ready to embed in AGENTS.md or architecture spec
 **Impact report:** Agent name, topology role, handoff defined, failure behavior defined
 
@@ -426,10 +436,10 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 ### Agents
 
 ### `setup-evaluator` (agent)
-**Spawned by:** `agent-architect` after it writes the architecture spec for `agent-chain` processes
+**Spawned by:** `agent-builder` after it writes the architecture spec for `agent-chain` processes
 **Skills:** `setup-evaluation`
-**What it does:** Runs between architecture design and orchestration config. Validates the setup independently from the architect. On FAIL: returns issues to agent-architect. On PASS: hands off to project-orchestrator.
-**Why an agent:** Independence from agent-architect prevents confirmation bias.
+**What it does:** Runs between architecture design and orchestration config. Validates the setup independently from the architect. On FAIL: returns issues to agent-builder. On PASS: hands off to project-orchestrator.
+**Why an agent:** Independence from agent-builder prevents confirmation bias.
 
 ---
 
@@ -471,6 +481,7 @@ User entry points:
   universal-skill-creator  ← "create a skill"
   improve-skills           ← "improve skills"
   learn-from-paper         ← "learn from this paper" / "paper to skill"
+  reality-check            ← "reality-check" / "evaluate claims" / "is this real"
   project-setup            ← "set up this project" / "create an AGENTS.md"
   project-orchestrator     ← "what should I do next" / "orchestrate" / "parallel tasks"
 
@@ -505,6 +516,11 @@ compress-skill → split-skill (if CORE still >200 after classify)
 split-skill      → library-skill (after extracting child skill)
 deprecate-skill  → library-skill (after retiring skill)
 library-skill        → generate-changelog (final step, always)
+
+reality-check → adversarial-hat (Step 7, pressure-test claims)
+              → assumption-mapping (Step 4, surface hidden beliefs)
+              → codebase-understanding (Step 1, map architecture)
+              → implementation-plan (Step 8, structure roadmap)
 
 Leaf nodes (call nothing):
   validate-skills  research-skill  prune-skill  publish-skill  generate-changelog

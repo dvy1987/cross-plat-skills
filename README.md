@@ -158,6 +158,7 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 | [`generate-changelog`](.agents/skills/generate-changelog/) | Generate user-facing or internal release notes and changelogs | **File created:** `docs/changelogs/` + logged | "write a changelog", "prepare release notes", "summarize my commits" |
 | [`project-setup`](.agents/skills/project-setup/) | Interview the user about skill gaps and project context, then generate a tailored AGENTS.md with orchestration map, boundaries, and skill routing | **File created:** `AGENTS.md` in project root + logged | "set up this project", "create an AGENTS.md", "bootstrap agents", "configure agents for my repo" |
 | [`debug-and-fix`](.agents/skills/debug-and-fix/) | Systematically reproduce, root-cause, fix, and verify bugs — supports Linear issue integration and batch triage | No files. Root cause + fix + verification summary in chat. Linear updated if applicable. | "this is broken", "fix this bug", "why is this failing", "debug this" |
+| [`reality-check`](.agents/skills/reality-check/) | Evaluate claims vs actual implementation — scoring truth, identifying gaps, competitive positioning, creative solutions, and actionable roadmap | **Files created:** `docs/YYYY-MM-DD-reality-check-findings.md` + `docs/YYYY-MM-DD-roadmap-and-implementation-plan.md` + logged | "reality-check", "evaluate claims", "is this real", "score these claims" |
 | [`codebase-understanding`](.agents/skills/codebase-understanding/) | Map architecture, trace key flows, surface complexity hotspots — build a mental model before making changes | No files. Architecture overview + component map + hotspots in chat. | "understand this repo", "how does this work", "explain the architecture", "onboard me" |
 | [`code-review-crsp`](.agents/skills/code-review-crsp/) | Review code changes against 6 criteria (correctness, completeness, conventions, tests, performance, completeness) with severity-classified findings | No files. Structured review with findings by severity in chat. | "review this code", "check this PR", "code review", "audit this diff" |
 | [`project-orchestrator`](.agents/skills/project-orchestrator/) | Route requests to the right skill, decompose complex work into parallel subagents (platform-aware), manage phase transitions | No files unless parallel plan written to `docs/task-plan.md`. Orchestration plan + routing in chat. | "what should I do next", "orchestrate this", "split into parallel tasks", "which skill should I use" |
@@ -167,7 +168,7 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 | Skill | What it does |
 |-------|-------------|
 | [`process-decomposer`](.agents/skills/process-decomposer/) | Complexity triage + task decomposition into reusable process entries in `docs/processes/` |
-| [`agent-architect`](.agents/skills/agent-architect/) | Designs single-agent or multi-agent execution structures from decomposed processes |
+| [`agent-builder`](.agents/skills/agent-builder/) | Designs single-agent or multi-agent execution structures from decomposed processes |
 | [`setup-evaluation`](.agents/skills/setup-evaluation/) | Validates decomposition + architecture before execution — on PASS, hands off to `agent-creator` |
 | [`agent-creator`](.agents/skills/agent-creator/) | Launches agents from a validated architecture spec using native platform parallelism (Task tool). **Claude Code and Ampcode only** — see platform note below. |
 | [`skill-finder`](.agents/skills/skill-finder/) | Maps capabilities to existing skills and prevents unnecessary skill creation |
@@ -177,9 +178,9 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 This design layer sits above execution. The current flow is:
 
 ```
-process-decomposer → agent-architect (if needed) → setup-evaluation
+process-decomposer → agent-builder (if needed) → setup-evaluation
   └── PASS → agent-creator → [agents run] → project-orchestrator
-  └── FAIL → agent-architect (revise)
+  └── FAIL → agent-builder (revise)
 ```
 
 That gives the repo a reusable process-memory layer instead of treating every complex request as a one-off.
@@ -208,7 +209,7 @@ process-decomposer
   complexity_class: agent-chain
   writes: docs/processes/2026-04-11-compliance-audit.md
         ↓
-agent-architect
+agent-builder
   topology: parallel (all 4 tracks independent)
   merge strategy: project-orchestrator collates into executive summary
   failure handling: non-blocking — failed domain flagged, others continue

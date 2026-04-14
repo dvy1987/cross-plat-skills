@@ -51,13 +51,14 @@ flowchart LR
     cbu[codebase-understanding]
     crsp[code-review-crsp]
     daf[debug-and-fix]
+    dd[reality-check]
     po[project-orchestrator]
     psu[project-setup]
   end
 
   subgraph Agent-Process-Design
     pd[process-decomposer]
-    aa[agent-architect]
+    aa[agent-builder]
     se[setup-evaluation]
     sf[skill-finder]
     tf[tool-finder]
@@ -125,14 +126,20 @@ flowchart LR
   aa --> se
   aa --> po
 
+  %% --- Due diligence ---
+  dd --> adv
+  dd --> asm
+  dd --> cbu
+  dd --> ipl
+
   %% --- Orchestrator ---
   po --> psu
 ```
 
 ## Reading the Graph
 
-- **Entry points** — skills users invoke directly: `universal-skill-creator`, `improve-skills`, `learn-from-paper`, `project-orchestrator`, `project-setup`, `process-decomposer`, `agent-architect`, `deep-thinking`, `brainstorming`, `prd-writing`, `product-soul`
+- **Entry points** — skills users invoke directly: `universal-skill-creator`, `improve-skills`, `learn-from-paper`, `due-diligence`, `project-orchestrator`, `project-setup`, `process-decomposer`, `agent-builder`, `deep-thinking`, `brainstorming`, `prd-writing`, `product-soul`
 - **Meta chain** — `improve-skills` runs the full cycle: validate → deprecate → prune → research → rewrite → split/compress → library-skill → generate-changelog
 - **Security gate** — `secure-skill` orchestrates three sibling skills (`content-sanitization`, `repo-ingestion`, `runtime`) and is called by `learn-from-paper` and internally by `research-skill`, `universal-skill-creator`, `improve-skills`
-- **Process layer** — `process-decomposer` → `agent-architect` → `setup-evaluation` → `project-orchestrator` → execution
+- **Process layer** — `process-decomposer` → `agent-builder` → `setup-evaluation` → `project-orchestrator` → execution
 - **Leaf nodes** (called but call nothing): `validate-skills`, `research-skill`, `prune-skill`, `publish-skill`, `generate-changelog`, `tool-finder`, `create-agent-prompt`, `setup-evaluation`, and all thinking framework skills except `deep-thinking`

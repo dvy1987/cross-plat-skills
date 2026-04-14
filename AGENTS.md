@@ -130,8 +130,10 @@ domain          | specialized, not universally needed      | install only when n
 "what should I do"    → project-orchestrator
 "orchestrate / split" → project-orchestrator
 "break this down"     → process-decomposer (triage + decompose)
-"design an agent"     → agent-architect
+"design an agent"     → agent-builder
 "find a skill for"    → skill-finder
+"reality-check"       → reality-check
+"evaluate claims"     → reality-check
 ```
 
 All other meta and supporting skills are called automatically. See `docs/SKILL-INDEX.md` → Call Graph.

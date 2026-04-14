@@ -5,7 +5,7 @@ description: >
   to check tool availability, confirm CLI compatibility, or determine if an MCP
   server is needed. Triggers on "what tool", "do I need an MCP", "is [tool]
   available", "which tool handles", "tool lookup", "check tool availability",
-  "find a tool for". Called by process-decomposer and agent-architect when
+  "find a tool for". Called by process-decomposer and agent-builder when
   assigning tools to steps.
 license: MIT
 metadata:

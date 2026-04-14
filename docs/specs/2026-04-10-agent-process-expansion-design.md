@@ -67,7 +67,7 @@ This expansion adds three new reasoning layers above the existing skill executio
      │       │              ▼                │
      │       │  ┌────────────────────────────▼───────┐
      │       │  │ LAYER 3 — ARCHITECTURE DESIGN      │
-     │       │  │ Skill: agent-architect (NEW)        │
+     │       │  │ Skill: agent-builder (NEW)        │
      │       │  │ • Single agent / multi-agent?       │
      │       │  │ • Topology + orchestration rules    │
      │       │  │ • Per agent: skills[], tools[],     │
@@ -115,7 +115,7 @@ This expansion adds three new reasoning layers above the existing skill executio
 
 ### Key Design Principle
 
-`project-orchestrator` is **execution configuration and feedback ownership** — it translates a spec into AGENTS.md, wraps execution, and writes back execution results. `agent-architect` is **structural design** — it decides what to build. `process-decomposer` is **task reasoning** — it figures out what needs to happen and in what order. `setup-evaluator` is **quality assurance** — it validates decomposition and architecture before execution begins. These are four distinct responsibilities that must not bleed into each other.
+`project-orchestrator` is **execution configuration and feedback ownership** — it translates a spec into AGENTS.md, wraps execution, and writes back execution results. `agent-builder` is **structural design** — it decides what to build. `process-decomposer` is **task reasoning** — it figures out what needs to happen and in what order. `setup-evaluator` is **quality assurance** — it validates decomposition and architecture before execution begins. These are four distinct responsibilities that must not bleed into each other.
 
 ### Fast-Path Principle
 
@@ -162,15 +162,15 @@ STEP 0 — COMPLEXITY TRIAGE (Layer 1 — fires first, before any decomposition)
           → Route directly to skill. No decomposition needed. DONE.
       - Multi-step but sequential, no specialization?
           → Mark as SKILL-CHAIN. Proceed to Steps 1-4.
-          → After Step 4: skip agent-architect (Layer 3).
+          → After Step 4: skip agent-builder (Layer 3).
           → Hand process entry to project-orchestrator for execution + write-back.
       - Parallel steps OR distinct agent specialization needed?
           → Mark as AGENT-CHAIN. Proceed to Steps 1-4.
-          → After Step 4: hand off to agent-architect (Layer 3).
-          → agent-architect writes architecture spec.
+          → After Step 4: hand off to agent-builder (Layer 3).
+          → agent-builder writes architecture spec.
           → setup-evaluator validates process entry + architecture spec.
           → PASS → hand off to project-orchestrator (Layer 4).
-          → FAIL → return issues to agent-architect for revision.
+          → FAIL → return issues to agent-builder for revision.
 
 STEP 1 — DEFINE OUTCOME FIRST
   Ask user: "What does done look like? What is the measurable outcome?"
@@ -221,13 +221,13 @@ STEP 5 — PATTERN LEARNING (if reuse or adaptation)
 HANDOFF CONTRACTS
   - process-decomposer → project-orchestrator:
       exact-match or skill-chain paths pass process_entry_ref
-  - process-decomposer → agent-architect:
+  - process-decomposer → agent-builder:
       agent-chain path passes process_entry_ref + complexity_class
-  - agent-architect → setup-evaluator:
+  - agent-builder → setup-evaluator:
       passes process_entry_ref + architecture_spec_ref
   - setup-evaluator → project-orchestrator:
       PASS with process_entry_ref + architecture_spec_ref
-  - setup-evaluator → agent-architect:
+  - setup-evaluator → agent-builder:
       FAIL with issue list for revision
 ```
 
@@ -251,7 +251,7 @@ HANDOFF CONTRACTS
 
 ---
 
-### 3.2 `agent-architect`
+### 3.2 `agent-builder`
 
 **Purpose:** Given a decomposed process (from `process-decomposer`), decide the correct execution structure: single skill, single agent, or multi-agent. Design the topology. For `agent-chain` tasks, write the architecture spec, invoke setup evaluation with the required inputs, and only then hand approved work to `project-orchestrator`.
 
@@ -305,7 +305,7 @@ Read decomposed process: steps, skills, tools, parallelism markers
             │
       PASS  ▼  FAIL
    hand to     return issues to
-   project-    agent-architect for
+   project-    agent-builder for
    orchestrator revision
 ```
 
@@ -326,10 +326,10 @@ Read decomposed process: steps, skills, tools, parallelism markers
 ## 4. Modified Skill: `project-orchestrator`
 
 **Current responsibility:** Decides execution structure + routes + writes AGENTS.md  
-**New responsibility:** Receives either a matched process entry, a decomposed skill-chain process entry, or an approved architecture spec from `agent-architect`. Translates specs into AGENTS.md and any project orchestration documents. Executes routing at runtime and owns the write-back loop for every persisted process entry that reaches execution.
+**New responsibility:** Receives either a matched process entry, a decomposed skill-chain process entry, or an approved architecture spec from `agent-builder`. Translates specs into AGENTS.md and any project orchestration documents. Executes routing at runtime and owns the write-back loop for every persisted process entry that reaches execution.
 
 **What changes:**
-- REMOVE: "decide structure" logic (now fully owned by `agent-architect`)
+- REMOVE: "decide structure" logic (now fully owned by `agent-builder`)
 - ADD: Read `process_entry_ref` for exact-match and skill-chain executions
 - ADD: Read approved architecture spec for agent-chain executions
 - ADD: Write/update `AGENTS.md` from spec
@@ -344,7 +344,7 @@ Read decomposed process: steps, skills, tools, parallelism markers
 | **Skills called** | `library-skill` (sync indexes after AGENTS.md changes) | |
 | **Tools** | File read (architecture spec), File write (AGENTS.md, orchestration docs), File edit (update existing AGENTS.md) | |
 | **Prompts** | AGENTS.md generation prompt, Routing rules prompt, Agent boundary documentation prompt | |
-| **Knowledge** | Architecture spec from `agent-architect`, existing AGENTS.md if present, platform-specific orchestration conventions | Codex CLI, Claude Code, Warp, and Ampcode handle multi-agent differently |
+| **Knowledge** | Architecture spec from `agent-builder`, existing AGENTS.md if present, platform-specific orchestration conventions | Codex CLI, Claude Code, Warp, and Ampcode handle multi-agent differently |
 | **Memory** | Past AGENTS.md patterns that worked (placeholder) | |
 
 ### 4.1 Execution Feedback Protocol
@@ -414,7 +414,7 @@ These four supporting skills are referenced by the core skills above. Each is le
 
 **Hard rule:** Never create a new skill if an existing skill can be extended. Lean library is a first-class constraint. If in doubt, extend.
 
-**Called by:** `process-decomposer`, `agent-architect`
+**Called by:** `process-decomposer`, `agent-builder`
 
 ---
 
@@ -438,7 +438,7 @@ These four supporting skills are referenced by the core skills above. Each is le
 5. Return: tool name, availability status, setup instructions if needed
 ```
 
-**Called by:** `process-decomposer`, `agent-architect`
+**Called by:** `process-decomposer`, `agent-builder`
 
 ---
 
@@ -446,10 +446,10 @@ These four supporting skills are referenced by the core skills above. Each is le
 
 **Purpose:** Create focused, high-quality role prompts for agents in a multi-agent topology. Prompt creation is a specialized skill — orchestrators and architects are not good prompt creators by default. This skill ensures every agent has a well-formed role prompt that clearly defines its identity, boundaries, and handoff protocol.
 
-**Scope (v1):** Agent role prompts only. This keeps the skill lean and focused on the primary consumer: `agent-architect`.
+**Scope (v1):** Agent role prompts only. This keeps the skill lean and focused on the primary consumer: `agent-builder`.
 
 **When invoked:**
-- By `agent-architect` to generate role prompts for each agent in a multi-agent topology
+- By `agent-builder` to generate role prompts for each agent in a multi-agent topology
 - Directly by the user: "create an agent prompt for...", "write a role prompt for..."
 
 **Behavior:**
@@ -473,7 +473,7 @@ These four supporting skills are referenced by the core skills above. Each is le
 
 **Leanness rule:** `create-agent-prompt` writes agent role prompts only. It does not execute them, validate them against a model, or manage prompt versioning.
 
-**Called by:** `agent-architect`, user (direct)
+**Called by:** `agent-builder`, user (direct)
 
 **TODO — Future prompt skills (not implemented in this version):**
 - `create-system-prompt` — system prompts that set agent identity + constraints
@@ -511,7 +511,7 @@ These four supporting skills are referenced by the core skills above. Each is le
 
 **Memory slot (placeholder):** A `memory:` field exists in every process entry and agent definition. Memory is intentionally left open for future design. The current constraint: if a skill or agent declares `memory: [store-and-search]`, the system acknowledges it but does not implement it until the memory sub-system is designed. Nothing breaks — the field is a reserved placeholder.
 
-**Will be called by (when implemented):** `process-decomposer`, `agent-architect`, user (direct: "index knowledge for this project")
+**Will be called by (when implemented):** `process-decomposer`, `agent-builder`, user (direct: "index knowledge for this project")
 
 ---
 
@@ -519,7 +519,7 @@ These four supporting skills are referenced by the core skills above. Each is le
 
 **Problem:** Users may not be experts in agent architecture. Relying on user confirmation gates between layers assumes the user can spot bad decompositions or wrong topology choices. Instead, the system should validate its own setup before execution begins.
 
-**Solution:** A `setup-evaluation` skill invoked by a `setup-evaluator` agent. The agent is spawned after `agent-architect` writes the architecture spec for an `agent-chain` task, because setup evaluation requires both the process entry and the architecture spec.
+**Solution:** A `setup-evaluation` skill invoked by a `setup-evaluator` agent. The agent is spawned after `agent-builder` writes the architecture spec for an `agent-chain` task, because setup evaluation requires both the process entry and the architecture spec.
 
 #### `setup-evaluation` skill
 
@@ -548,7 +548,7 @@ These four supporting skills are referenced by the core skills above. Each is le
    - Do the skills in the architecture match the skills in the process?
    - Are there steps in the process not covered by any agent?
 6. Output: PASS (proceed to orchestration config) or FAIL with specific issues list
-   - On FAIL: return issues to agent-architect for revision
+   - On FAIL: return issues to agent-builder for revision
    - On PASS: hand off to project-orchestrator (Layer 4)
 ```
 
@@ -557,7 +557,7 @@ These four supporting skills are referenced by the core skills above. Each is le
 **Purpose:** An agent (not a skill) that orchestrates the setup validation. Spawned automatically — the user does not need to invoke it.
 
 **When spawned:**
-- By `agent-architect` after it writes `architecture_spec_ref` for `complexity_class = agent-chain`
+- By `agent-builder` after it writes `architecture_spec_ref` for `complexity_class = agent-chain`
 - Runs between Layer 3 (Architecture Design) and Layer 4 (Orchestration Config)
 
 **Agent definition:**
@@ -565,7 +565,7 @@ These four supporting skills are referenced by the core skills above. Each is le
 role: "Setup Evaluator — validates process decomposition and architecture
        design before execution begins. Does NOT modify the setup — only
        evaluates and reports. If issues are found, hands back to
-       agent-architect for revision."
+       agent-builder for revision."
 skills: [setup-evaluation]
 tools: [file-read]
 input: process entry path + architecture spec path
@@ -573,9 +573,9 @@ output: PASS or FAIL with issues list
 failure_behavior: "Report all issues at once. Do not fix — only evaluate."
 ```
 
-**Why an agent and not just a skill?** The evaluation needs to run independently from the architect that produced the design. If `agent-architect` self-evaluated, it would have confirmation bias toward its own decisions. A separate agent provides an independent perspective.
+**Why an agent and not just a skill?** The evaluation needs to run independently from the architect that produced the design. If `agent-builder` self-evaluated, it would have confirmation bias toward its own decisions. A separate agent provides an independent perspective.
 
-**Called by:** `agent-architect` (automatic for agent-chain tasks), user (manual: "evaluate this setup")
+**Called by:** `agent-builder` (automatic for agent-chain tasks), user (manual: "evaluate this setup")
 
 ---
 
@@ -743,7 +743,7 @@ The `project-specific` category is restructured into four named sub-groups in do
 | Skill | Status | Description |
 |-------|--------|-------------|
 | `process-decomposer` | **NEW** | Complexity triage + decomposes tasks into structured, outcome-defined process entries |
-| `agent-architect` | **NEW** | Designs execution structure: single skill / single agent / multi-agent |
+| `agent-builder` | **NEW** | Designs execution structure: single skill / single agent / multi-agent |
 | `setup-evaluation` | **NEW** | Validates decomposition + architecture quality before execution begins |
 | `skill-finder` | **NEW** | Maps capability to existing skill or creates new one; prevents skill sprawl |
 | `tool-finder` | **NEW** | Identifies tools, checks CLI compatibility, handles MCP setup |
@@ -755,7 +755,7 @@ The `project-specific` category is restructured into four named sub-groups in do
 ### Agents
 | Agent | Status | Description |
 |-------|--------|-------------|
-| `setup-evaluator` | **NEW** | Spawned automatically after `agent-architect` writes an arch spec for agent-chain tasks; invokes `setup-evaluation` to validate setup before orchestration |
+| `setup-evaluator` | **NEW** | Spawned automatically after `agent-builder` writes an arch spec for agent-chain tasks; invokes `setup-evaluation` to validate setup before orchestration |
 
 ### Product & Specs
 | Skill | Status |
@@ -810,7 +810,7 @@ Every agent definition and process entry has a `memory[]` field. In this version
 ### New files
 ```
 .agents/skills/process-decomposer/SKILL.md      ← new skill (≤200 lines) — includes complexity triage
-.agents/skills/agent-architect/SKILL.md         ← new skill (≤200 lines)
+.agents/skills/agent-builder/SKILL.md         ← new skill (≤200 lines)
 .agents/skills/setup-evaluation/SKILL.md        ← new skill (≤200 lines)
 .agents/skills/skill-finder/SKILL.md            ← new skill (≤200 lines)
 .agents/skills/tool-finder/SKILL.md             ← new skill (≤200 lines)
@@ -847,11 +847,11 @@ README.md                                       ← update skill tables + daily 
 
 - "decompose" | "break down" | "plan this out" | "what steps"
     → process-decomposer (triage fires first — may short-circuit)
-    (fires BEFORE agent-architect — decomposition must precede architecture)
+    (fires BEFORE agent-builder — decomposition must precede architecture)
 
 - "design an agent" | "what agent structure" | "architect this" | "multi-agent"
-    → agent-architect
-    (if no process entry exists yet, agent-architect calls process-decomposer first)
+    → agent-builder
+    (if no process entry exists yet, agent-builder calls process-decomposer first)
 
 - "what skill does this need" | "find a skill for" | "is there a skill that"
     → skill-finder
@@ -865,7 +865,7 @@ README.md                                       ← update skill tables + daily 
 
 - "evaluate this setup" | "check the decomposition" | "validate the architecture"
     → setup-evaluation
-    (also auto-invoked by setup-evaluator agent after agent-architect writes the arch spec for agent-chain tasks)
+    (also auto-invoked by setup-evaluator agent after agent-builder writes the arch spec for agent-chain tasks)
 
 ## Hard boundaries (never auto-invoked by routing)
 - deprecate-skill    → user must explicitly request
@@ -873,7 +873,7 @@ README.md                                       ← update skill tables + daily 
 - process-decomposer → does NOT replace brainstorming
                        brainstorming = design approval (upstream)
                        process-decomposer = execution planning (downstream)
-- setup-evaluator    → auto-spawned by agent-architect after arch spec exists for agent-chain only
+- setup-evaluator    → auto-spawned by agent-builder after arch spec exists for agent-chain only
                        (not routed by keyword — spawned programmatically)
 
 ## Triage short-circuits (process-decomposer Step 0)
@@ -885,7 +885,7 @@ README.md                                       ← update skill tables + daily 
 ## Firing order for full task execution (agent-chain)
   brainstorming (if needed)
     → process-decomposer (triage → decompose)
-      → agent-architect
+      → agent-builder
         → setup-evaluator (auto)
           → project-orchestrator
             → execution
@@ -916,7 +916,7 @@ README.md                                       ← update skill tables + daily 
 - **tool-finder scope** — Should it also handle tool installation (npm install, pip install) or strictly discovery and MCP config?
 - **create-agent-prompt versioning** — Should agent role prompts in AGENTS.md carry a version number so they can be improved without losing the original?
 - **knowledge-indexer + RAG** — When RAG is added, does `knowledge-indexer` become the RAG ingestion layer, or is that a separate skill (`knowledge-ingestor`)?
-- **setup-evaluator iteration limit** — How many times can setup-evaluator reject and send back to agent-architect before escalating to the user? Infinite loops are a risk.
+- **setup-evaluator iteration limit** — How many times can setup-evaluator reject and send back to agent-builder before escalating to the user? Infinite loops are a risk.
 - **Cross-volume similarity matching** — As process.md splits into multiple volumes, should the triage step use tag-based filtering first to narrow which volumes to read, or always read all volumes?
 
 ### Resolved Questions

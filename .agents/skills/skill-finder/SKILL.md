@@ -3,7 +3,7 @@ name: skill-finder
 description: >
   Find the right skill for a capability. Load when a user or skill needs to
   check if a skill exists for a given task, when process-decomposer assigns
-  skills to steps, or when agent-architect checks skill availability. Triggers
+  skills to steps, or when agent-builder checks skill availability. Triggers
   on "what skill does this need", "find a skill for", "is there a skill that",
   "which skill handles", "does a skill exist for", "skill lookup", "check skill
   library". Prevents skill sprawl by always checking existing skills before

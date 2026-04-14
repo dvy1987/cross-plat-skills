@@ -109,7 +109,10 @@ Then invoke ALL `secure-*` skills (discover via `ls .agents/skills/secure-*`) to
 agentskills validate .agents/skills/<skill-name>/
 ```
 
-### Step 9 — Publish (Optional)
+### Step 9 — Cross-Link Repair
+Invoke `cross-link-skills` with trigger `created — <skill-name>`. It scans all SKILL.md files for missing or stale cross-references involving the new skill and fixes them.
+
+### Step 10 — Publish (Optional)
 Ask the user: "Would you like to publish this skill to skills.sh?"
 If yes — invoke `publish-skill`. It handles packaging, README, and registry submission.
 

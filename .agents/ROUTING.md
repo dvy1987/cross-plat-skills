@@ -55,11 +55,11 @@ This notification should be a single line — not disruptive. Skip the notificat
 
 - "decompose" | "break down" | "plan this out" | "what steps"
     → `process-decomposer` (triage fires first — may short-circuit)
-    Fires BEFORE `agent-architect` — decomposition must precede architecture.
+    Fires BEFORE `agent-builder` — decomposition must precede architecture.
 
 - "design an agent" | "what agent structure" | "architect this" | "multi-agent"
-    → `agent-architect`
-    If no process entry exists, `agent-architect` calls `process-decomposer` first.
+    → `agent-builder`
+    If no process entry exists, `agent-builder` calls `process-decomposer` first.
 
 - "what skill does this need" | "find a skill for" | "is there a skill that"
     → `skill-finder`
@@ -73,13 +73,13 @@ This notification should be a single line — not disruptive. Skip the notificat
 
 - "evaluate this setup" | "check the decomposition" | "validate the architecture"
     → `setup-evaluation`
-    Also auto-invoked by setup-evaluator agent after `agent-architect` writes the architecture spec for agent-chain tasks.
+    Also auto-invoked by setup-evaluator agent after `agent-builder` writes the architecture spec for agent-chain tasks.
 
 ## Hard Boundaries
 
 - `process-decomposer` does NOT replace `brainstorming`.
   brainstorming = design approval (upstream). process-decomposer = execution planning (downstream).
-- `setup-evaluator` agent is auto-spawned by `agent-architect` after the architecture spec exists for agent-chain only (not keyword-routed).
+- `setup-evaluator` agent is auto-spawned by `agent-builder` after the architecture spec exists for agent-chain only (not keyword-routed).
 
 ## Triage Short-Circuits (process-decomposer Step 0)
 
@@ -92,4 +92,4 @@ This notification should be a single line — not disruptive. Skip the notificat
 
 ## Full Firing Order (agent-chain)
 
-brainstorming (if needed) → process-decomposer → agent-architect → setup-evaluator → project-orchestrator → execution → execution feedback
+brainstorming (if needed) → process-decomposer → agent-builder → setup-evaluator → project-orchestrator → execution → execution feedback

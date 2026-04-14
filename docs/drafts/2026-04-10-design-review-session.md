@@ -18,7 +18,7 @@ The spec adds reasoning layers above the existing skill execution layer:
 
 - **Layer 1 (Complexity Triage):** Checks process.md for matches, assesses complexity, routes accordingly
 - **Layer 2 (Process Decomposition):** `process-decomposer` — decomposes tasks into steps with skills/tools/knowledge
-- **Layer 3 (Architecture Design):** `agent-architect` — decides single-skill / single-agent / multi-agent topology
+- **Layer 3 (Architecture Design):** `agent-builder` — decides single-skill / single-agent / multi-agent topology
 - **Layer 3.5 (Setup Evaluation):** `setup-evaluator` agent — validates decomposition + architecture before execution
 - **Layer 4 (Orchestration Config):** `project-orchestrator` (modified) — writes AGENTS.md from arch spec
 - **Layer 5 (Execution):** Existing skill library
@@ -84,8 +84,8 @@ Supporting skills: `skill-finder`, `tool-finder`, `create-agent-prompt`, `knowle
 | 4 | Section 3.1 (process-decomposer) | Rewrote Step 0 with full triage logic (exact-match/single-skill/skill-chain/agent-chain) |
 | 5 | Section 3.1 (process-decomposer) | Rewrote Step 5 with execution feedback protocol owned by project-orchestrator |
 | 6 | Section 3.1 (process-decomposer) | Added triage output (complexity_class) to output artifacts |
-| 7 | Section 3.2 (agent-architect) | Changed output from ephemeral to persisted at docs/architecture/ |
-| 8 | Section 3.2 (agent-architect) | Updated primitives: prompt-creator -> create-agent-prompt |
+| 7 | Section 3.2 (agent-builder) | Changed output from ephemeral to persisted at docs/architecture/ |
+| 8 | Section 3.2 (agent-builder) | Updated primitives: prompt-creator -> create-agent-prompt |
 | 9 | Section 4 (project-orchestrator) | Added Section 4.1: Execution Feedback Protocol with full diagram |
 | 10 | Section 5.3 | Renamed prompt-creator -> create-agent-prompt, narrowed scope, added TODOs |
 | 11 | Section 5.4 | Marked knowledge-indexer as TODO/deferred with rationale |
@@ -105,7 +105,7 @@ Supporting skills: `skill-finder`, `tool-finder`, `create-agent-prompt`, `knowle
 
 ## 5. New Open Questions (from this session)
 
-- **setup-evaluator iteration limit** — How many times can it reject and loop back to agent-architect before escalating to user?
+- **setup-evaluator iteration limit** — How many times can it reject and loop back to agent-builder before escalating to user?
 - **Cross-volume similarity matching** — As process.md splits, should triage use tag-based pre-filtering or always read all volumes?
 
 ---
@@ -114,7 +114,7 @@ Supporting skills: `skill-finder`, `tool-finder`, `create-agent-prompt`, `knowle
 
 Implementation of the spec. Likely order:
 1. `process-decomposer` (core skill with triage)
-2. `agent-architect`
+2. `agent-builder`
 3. `setup-evaluation` + `setup-evaluator` agent
 4. `project-orchestrator` modifications (structure removal + execution feedback)
 5. `skill-finder`
@@ -131,7 +131,7 @@ Full implementation plan saved to: `docs/superpowers/plans/2026-04-10-agent-proc
 
 **13 tasks across 4 phases + verification:**
 - Phase 1 (parallel): skill-finder, tool-finder, create-agent-prompt
-- Phase 2 (depends on P1): process-decomposer, agent-architect, setup-evaluation
+- Phase 2 (depends on P1): process-decomposer, agent-builder, setup-evaluation
 - Phase 3 (depends on P2): project-orchestrator modifications, process.md template
 - Phase 4 (depends on all): ROUTING.md, AGENTS.md, SKILL-INDEX.md, README.md
 - Verification: full pass across all files

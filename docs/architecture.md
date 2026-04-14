@@ -68,7 +68,7 @@ This layer is now present in the repo as implemented skills, not just a spec. It
 
 - `process-decomposer`
   checks for reusable process patterns, classifies complexity, and writes process entries to `docs/processes/`
-- `agent-architect`
+- `agent-builder`
   designs execution structure from a process entry and, by current skill contract, writes architecture specs to `docs/architecture/`
 - `setup-evaluation`
   validates decomposition and architecture before execution
@@ -90,7 +90,7 @@ The repo’s current execution model is:
    - `agent-chain`
    - `exact-match`
 5. For `skill-chain`, execution still goes through `project-orchestrator`.
-6. For `agent-chain`, `agent-architect` writes an architecture spec, then `setup-evaluation` validates it, then `project-orchestrator` executes it.
+6. For `agent-chain`, `agent-builder` writes an architecture spec, then `setup-evaluation` validates it, then `project-orchestrator` executes it.
 7. After execution, `project-orchestrator` writes execution feedback back into the process entry.
 
 That last step is important: the process registry is intended to improve by replay and write-back, not just by storing static plans.
@@ -110,7 +110,7 @@ User request
 → `process-decomposer`
 → `docs/processes/process.md` lookup
 → new or reused process entry
-→ `agent-architect` if needed
+→ `agent-builder` if needed
 → `setup-evaluation` if agent-chain
 → `project-orchestrator`
 → execution
@@ -144,7 +144,7 @@ This is the pre-execution reasoning entry point for complex work. It owns:
 
 It plans, but does not execute.
 
-### `agent-architect`
+### `agent-builder`
 
 This component turns a decomposed process into an execution structure. It owns:
 

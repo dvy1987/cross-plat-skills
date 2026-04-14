@@ -3,8 +3,8 @@ name: library-skill
 description: >
   Automatically maintain skill library consistency whenever a structural change
   occurs — new skill added, skill renamed, skill deprecated, call graph rewired,
-  or category changed. Updates SKILL-INDEX.md, AGENTS.md, README.md, and the
-  skill graph. Load when universal-skill-creator finishes creating a skill,
+  or category changed. Updates SKILL-INDEX.md, AGENTS.md, README.md, skill graph,
+  docs/PRD.md, and docs/architecture.md. Load when universal-skill-creator finishes creating a skill,
   split-skill extracts a child, deprecate-skill retires a skill, improve-skills
   makes a structural change, or the user manually renames or restructures skills.
   Also triggers on "update the skill index", "sync skill references", "refresh
@@ -91,14 +91,42 @@ flowchart LR
 - Every call relationship is a directed edge (`caller --> callee`).
 - Group nodes by category using Mermaid `subgraph` blocks.
 
-### 6. Validate cross-references
+### 6. Update `docs/architecture.md`
 
-- Check every skill name referenced in SKILL-INDEX.md, AGENTS.md, and README.md against the registry.
+If `docs/architecture.md` does not exist, invoke `codebase-understanding` to create it, then continue with step 7.
+
+Update when structural changes affect the execution flow or layer structure:
+- **Key Components:** Add/remove/rename skill entries.
+- **Execution Architecture:** Update flow descriptions if a skill's role in the pipeline changed.
+- **Process-and-Agent Design Layer:** Update if process/agent skills changed.
+- Do not rewrite sections unrelated to the structural change.
+
+### 7. Update `docs/PRD.md`
+
+If `docs/PRD.md` does not exist, invoke `prd-writing` to create it. Provide `prd-writing` with:
+- `docs/architecture.md` (from step 6) as architectural context
+- Any existing point-in-time PRDs (`docs/prd/YYYY-MM-DD-*.md`) as historical context — **caution:** these may be outdated; treat as directional input, not ground truth
+- The skill registry (from step 1) as the current skill inventory
+- Allow `prd-writing` to ask the user clarifying questions as needed before writing.
+
+Then continue.
+
+This is the living PRD — the source of truth for both agents and humans. Update:
+- **Section 4 (Skill Inventory):** Add/remove/rename skills in the correct category table. Update the total count.
+- **Section 5 (Architecture Overview):** Update if the execution flow or layer structure changed.
+- **Section 9 (Post-Creation/Update Maintenance):** Update if the maintenance pipeline changed.
+- Update the `Last updated` date in the header.
+- Do not rewrite sections unrelated to the structural change — minimal, targeted edits only.
+- **Never touch point-in-time PRDs** (`docs/prd/YYYY-MM-DD-*.md`) — those are historical snapshots. **Exception:** global skill renames — update the old name in all files including point-in-time PRDs to prevent stale references causing confusion.
+
+### 8. Validate cross-references
+
+- Check every skill name referenced in SKILL-INDEX.md, AGENTS.md, README.md, PRD.md, and architecture.md against the registry.
 - Flag broken references (skill name not found on disk).
 - Flag orphaned entries (index entry with no matching SKILL.md).
 - Report findings — do not auto-fix SKILL.md files.
 
-### 7. Log outputs
+### 9. Log outputs
 
 Append each updated file to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 
@@ -107,9 +135,11 @@ Append each updated file to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 | YYYY-MM-DD HH:MM | library-skill | AGENTS.md | Updated entry points |
 | YYYY-MM-DD HH:MM | library-skill | README.md | Updated skill tables |
 | YYYY-MM-DD HH:MM | library-skill | docs/skill-graph.md | Rebuilt call graph |
+| YYYY-MM-DD HH:MM | library-skill | docs/PRD.md | Updated skill inventory |
+| YYYY-MM-DD HH:MM | library-skill | docs/architecture.md | Updated key components |
 ```
 
-### 8. Invoke `generate-changelog`
+### 10. Invoke `generate-changelog`
 
 Call `generate-changelog` with a summary of structural changes made. This is the final step — never skip it.
 
@@ -140,6 +170,8 @@ Files updated:
   AGENTS.md — added library-skill to user entry points
   README.md — added library-skill row to meta skills table
   docs/skill-graph.md — rebuilt with 35 nodes, 48 edges
+  docs/PRD.md — added library-skill to meta skills table, count 35→36
+  docs/architecture.md — no structural flow change, skipped
 
 Cross-reference check:
   Broken references: 0

@@ -23,7 +23,7 @@
 | `.agents/skills/tool-finder/SKILL.md` | Identifies tools, checks availability, handles MCP setup |
 | `.agents/skills/create-agent-prompt/SKILL.md` | Creates agent role prompts for multi-agent topologies |
 | `.agents/skills/process-decomposer/SKILL.md` | Complexity triage + task decomposition into process entries |
-| `.agents/skills/agent-architect/SKILL.md` | Designs execution structure: single skill / agent / multi-agent |
+| `.agents/skills/agent-builder/SKILL.md` | Designs execution structure: single skill / agent / multi-agent |
 | `.agents/skills/setup-evaluation/SKILL.md` | Validates decomposition + architecture quality before execution |
 | `docs/processes/process.md` | Empty process registry template (volume 1) |
 
@@ -33,7 +33,7 @@
 |------|--------|
 | `.agents/skills/project-orchestrator/SKILL.md` | Remove structure-decision logic; add execution feedback protocol; update routing table |
 | `.agents/ROUTING.md` | Add routing rules for 6 new skills + triage short-circuits |
-| `AGENTS.md` | Add new user entry points for process-decomposer, agent-architect, skill-finder |
+| `AGENTS.md` | Add new user entry points for process-decomposer, agent-builder, skill-finder |
 | `docs/SKILL-INDEX.md` | Add entries for 6 new skills + setup-evaluator agent |
 | `README.md` | Update skill count, add Agent & Process Design sub-group, add TODOs |
 
@@ -66,7 +66,7 @@ name: skill-finder
 description: >
   Find the right skill for a capability. Load when a user or skill needs to
   check if a skill exists for a given task, when process-decomposer assigns
-  skills to steps, or when agent-architect checks skill availability. Triggers
+  skills to steps, or when agent-builder checks skill availability. Triggers
   on "what skill does this need", "find a skill for", "is there a skill that",
   "which skill handles", "does a skill exist for", "skill lookup", "check skill
   library". Prevents skill sprawl by always checking existing skills before
@@ -209,7 +209,7 @@ description: >
   to check tool availability, confirm CLI compatibility, or determine if an MCP
   server is needed. Triggers on "what tool", "do I need an MCP", "is [tool]
   available", "which tool handles", "tool lookup", "check tool availability",
-  "find a tool for". Called by process-decomposer and agent-architect when
+  "find a tool for". Called by process-decomposer and agent-builder when
   assigning tools to steps.
 license: MIT
 metadata:
@@ -356,7 +356,7 @@ Write the following to `.agents/skills/create-agent-prompt/SKILL.md`:
 name: create-agent-prompt
 description: >
   Create focused role prompts for agents in multi-agent topologies. Load when
-  agent-architect needs role prompts for agents, or when a user asks to "create
+  agent-builder needs role prompts for agents, or when a user asks to "create
   an agent prompt", "write a role prompt", "define agent identity", "write an
   agent role", "prompt for this agent". Scope: agent role prompts only (v1).
   System prompts, task prompts, and skill invocation prompts are future TODOs.
@@ -436,7 +436,7 @@ Return the prompt text, ready to embed in AGENTS.md or an architecture spec.
 
 - Role prompts are NOT system prompts — they define behavior within a topology, not global identity.
 - Avoid "be helpful" or "be thorough" — these are noise. Be specific about what the agent does.
-- If the agent's boundary overlaps with another agent, the topology is wrong — flag it to agent-architect.
+- If the agent's boundary overlaps with another agent, the topology is wrong — flag it to agent-builder.
 
 ---
 
@@ -512,7 +512,7 @@ git commit -m "feat: add create-agent-prompt — agent role prompt creation"
 
 ## Phase 2: Core Pipeline Skills
 
-These skills form the main pipeline. `process-decomposer` calls `skill-finder` and `tool-finder` (from Phase 1). `agent-architect` calls `create-agent-prompt` (from Phase 1). `setup-evaluation` validates outputs of both.
+These skills form the main pipeline. `process-decomposer` calls `skill-finder` and `tool-finder` (from Phase 1). `agent-builder` calls `create-agent-prompt` (from Phase 1). `setup-evaluation` validates outputs of both.
 
 ---
 
@@ -582,8 +582,8 @@ Never write to `process.md` from any other skill — this skill owns the registr
 | Complexity | Route |
 |------------|-------|
 | Single skill sufficient | Route directly to skill. No decomposition. DONE. Output: `complexity_class: single-skill` |
-| Multi-step, sequential, no specialization | Mark as `skill-chain`. Proceed to Steps 1-4. Skip agent-architect after. |
-| Parallel steps or distinct specialization | Mark as `agent-chain`. Proceed to Steps 1-4. Hand off to agent-architect. Spawn setup-evaluator. |
+| Multi-step, sequential, no specialization | Mark as `skill-chain`. Proceed to Steps 1-4. Skip agent-builder after. |
+| Parallel steps or distinct specialization | Mark as `agent-chain`. Proceed to Steps 1-4. Hand off to agent-builder. Spawn setup-evaluator. |
 
 ### Step 1 — Define Outcome (Hard Gate)
 
@@ -613,7 +613,7 @@ Execution feedback is owned by `project-orchestrator` (Section 4.1 of design spe
 
 - Triage must read ALL process.md volumes — not just the first one.
 - "Exact match" means same outcome cluster AND same nuance — same cluster alone is partial.
-- `skill-chain` tasks skip agent-architect entirely — don't waste time on architecture for sequential work.
+- `skill-chain` tasks skip agent-builder entirely — don't waste time on architecture for sequential work.
 - This skill does NOT replace `brainstorming` or `implementation-plan`. Brainstorming = what to build. This = how to execute.
 
 ---
@@ -656,7 +656,7 @@ Process entry: docs/processes/YYYY-MM-DD-<slug>.md
 Registry updated: docs/processes/process.md (volume N)
 Steps: [N] ([M] parallel)
 Knowledge gaps: [N] flagged
-Next: [execution | agent-architect | skill routing]
+Next: [execution | agent-builder | skill routing]
 ```
 ```
 
@@ -677,24 +677,24 @@ git commit -m "feat: add process-decomposer — complexity triage + task decompo
 
 ---
 
-### Task 5: Create `agent-architect`
+### Task 5: Create `agent-builder`
 
 **Files:**
-- Create: `.agents/skills/agent-architect/SKILL.md`
+- Create: `.agents/skills/agent-builder/SKILL.md`
 
 - [ ] **Step 1: Create skill directory**
 
 ```bash
-mkdir -p .agents/skills/agent-architect
+mkdir -p .agents/skills/agent-builder
 ```
 
 - [ ] **Step 2: Write SKILL.md**
 
-Write the following to `.agents/skills/agent-architect/SKILL.md`:
+Write the following to `.agents/skills/agent-builder/SKILL.md`:
 
 ```markdown
 ---
-name: agent-architect
+name: agent-builder
 description: >
   Design execution structure for decomposed processes: single agent or
   multi-agent topology. Load when user says "design an agent for this", "what
@@ -824,7 +824,7 @@ Next: setup-evaluator (if agent-chain) | project-orchestrator
 - [ ] **Step 3: Verify line count**
 
 ```bash
-wc -l .agents/skills/agent-architect/SKILL.md
+wc -l .agents/skills/agent-builder/SKILL.md
 ```
 
 Expected: <=200 lines (target: ~125 lines).
@@ -832,8 +832,8 @@ Expected: <=200 lines (target: ~125 lines).
 - [ ] **Step 4: Commit**
 
 ```bash
-git add .agents/skills/agent-architect/SKILL.md
-git commit -m "feat: add agent-architect — execution structure design"
+git add .agents/skills/agent-builder/SKILL.md
+git commit -m "feat: add agent-builder — execution structure design"
 ```
 
 ---
@@ -873,7 +873,7 @@ metadata:
 
 # Setup Evaluation
 
-You are a Setup Evaluator. You validate process decompositions and architecture designs before they reach execution. You catch errors that would waste execution time. You are deliberately separate from agent-architect to avoid confirmation bias — you evaluate independently. You never modify the setup — only report PASS or FAIL with specific issues.
+You are a Setup Evaluator. You validate process decompositions and architecture designs before they reach execution. You catch errors that would waste execution time. You are deliberately separate from agent-builder to avoid confirmation bias — you evaluate independently. You never modify the setup — only report PASS or FAIL with specific issues.
 
 ## Hard Rules
 
@@ -925,7 +925,7 @@ Read:
 
 **PASS:** All checks pass. Hand off to `project-orchestrator`.
 
-**FAIL:** Return all issues to `agent-architect` for revision. Format:
+**FAIL:** Return all issues to `agent-builder` for revision. Format:
 
 ```
 SETUP EVALUATION: FAIL
@@ -938,7 +938,7 @@ Issues found: [N]
 
 ## Gotchas
 
-- This skill runs from a SEPARATE agent (setup-evaluator) to avoid bias. If agent-architect calls it directly, the independence is lost.
+- This skill runs from a SEPARATE agent (setup-evaluator) to avoid bias. If agent-builder calls it directly, the independence is lost.
 - A "partial pass" is still a FAIL — all checks must pass.
 - Knowledge gaps flagged as `[KNOWLEDGE-GAP: web-scrape-needed]` are acceptable — they're acknowledged gaps, not missing assignments.
 - If the same setup fails 3 times, escalate to the user instead of looping.
@@ -980,7 +980,7 @@ Issues found: [N]
 Decomposition checks: [passed/total]
 Architecture checks: [passed/total]
 Cross-validation checks: [passed/total]
-Next: project-orchestrator (if PASS) | agent-architect revision (if FAIL)
+Next: project-orchestrator (if PASS) | agent-builder revision (if FAIL)
 ```
 ```
 
@@ -1011,7 +1011,7 @@ git commit -m "feat: add setup-evaluation — pre-execution quality gate"
 - Modify: `.agents/skills/project-orchestrator/SKILL.md:53-58` (Step 2), `:114-131` (routing table), add execution feedback after Step 5
 
 The changes are:
-1. Update Step 2 to remove structure-decision logic (now owned by agent-architect)
+1. Update Step 2 to remove structure-decision logic (now owned by agent-builder)
 2. Add new entries to the Skill Routing Table
 3. Add Step 6: Execution Feedback Protocol
 
@@ -1038,7 +1038,7 @@ New:
 **New complex request:** No process entry → route to `process-decomposer` for triage + decomposition.
 **Phase recommendation:** User asks "what next?" → recommend based on Step 1.
 
-If `process-decomposer` returns `agent-chain`: wait for `agent-architect` and `setup-evaluator` to complete before proceeding to execution.
+If `process-decomposer` returns `agent-chain`: wait for `agent-builder` and `setup-evaluator` to complete before proceeding to execution.
 ```
 
 - [ ] **Step 2: Add new entries to Skill Routing Table**
@@ -1047,7 +1047,7 @@ In `.agents/skills/project-orchestrator/SKILL.md`, add these rows to the routing
 
 ```markdown
 | "decompose" / "break this down" / "what steps" | `process-decomposer` | — |
-| "design agent" / "architect this" / "multi-agent" | `agent-architect` | Process entry |
+| "design agent" / "architect this" / "multi-agent" | `agent-builder` | Process entry |
 | "find a skill for" / "which skill handles" | `skill-finder` | — |
 | "what tool" / "is [tool] available" | `tool-finder` | — |
 | "create agent prompt" / "write role prompt" | `create-agent-prompt` | Agent spec |
@@ -1151,11 +1151,11 @@ Append the following to `.agents/ROUTING.md` (after the existing Examples table,
 
 - "decompose" | "break down" | "plan this out" | "what steps"
     → `process-decomposer` (triage fires first — may short-circuit)
-    Fires BEFORE `agent-architect` — decomposition must precede architecture.
+    Fires BEFORE `agent-builder` — decomposition must precede architecture.
 
 - "design an agent" | "what agent structure" | "architect this" | "multi-agent"
-    → `agent-architect`
-    If no process entry exists, `agent-architect` calls `process-decomposer` first.
+    → `agent-builder`
+    If no process entry exists, `agent-builder` calls `process-decomposer` first.
 
 - "what skill does this need" | "find a skill for" | "is there a skill that"
     → `skill-finder`
@@ -1188,7 +1188,7 @@ Append the following to `.agents/ROUTING.md` (after the existing Examples table,
 
 ## Full Firing Order (agent-chain)
 
-brainstorming (if needed) → process-decomposer → agent-architect → setup-evaluator → project-orchestrator → execution → execution feedback
+brainstorming (if needed) → process-decomposer → agent-builder → setup-evaluator → project-orchestrator → execution → execution feedback
 ```
 
 - [ ] **Step 2: Verify file is well-formed**
@@ -1241,7 +1241,7 @@ New:
 "what should I do"    → project-orchestrator
 "orchestrate / split" → project-orchestrator
 "break this down"     → process-decomposer (triage + decompose)
-"design an agent"     → agent-architect
+"design an agent"     → agent-builder
 "find a skill for"    → skill-finder
 ```
 
@@ -1252,7 +1252,7 @@ All other meta and supporting skills are called automatically. See `docs/SKILL-I
 
 ```bash
 git add AGENTS.md
-git commit -m "feat: AGENTS.md — add process-decomposer, agent-architect, skill-finder entry points"
+git commit -m "feat: AGENTS.md — add process-decomposer, agent-builder, skill-finder entry points"
 ```
 
 ---
@@ -1281,7 +1281,7 @@ In `docs/SKILL-INDEX.md`, add the following entries after the existing `project-
 
 ---
 
-### `agent-architect`
+### `agent-builder`
 **Triggers:** "design an agent for this", "what agent structure do I need", "architect this", "should this be multi-agent", "what's the right execution structure"
 **What it does:** Designs execution structure for decomposed processes. Decides single agent or multi-agent topology. For multi-agent: defines boundaries, chooses topology (sequential/parallel/hierarchical), specifies handoff protocols. Persists architecture specs for the learning loop.
 **Calls:** `agent-system-architecture` (complex topology), `create-agent-prompt` (role prompts), `project-orchestrator` (downstream)
@@ -1293,7 +1293,7 @@ In `docs/SKILL-INDEX.md`, add the following entries after the existing `project-
 
 ### `setup-evaluation`
 **Triggers:** "evaluate this setup", "check the decomposition", "validate the architecture", "is this plan sound"
-**What it does:** Validates process decomposition and architecture design before execution. Checks step coverage, tool availability, parallelism consistency, agent boundaries, handoff protocols, and cross-validates spec linkage. Returns PASS or FAIL with specific issues. Runs from setup-evaluator agent (separate from agent-architect to avoid confirmation bias).
+**What it does:** Validates process decomposition and architecture design before execution. Checks step coverage, tool availability, parallelism consistency, agent boundaries, handoff protocols, and cross-validates spec linkage. Returns PASS or FAIL with specific issues. Runs from setup-evaluator agent (separate from agent-builder to avoid confirmation bias).
 **Output:** PASS/FAIL verdict in chat with issues list
 **Impact report:** Verdict, issues count, checks passed/total, next step
 
@@ -1319,7 +1319,7 @@ In `docs/SKILL-INDEX.md`, add the following entries after the existing `project-
 ### `create-agent-prompt`
 **Triggers:** "create an agent prompt", "write a role prompt", "define agent identity"
 **What it does:** Creates focused role prompts for agents in multi-agent topologies. Defines identity, responsibilities, boundaries, handoff protocol, and failure behavior. Scope: agent role prompts only (v1). System prompts, task prompts, skill prompts are future TODOs.
-**Called by:** `agent-architect`, user (direct)
+**Called by:** `agent-builder`, user (direct)
 **Output:** Prompt text ready to embed in AGENTS.md or architecture spec
 **Impact report:** Agent name, topology role, handoff defined, failure behavior defined
 
@@ -1330,8 +1330,8 @@ In `docs/SKILL-INDEX.md`, add the following entries after the existing `project-
 ### `setup-evaluator` (agent)
 **Spawned by:** `process-decomposer` when `complexity_class = agent-chain`
 **Skills:** `setup-evaluation`
-**What it does:** Runs between architecture design and orchestration config. Validates the setup independently from the architect. On FAIL: returns issues to agent-architect. On PASS: hands off to project-orchestrator.
-**Why an agent:** Independence from agent-architect prevents confirmation bias.
+**What it does:** Runs between architecture design and orchestration config. Validates the setup independently from the architect. On FAIL: returns issues to agent-builder. On PASS: hands off to project-orchestrator.
+**Why an agent:** Independence from agent-builder prevents confirmation bias.
 ```
 
 - [ ] **Step 2: Update the "Last updated" date**
@@ -1367,7 +1367,7 @@ Find the skill category table in README.md and add a new sub-group under Project
 | Skill | What it does |
 |-------|-------------|
 | `process-decomposer` | Complexity triage + task decomposition into reusable process entries |
-| `agent-architect` | Designs single-agent or multi-agent execution structures |
+| `agent-builder` | Designs single-agent or multi-agent execution structures |
 | `setup-evaluation` | Validates decomposition + architecture before execution |
 | `skill-finder` | Maps capabilities to existing skills; prevents sprawl |
 | `tool-finder` | Tool discovery, availability checking, MCP setup |
@@ -1405,7 +1405,7 @@ git commit -m "feat: README.md — add agent & process design skills, deferred T
 - [ ] **Step 1: Verify all new skill directories exist**
 
 ```bash
-ls -d .agents/skills/skill-finder .agents/skills/tool-finder .agents/skills/create-agent-prompt .agents/skills/process-decomposer .agents/skills/agent-architect .agents/skills/setup-evaluation
+ls -d .agents/skills/skill-finder .agents/skills/tool-finder .agents/skills/create-agent-prompt .agents/skills/process-decomposer .agents/skills/agent-builder .agents/skills/setup-evaluation
 ```
 
 Expected: all 6 directories listed.
@@ -1413,7 +1413,7 @@ Expected: all 6 directories listed.
 - [ ] **Step 2: Verify all SKILL.md files are <=200 lines**
 
 ```bash
-wc -l .agents/skills/skill-finder/SKILL.md .agents/skills/tool-finder/SKILL.md .agents/skills/create-agent-prompt/SKILL.md .agents/skills/process-decomposer/SKILL.md .agents/skills/agent-architect/SKILL.md .agents/skills/setup-evaluation/SKILL.md
+wc -l .agents/skills/skill-finder/SKILL.md .agents/skills/tool-finder/SKILL.md .agents/skills/create-agent-prompt/SKILL.md .agents/skills/process-decomposer/SKILL.md .agents/skills/agent-builder/SKILL.md .agents/skills/setup-evaluation/SKILL.md
 ```
 
 Expected: every file <=200 lines.
@@ -1430,7 +1430,7 @@ Expected: `<!-- Process Registry — Volume 1 of 1 -->`.
 
 ```bash
 grep "process-decomposer" .agents/ROUTING.md
-grep "agent-architect" .agents/ROUTING.md
+grep "agent-builder" .agents/ROUTING.md
 grep "setup-evaluation" .agents/ROUTING.md
 ```
 
@@ -1440,7 +1440,7 @@ Expected: all three found.
 
 ```bash
 grep "process-decomposer" AGENTS.md
-grep "agent-architect" AGENTS.md
+grep "agent-builder" AGENTS.md
 grep "skill-finder" AGENTS.md
 ```
 
@@ -1489,7 +1489,7 @@ Phase 1 (parallel — no dependencies):
 
 Phase 2 (depends on Phase 1):
   Task 4: process-decomposer (calls skill-finder, tool-finder)
-  Task 5: agent-architect (calls create-agent-prompt)
+  Task 5: agent-builder (calls create-agent-prompt)
   Task 6: setup-evaluation (validates outputs of 4 + 5)
 
 Phase 3 (depends on Phase 2):

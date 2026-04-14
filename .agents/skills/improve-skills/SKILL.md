@@ -104,8 +104,11 @@ agentskills validate .agents/skills/<skill>/
 git commit -m "improve: <skill> — <before>/14 → <after>/14\n\n- [change]\nSources: [source]"
 ```
 
-### Step 3 — Library Summary
-Report scores, structural gaps fixed, new links created, sources used, files modified.
+### Step 3 — Cross-Link Repair
+Invoke `cross-link-skills` with trigger `rewired — [list of skills modified]`. It scans all SKILL.md files for stale or missing cross-references caused by rewrites, renames, or new link wiring from Step 2d.
+
+### Step 4 — Library Summary
+Report scores, structural gaps fixed, new links created, cross-references repaired, sources used, files modified.
 
 ---
 

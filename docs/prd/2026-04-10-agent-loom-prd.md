@@ -144,7 +144,7 @@ Installed globally; outputs always land inside the current project. Covers the f
 
 **Process And Agent Design:**
 - `process-decomposer` → `docs/processes/` entries + `docs/processes/process.md` registry updates
-- `agent-architect` → architecture specs by skill contract in `docs/architecture/`
+- `agent-builder` → architecture specs by skill contract in `docs/architecture/`
 - `setup-evaluation` — PASS / FAIL quality gate before execution for `agent-chain` workflows
 - `skill-finder` — checks whether a capability already exists in the library before new skill creation
 - `tool-finder` — checks tool availability, CLI fit, and MCP setup needs
@@ -334,7 +334,7 @@ For more complex work, the architecture now supports:
 User: "Design and run a reusable review workflow"
         ↓
 process-decomposer     → reusable process entry + complexity class
-agent-architect        → execution structure if needed
+agent-builder          → execution structure if needed
 setup-evaluation       → validate before execution
 project-orchestrator   → execute + collect feedback
 docs/processes/        ← write back actual outcome and execution delta

@@ -2,7 +2,7 @@
 name: create-agent-prompt
 description: >
   Create focused role prompts for agents in multi-agent topologies. Load when
-  agent-architect needs role prompts for agents, or when a user asks to "create
+  agent-builder needs role prompts for agents, or when a user asks to "create
   an agent prompt", "write a role prompt", "define agent identity", "write an
   agent role", "prompt for this agent". Scope: agent role prompts only (v1).
   System prompts, task prompts, and skill invocation prompts are future TODOs.
@@ -82,7 +82,7 @@ Return the prompt text, ready to embed in AGENTS.md or an architecture spec.
 
 - Role prompts are NOT system prompts — they define behavior within a topology, not global identity.
 - Avoid "be helpful" or "be thorough" — these are noise. Be specific about what the agent does.
-- If the agent's boundary overlaps with another agent, the topology is wrong — flag it to agent-architect.
+- If the agent's boundary overlaps with another agent, the topology is wrong — flag it to agent-builder.
 
 ---
 

@@ -29,7 +29,7 @@ agent-loom is a cross-platform agent skill library with 48 skills, a self-improv
 | "Using its skill library" | **Partially true** | 6/10 | The library is real, broad (48 skills), and thoughtfully organized into meta/thinking/project-specific/domain categories. But many skills are instruction/methodology frameworks, not executable capabilities. They produce plans and documents, not completed outcomes. |
 | "Understanding the task" | **Partially true** | 6/10 | Skills like process-decomposer (Step 0 conversational understanding), brainstorming (structured questioning), and project-orchestrator (project state reading) encode strong clarification behavior. But this is prompt behavior relying on LLM compliance, not a robust task understanding system. |
 | "Asking relevant questions" | **Mostly true** | 7/10 | One of the stronger parts. Several skills enforce gated questioning: brainstorming (one question at a time), prd-writing (minimum 2 questions even with a detailed brief), process-decomposer (1–2 focused questions, wait for confirmation). This is well-designed prompt discipline. |
-| "Building required agent infrastructure" | **Partially true** | 3/10 | Can design process docs, architecture specs, agent role prompts, and launch manifests. But actual execution infrastructure is thin: agent-creator only works on 2 platforms (Claude Code, Ampcode), generates spawn INSTRUCTIONS not actual orchestration, and has never been proven in production. |
+| "Building required agent infrastructure" | **Partially true** | 3/10 | Can design process docs, architecture specs, agent role prompts, and launch manifests. But actual execution infrastructure is thin: agent-launcher only works on 2 platforms (Claude Code, Ampcode), generates spawn INSTRUCTIONS not actual orchestration, and has never been proven in production. |
 | "Learning from past chats" | **False** | 1/10 | The process registry is empty. There is no persistent chat memory, no ingestion pipeline from prior conversations, no retrieval layer, no embedding store, no database. The "learning loop" (execution feedback written to process entries) has never been exercised. |
 | "Learning from best practices" | **Partially true** | 4/10 | research-skill searches papers/blogs/GitHub repos. improve-skills runs prune→research→rewrite cycles. learn-from-paper extracts insights from academic papers. But "learning" here means prompt-guided rewriting at agent invocation time, not measured, durable capability improvement. No evals prove the improvements actually make skills better. |
 
@@ -37,7 +37,7 @@ agent-loom is a cross-platform agent skill library with 48 skills, a self-improv
 
 | Claim | Verdict | Score | Evidence |
 |-------|---------|:---:|----------|
-| Cross-platform skill library | **Mostly true** | 7/10 | Distribution/install story is genuinely strong. Symlinks to `~/.agents/skills/` work. But execution parity does not exist — agent-creator only works on 2 of 10 platforms. "Installed everywhere" ≠ "works equally everywhere." Replit and Bolt.new are project-level only. |
+| Cross-platform skill library | **Mostly true** | 7/10 | Distribution/install story is genuinely strong. Symlinks to `~/.agents/skills/` work. But execution parity does not exist — agent-launcher only works on 2 of 10 platforms. "Installed everywhere" ≠ "works equally everywhere." Replit and Bolt.new are project-level only. |
 | Self-improving meta layer | **Partially true** | 4/10 | Well designed on paper. validate→prune→research→rewrite→split/compress flow is coherent. But no eval harness proves improvements don't degrade quality. v1.1.1 changelog even notes "agentskills validate could not be run because CLI is not installed." |
 | Evidence-grounded improvements | **Partially true** | 5/10 | Cited/pruned/research-backed workflow is a solid pattern. Prune-skill has citation standards and obsolete-techniques list. But no hard assurance that evidence quality is vetted or resulting changes are actually better. |
 | Reusable process memory layer | **Mostly false** | 2/10 | Architecturally intended with `process.md` registry, outcome clusters, replay logic. But the registry has zero entries. Never been tested in real use. The entire feedback loop is theoretical. |
@@ -110,7 +110,7 @@ That's a real OSS wedge. It's just not yet a hard systems moat.
 
 **What's missing:**
 - Most of the system generates plans, manifests, prompts, and markdown artifacts
-- agent-creator emits spawn INSTRUCTIONS; it is not a real orchestration engine
+- agent-launcher emits spawn INSTRUCTIONS; it is not a real orchestration engine
 - Execution is delegated to host platforms and model obedience
 - No actual Task tool invocations in the skills — just templates for how they would look
 
@@ -121,7 +121,7 @@ That's a real OSS wedge. It's just not yet a hard systems moat.
 **What the README explicitly admits is missing:**
 - Dynamic branching (agent can't signal back to change the plan mid-run)
 - Conditional spawning (no "if Agent A finds X, spawn Agent B")
-- Replanning on failure (agent-creator retries once then halts)
+- Replanning on failure (agent-launcher retries once then halts)
 - Chunking large contexts
 
 **Why it matters:** Real-world workflows fail constantly. Without adaptive recovery, multi-step automation is brittle. The retry-once-then-halt strategy is not production-grade.
@@ -174,7 +174,7 @@ That's a real OSS wedge. It's just not yet a hard systems moat.
 ### Gap 8: Platform Capability Inconsistency
 
 **The trust problem:**
-- agent-creator works on 2 of 10 platforms
+- agent-launcher works on 2 of 10 platforms
 - project-orchestrator has 3 tiers with very different capabilities
 - README says "works with" 10+ platforms but execution depth varies dramatically
 - "Installed everywhere" is marketing; "works equally everywhere" is false

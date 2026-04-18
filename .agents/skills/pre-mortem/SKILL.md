@@ -5,9 +5,11 @@ description: >
   and work backward to find the root causes before they happen. Load when the
   user asks for a pre-mortem, wants to imagine failure before committing,
   asks "what could go wrong before we start", "assume this fails — why",
-  or when deep-thinking diagnoses a pre-mortem frame. Based on Gary Klein's
-  prospective hindsight method, which surfaces failure causes more effectively
-  than forward risk analysis. Most useful right before a major commitment.
+  "risk analysis before launch", "what kills this project", "what could go
+  wrong", or when deep-thinking diagnoses a pre-mortem frame. Based on Gary
+  Klein's prospective hindsight method, which surfaces failure causes more
+  effectively than forward risk analysis. Most useful right before a major
+  commitment.
 license: MIT
 metadata:
   author: dvy1987

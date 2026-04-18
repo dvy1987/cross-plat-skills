@@ -1,12 +1,15 @@
 ---
 name: agent-system-architecture
 description: >
-  Design state-of-the-art multi-agent systems, orchestration patterns, and wiring.
-  Load when the user asks to build an agent system, design agent orchestration,
-  choose between sequential/parallel/hierarchical workflows, or define how
-  multiple agents should collaborate. Also triggers on "agent architecture",
-  "multi-agent wiring", "agent orchestration pattern", "how to connect these agents",
-  or any request to design the cognitive and communication structure of an AI system.
+  Design state-of-the-art multi-agent systems, orchestration patterns, and
+  wiring from scratch. Load when the user asks to build an agent system from
+  scratch, design agent orchestration patterns, choose between
+  sequential/parallel/hierarchical workflows, or define how multiple agents
+  should collaborate. Also triggers on "agent architecture", "multi-agent
+  wiring", "agent orchestration pattern", "how to connect these agents",
+  "design the communication structure". Called by agent-builder for complex
+  topologies (>4 agents or hierarchical). For process-driven agent design,
+  use agent-builder instead.
 license: MIT
 metadata:
   author: dvy1987

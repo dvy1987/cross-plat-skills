@@ -4,7 +4,8 @@ description: >
   Create focused role prompts for agents in multi-agent topologies. Load when
   agent-builder needs role prompts for agents, or when a user asks to "create
   an agent prompt", "write a role prompt", "define agent identity", "write an
-  agent role", "prompt for this agent". Scope: agent role prompts only (v1).
+  agent role", "prompt for this agent", "write instructions for this agent",
+  "agent persona". Scope: agent role prompts only (v1).
   System prompts, task prompts, and skill invocation prompts are future TODOs.
 license: MIT
 metadata:

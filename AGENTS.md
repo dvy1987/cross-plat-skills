@@ -134,6 +134,7 @@ domain          | specialized, not universally needed      | install only when n
 "find a skill for"    → skill-finder
 "reality-check"       → reality-check
 "evaluate claims"     → reality-check
+"deconflict skills"   → skill-deconflict
 ```
 
 All other meta and supporting skills are called automatically. See `docs/SKILL-INDEX.md` → Call Graph.

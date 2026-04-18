@@ -4,12 +4,12 @@ description: >
   Flip a problem, goal, or decision 180 degrees to find what forward thinking
   misses. Asks what would guarantee failure, then works backward to what must
   be avoided or changed. Load when the user says "invert this", "flip this
-  problem", "what would guarantee failure", "think backward", or when
-  deep-thinking diagnoses an inversion frame. Two methods: Failure Inversion
-  (ask what guarantees failure, avoid those things) and Opposite Goal (ask
-  what the reverse goal looks like, check if we're accidentally pursuing it).
-  Max 2 clarifying questions before inverting. Always returns forward actions.
-  For broader analysis involving multiple frameworks, deep-thinking calls this.
+  problem", "what would guarantee failure", "think backward", "reverse
+  engineer the goal", "think about it backwards", or when deep-thinking
+  diagnoses an inversion frame. Also triggers on "what's the opposite of
+  success here", "how would we sabotage this". Two methods: Failure Inversion
+  and Opposite Goal. Max 2 clarifying questions before inverting. Always
+  returns forward actions. For broader analysis, deep-thinking calls this.
 license: MIT
 metadata:
   author: dvy1987

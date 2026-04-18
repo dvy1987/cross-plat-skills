@@ -169,8 +169,8 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 |-------|-------------|
 | [`process-decomposer`](.agents/skills/process-decomposer/) | Complexity triage + task decomposition into reusable process entries in `docs/processes/` |
 | [`agent-builder`](.agents/skills/agent-builder/) | Designs single-agent or multi-agent execution structures from decomposed processes |
-| [`setup-evaluation`](.agents/skills/setup-evaluation/) | Validates decomposition + architecture before execution — on PASS, hands off to `agent-creator` |
-| [`agent-creator`](.agents/skills/agent-creator/) | Launches agents from a validated architecture spec using native platform parallelism (Task tool). **Claude Code and Ampcode only** — see platform note below. |
+| [`setup-evaluation`](.agents/skills/setup-evaluation/) | Validates decomposition + architecture before execution — on PASS, hands off to `agent-launcher` |
+| [`agent-launcher`](.agents/skills/agent-launcher/) | Launches agents from a validated architecture spec using native platform parallelism (Task tool). **Claude Code and Ampcode only** — see platform note below. |
 | [`skill-finder`](.agents/skills/skill-finder/) | Maps capabilities to existing skills and prevents unnecessary skill creation |
 | [`tool-finder`](.agents/skills/tool-finder/) | Tool discovery, availability checking, and MCP setup guidance |
 | [`create-agent-prompt`](.agents/skills/create-agent-prompt/) | Creates focused role prompts for agents in multi-agent topologies |
@@ -179,13 +179,13 @@ This design layer sits above execution. The current flow is:
 
 ```
 process-decomposer → agent-builder (if needed) → setup-evaluation
-  └── PASS → agent-creator → [agents run] → project-orchestrator
+  └── PASS → agent-launcher → [agents run] → project-orchestrator
   └── FAIL → agent-builder (revise)
 ```
 
 That gives the repo a reusable process-memory layer instead of treating every complex request as a one-off.
 
-> **Platform note — `agent-creator`:** This skill uses the built-in **Task tool** for native parallel subagent spawning. It works on **Claude Code and Ampcode** (Tier 1 — Task tool available). It is installed globally on all platforms but will halt gracefully on unsupported ones with a clear message. For Warp, Factory.ai, and Gemini without Maestro (Tier 2), `project-orchestrator` handles orchestration via a file-based task plan instead.
+> **Platform note — `agent-launcher`:** This skill uses the built-in **Task tool** for native parallel subagent spawning. It works on **Claude Code and Ampcode** (Tier 1 — Task tool available). It is installed globally on all platforms but will halt gracefully on unsupported ones with a clear message. For Warp, Factory.ai, and Gemini without Maestro (Tier 2), `project-orchestrator` handles orchestration via a file-based task plan instead.
 
 #### Full Execution Flow — Example: Annual Compliance Audit
 
@@ -219,7 +219,7 @@ setup-evaluation
   checks: no shared file writes ✓  prompts complete ✓  handoffs defined ✓
   → PASS
         ↓
-agent-creator  [Claude Code / Ampcode only]
+agent-launcher  [Claude Code / Ampcode only]
   writes launch manifest: docs/agents/runs/2026-04-11-compliance-manifest.md
   spawns 4 agents concurrently via Task tool:
     privacy-agent  → docs/handoffs/privacy-output.md
@@ -258,7 +258,7 @@ The pipeline handles well-scoped, parallel, statically-defined work where the ta
 
 - **Dynamic branching** — if an agent discovers something unexpected mid-run, it cannot signal back to change the plan. Topology is fixed at architecture time.
 - **Conditional spawning** — no support for "if Agent A finds X, spawn Agent B, otherwise skip."
-- **Replanning on failure** — `agent-creator` retries once then halts. It does not replan around a failed agent or find an alternative path.
+- **Replanning on failure** — `agent-launcher` retries once then halts. It does not replan around a failed agent or find an alternative path.
 - **Chunking large contexts** — no built-in strategy for when the artefact being analysed exceeds one agent's context window.
 
 These are on the roadmap. The current system covers the majority of real parallel agent use cases cleanly.
@@ -289,6 +289,8 @@ You interact with two meta skills directly. The rest call each other automatical
 | [`deprecate-skill`](.agents/skills/deprecate-skill/) | Retires redundant or superseded skills — archives, updates callers, logs reason | **Files moved:** to `.agents/skills/.deprecated/`. **Files modified:** AGENTS.md, README, callers. Impact report: archive path, recovery command | When a skill scores 0-5/14 or is fully subsumed |
 | [`library-skill`](.agents/skills/library-skill/) | Maintains library consistency — syncs SKILL-INDEX, AGENTS.md, README, skill graph after structural changes | **Files modified:** SKILL-INDEX.md, AGENTS.md, README.md, docs/skill-graph.md. Impact report: entries added/removed, cross-refs validated | Auto-called after skill creation, rename, deprecation, or restructure |
 | [`publish-skill`](.agents/skills/publish-skill/) | Validates, packages, writes README if missing, publishes to skills.sh | **External action:** skill live on skills.sh. Impact report: registry URL, install command, score at publish | Optional after `universal-skill-creator` creates a skill |
+| [`skill-deconflict`](.agents/skills/skill-deconflict/) | Detects naming collisions, overlapping triggers, and insufficient intent diversity across the skill library | No files. Deconflict report in chat. | Called by universal-skill-creator and improve-skills; also "deconflict skills", "check naming" |
+| [`skill-routing`](.agents/skills/skill-routing/) | Matches requests to skills using trigger matching, project context, conversation history; scores ambiguity 1-10 | No files. Routing decision in chat. | Called by project-orchestrator; also "which skill should handle this", "route this request" |
 
 ### How the Meta Skills Work Together
 
@@ -298,13 +300,13 @@ User: "create a skill for X"          User: "improve all skills"
 universal-skill-creator            improve-skills
   → research-skill                    0. validate-skills  ← pre-flight, score all
   → split-skill (if >200, seam)          └ deprecate-skill ← if score 0-5/14
-  → compress-skill (if no seam)     Per skill:
-  → validate-skills  (quality gate)   1. prune-skill       ← remove wrong content
-  → library-skill (sync indexes)          2. research-skill    ← add current research
-  → publish-skill    (optional)       3. rewrite
-                                       4. split/compress
-                                       5. validate + commit
-                                       6. library-skill → generate-changelog
+  → compress-skill (if no seam)       Per skill:
+  → skill-deconflict (name/trigger gate) 1. prune-skill       ← remove wrong content
+  → validate-skills  (quality gate)      2. research-skill    ← add current research
+  → library-skill (sync indexes)         3. rewrite
+  → publish-skill    (optional)          4. split/compress
+                                         5. validate + commit
+                                         6. library-skill → generate-changelog
 ```
 
 **Full ordering rationale:**

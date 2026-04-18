@@ -6,8 +6,9 @@ description: >
   find current best practices, domain gotchas, and existing skill patterns.
   Called by universal-skill-creator and improve-skills before writing any skill.
   Also load directly when the user asks to research a domain for a skill, find
-  existing skills on a topic, discover best practices for a skill, or check
-  what research exists before building an agent skill.
+  existing skills on a topic, discover best practices for a skill, check what
+  research exists before building an agent skill, or says "what does current
+  research say about", "find best practices for".
 license: MIT
 metadata:
   author: dvy1987

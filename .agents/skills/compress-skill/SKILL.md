@@ -4,8 +4,10 @@ description: >
   Compress an oversized SKILL.md to under 200 lines without losing effectiveness.
   Load when a skill exceeds 200 lines, when AGENTS.md triggers compression after
   a skill edit, or when the user asks to compress, shrink, slim down, or optimize
-  a skill. Applies to all skills including meta skills — the 200-line rule has
-  no exceptions. Preserves hard gates, gotchas, output format, routing triggers,
+  a skill. Also triggers on "this skill is too long", "reduce skill size",
+  "make this skill shorter". Applies to all skills including meta skills — the
+  200-line rule has no exceptions. Preserves hard gates, gotchas, output format,
+  routing triggers,
   and at least one example. When genuinely CORE content cannot be compressed
   away, invokes split-skill instead of degrading the skill.
 license: MIT

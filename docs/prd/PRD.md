@@ -1,7 +1,7 @@
 # Product Requirements Document — agent-loom
 
 **Status:** Living Document (source of truth)
-**Last updated:** 2026-04-12
+**Last updated:** 2026-04-18
 **Owner:** Divya
 **Point-in-time PRDs:** See dated files in this directory for historical snapshots.
 
@@ -54,9 +54,9 @@ One architectural direction:
 
 ## 4. Current Skill Inventory
 
-**49 skills** across 4 categories as of 2026-04-13.
+**56 skills** across 4 categories as of 2026-04-18.
 
-### 4.1 Meta Skills (18)
+### 4.1 Meta Skills (20)
 
 Manage the library itself. Always global. Users interact directly with `universal-skill-creator` and `improve-skills`; the rest are called automatically.
 
@@ -79,6 +79,8 @@ Manage the library itself. Always global. Users interact directly with `universa
 | `secure-skill-content-sanitization` | Strips hidden text, zero-width chars, homoglyphs |
 | `secure-skill-repo-ingestion` | Repo-specific: poisoned examples, dependency scan, path attacks |
 | `secure-skill-runtime` | Runtime: state corruption, skill overwrites, DoS prevention |
+| `skill-deconflict` | Detects naming collisions, overlapping triggers, insufficient intent diversity |
+| `skill-routing` | Matches requests to skills via trigger matching, context, and ambiguity scoring |
 | `generate-changelog` | Generates release notes and changelogs |
 
 ### 4.2 Thinking Skills (11)
@@ -122,7 +124,7 @@ Global install, project-scoped output. Cover the full product and engineering li
 | `agent-builder` | Designs single/multi-agent execution structures from processes |
 | `setup-evaluation` | Pre-execution QA gate for agent-chain workflows |
 | `create-agent-prompt` | Creates role prompts for agents in multi-agent topologies |
-| `agent-creator` | Launches agents from validated specs via Task tool (Claude Code / Ampcode only) |
+| `agent-launcher` | Launches agents from validated specs via Task tool (Claude Code / Ampcode only) |
 | `learn-from-paper` | Extracts actionable knowledge from research papers |
 | `apply-paper-to-project` | Applies paper findings to the current codebase |
 
@@ -144,7 +146,7 @@ Plus a **Process-and-Agent Design Layer** for complex workflows:
 
 ```
 process-decomposer → agent-builder (if needed) → setup-evaluation
-  └── PASS → agent-creator → [agents run] → project-orchestrator
+  └── PASS → agent-launcher → [agents run] → project-orchestrator
   └── FAIL → agent-builder (revise)
 ```
 
@@ -188,7 +190,7 @@ When a user brings any request, here is the skill chain that fires:
            └─► agent-chain      → Decompose into steps
                                  └── 4. agent-builder (design topology)
                                      └── 5. setup-evaluation (validate)
-                                         ├─► PASS → 6. agent-creator (spawn)
+                                         ├─► PASS → 6. agent-launcher (spawn)
                                          └─► FAIL → back to agent-builder
 ```
 

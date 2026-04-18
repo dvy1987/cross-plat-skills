@@ -101,7 +101,10 @@ If over 200 lines:
 
 Never rely on `split-skill` to compress automatically. `split-skill` verifies line counts after splitting; `compress-skill` owns the compression path.
 
-### Step 8 — Validate and Security-Scan Output
+### Step 8 — Deconflict Name and Triggers
+Invoke `skill-deconflict` in single-skill mode on the new skill. If verdict is RENAME — rename before proceeding. If REVISE — fix trigger overlap or add missing triggers. Only proceed on PASS.
+
+### Step 9 — Validate and Security-Scan Output
 Invoke `validate-skills` on the new skill. Must score ≥10/14.
 Then invoke ALL `secure-*` skills (discover via `ls .agents/skills/secure-*`) to scan the GENERATED skill — not just the inputs. This catches cases where external patterns were absorbed into the output. BLOCKED = revise and re-scan before committing.
 
@@ -109,10 +112,10 @@ Then invoke ALL `secure-*` skills (discover via `ls .agents/skills/secure-*`) to
 agentskills validate .agents/skills/<skill-name>/
 ```
 
-### Step 9 — Cross-Link Repair
+### Step 10 — Cross-Link Repair
 Invoke `cross-link-skills` with trigger `created — <skill-name>`. It scans all SKILL.md files for missing or stale cross-references involving the new skill and fixes them.
 
-### Step 10 — Publish (Optional)
+### Step 11 — Publish (Optional)
 Ask the user: "Would you like to publish this skill to skills.sh?"
 If yes — invoke `publish-skill`. It handles packaging, README, and registry submission.
 

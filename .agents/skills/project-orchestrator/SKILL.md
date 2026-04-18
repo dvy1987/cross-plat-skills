@@ -50,12 +50,15 @@ Always present the plan before executing — user approves, then it runs.
 
 Also read: `AGENTS.md` Orchestration Map (if present), `docs/skill-outputs/SKILL-OUTPUTS.md`.
 
-### Step 2 — Classify the Request
+### Step 2 — Route the Request
 
-**Single-skill routing:** Request maps to one skill → route directly.
-**Process-backed execution:** Process entry exists in `docs/processes/` → read complexity_class, follow the process.
-**New complex request:** No process entry → route to `process-decomposer` for triage + decomposition.
-**Phase recommendation:** User asks "what next?" → recommend based on Step 1.
+Invoke `skill-routing` with the user's request and the project state from Step 1. It returns the matched skill, ambiguity score, and how it resolved.
+
+**Then classify:**
+- **Single-skill:** `skill-routing` returned one skill → proceed to Step 3.
+- **Process-backed:** Process entry exists in `docs/processes/` → read complexity_class, follow the process.
+- **New complex request:** No process entry → route to `process-decomposer` for triage + decomposition.
+- **Phase recommendation:** User asks "what next?" → recommend based on Step 1.
 
 If `process-decomposer` returns `agent-chain`: wait for `agent-builder` and `setup-evaluator` to complete before proceeding to execution.
 
@@ -109,34 +112,6 @@ After execution completes (all skills/agents finish), update the process entry:
 4. Re-evaluate outcome cluster membership if nuance changed
 
 **This step is mandatory.** Every executed process entry must have its execution section filled. Entries stuck at `status: executing` for 24h+ are flagged as stale.
-
----
-
-## Skill Routing Table
-
-| User says | Route to | Pre-req |
-|-----------|----------|---------|
-| "new feature" / "I have an idea" | `brainstorming` (→ `product-soul` if missing) | — |
-| "product strategy" / "product soul" | `product-soul` | — |
-| "write a PRD" | `prd-writing` | Design spec |
-| "plan implementation" | `implementation-plan` | PRD |
-| "plan this change" / "spec this out" / "create TODO" | `problem-to-plan` | — |
-| "build this" / "implement" | Implementation + `test-driven-development` | Plan |
-| "technical debt" / "code health" | `technical-debt-audit` | Code exists |
-| "changelog" / "release notes" | `generate-changelog` | Commits exist |
-| "think through this" / "I'm stuck" | `deep-thinking` | — |
-| "stress test this plan" | `adversarial-hat` or `pre-mortem` | Plan/doc |
-| "architect the agent system" | `agent-system-architecture` | Requirements |
-| "record this decision" | `architectural-decision-log` | Decision made |
-| "set up this project" | `project-setup` | — |
-| "create a skill" | `universal-skill-creator` | — |
-| "what should I do next" | Phase recommendation from Step 1 | — |
-| "decompose" / "break this down" / "what steps" | `process-decomposer` | — |
-| "design agent" / "architect this" / "multi-agent" | `agent-builder` | Process entry |
-| "find a skill for" / "which skill handles" | `skill-finder` | — |
-| "what tool" / "is [tool] available" | `tool-finder` | — |
-| "create agent prompt" / "write role prompt" | `create-agent-prompt` | Agent spec |
-| "evaluate setup" / "validate architecture" | `setup-evaluation` | Process + arch spec |
 
 ---
 

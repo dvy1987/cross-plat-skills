@@ -6,14 +6,14 @@
 
 ## Executive Summary
 
-The current batch needs a narrow corrective pass. Two issues are behavioral regressions in `agent-creator`: the launcher must obey architecture-defined failure handling again, and hierarchical launches must only emit the orchestrator spawn block instead of eagerly spawning workers. One issue is a contract mismatch in `agent-system-architecture`: examples must teach `parallel`, not `Concurrent`, because downstream consumers parse topology strings literally. One issue is a documentation-policy violation in `docs/changelogs/v1.1.1.md`: user-facing changelogs must not describe internal security-fix implementation details.
+The current batch needs a narrow corrective pass. Two issues are behavioral regressions in `agent-launcher`: the launcher must obey architecture-defined failure handling again, and hierarchical launches must only emit the orchestrator spawn block instead of eagerly spawning workers. One issue is a contract mismatch in `agent-system-architecture`: examples must teach `parallel`, not `Concurrent`, because downstream consumers parse topology strings literally. One issue is a documentation-policy violation in `docs/changelogs/v1.1.1.md`: user-facing changelogs must not describe internal security-fix implementation details.
 
 The safest execution strategy is a small, file-scoped repair with explicit verification after each fix, followed by a focused review of the staged diff and either an amend or a follow-up commit.
 
 ## Technical Scope
 
 - Files in scope:
-  - `.agents/skills/agent-creator/SKILL.md`
+  - `.agents/skills/agent-launcher/SKILL.md`
   - `.agents/skills/agent-system-architecture/SKILL.md`
   - `docs/changelogs/v1.1.1.md`
 - Tools:
@@ -29,12 +29,12 @@ The safest execution strategy is a small, file-scoped repair with explicit verif
 This is a constrained documentation-and-skill repair, not a feature build.
 
 - `agent-system-architecture` produces architecture specs and examples.
-- `agent-creator` consumes those specs and must preserve architecture-defined behavior.
+- `agent-launcher` consumes those specs and must preserve architecture-defined behavior.
 - `v1.1.1.md` is a user-facing changelog and must follow repo doc policy.
 
 The critical dependency is:
 
-`agent-system-architecture` terminology -> `agent-creator` topology parsing -> launch behavior
+`agent-system-architecture` terminology -> `agent-launcher` topology parsing -> launch behavior
 
 Any mismatch here can break downstream execution even if the docs look reasonable.
 
@@ -47,7 +47,7 @@ Any mismatch here can break downstream execution even if the docs look reasonabl
 - [ ] Decide commit strategy before editing: amend the previous batch commit if no one else depends on it; otherwise create a follow-up fix commit.
   **DoD:** One commit strategy chosen before stage/commit.
 
-## Phase 1 - Restore `agent-creator` Launch Semantics
+## Phase 1 - Restore `agent-launcher` Launch Semantics
 
 ### Task 1.1 - Restore hierarchical spawn behavior
 - [ ] Replace the generic Step 4 wording so hierarchical topology emits only the orchestrator launch block plus the sub-agent list, not one block per worker.
@@ -88,11 +88,11 @@ Any mismatch here can break downstream execution even if the docs look reasonabl
   **DoD:** No whitespace or patch-format issues reported.
 
 ### Task 4.2 - Behavioral verification by inspection
-- [ ] Re-read `agent-creator` Step 2, Step 4, and Step 5 together.
+- [ ] Re-read `agent-launcher` Step 2, Step 4, and Step 5 together.
   **DoD:** Extracted topology and failure rules are still reflected consistently in the later instructions.
 
 ### Task 4.3 - Contract verification by inspection
-- [ ] Re-read the `agent-system-architecture` example together with the `agent-creator` accepted topology values.
+- [ ] Re-read the `agent-system-architecture` example together with the `agent-launcher` accepted topology values.
   **DoD:** The example cannot teach an unsupported topology string.
 
 ### Task 4.4 - Policy verification by inspection
@@ -101,7 +101,7 @@ Any mismatch here can break downstream execution even if the docs look reasonabl
 
 ### Task 4.5 - Size guardrails
 - [ ] Recheck line counts on the two edited skill files.
-  **DoD:** `agent-creator` remains <=200 lines and `agent-system-architecture` remains <=200 lines.
+  **DoD:** `agent-launcher` remains <=200 lines and `agent-system-architecture` remains <=200 lines.
 
 ## Phase 5 - Commit And Closeout
 
@@ -116,7 +116,7 @@ Any mismatch here can break downstream execution even if the docs look reasonabl
 
 ## Risks And Mitigations
 
-1. **Risk:** Over-compressing `agent-creator` again could reintroduce ambiguity in hierarchical behavior or failure handling.
+1. **Risk:** Over-compressing `agent-launcher` again could reintroduce ambiguity in hierarchical behavior or failure handling.
    **Mitigation:** Prefer one compact topology-specific block over a generic abstraction when semantics differ materially.
 
 2. **Risk:** Fixing the changelog too aggressively could erase useful release context.
@@ -139,7 +139,7 @@ Any mismatch here can break downstream execution even if the docs look reasonabl
 
 - [ ] Review comments mapped to exact edit locations
 - [ ] Commit strategy chosen
-- [ ] `agent-creator` semantics restored
+- [ ] `agent-launcher` semantics restored
 - [ ] `agent-system-architecture` topology string aligned
 - [ ] changelog wording policy-safe
 - [ ] diffs checked

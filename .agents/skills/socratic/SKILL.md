@@ -4,12 +4,12 @@ description: >
   Break a stuck or complex problem into the smallest sub-question that, if
   answered, unlocks the next step — then answer it and repeat until the path
   forward is clear. Load when a problem feels genuinely stuck, when reasoning
-  keeps circling, when the user needs to think through something deeply before
-  acting, or when deep-thinking diagnoses a Socratic frame. Also triggers on
-  "help me think through this", "I keep going in circles", "what is the real
-  question here", "break this down for me". Based on the recursive Socratic
-  questioning method (EMNLP 2023) which outperforms CoT and Tree-of-Thought
-  on complex reasoning tasks.
+  keeps circling, or when deep-thinking diagnoses a Socratic frame. Also
+  triggers on "I keep going in circles", "what is the real question here",
+  "help me reason through this step by step", "unstick my thinking",
+  "recursive questioning", "what is the root question". Based on the
+  recursive Socratic questioning method (EMNLP 2023) which outperforms
+  CoT and Tree-of-Thought on complex reasoning tasks.
 license: MIT
 metadata:
   author: dvy1987

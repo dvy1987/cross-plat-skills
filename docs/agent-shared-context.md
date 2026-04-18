@@ -11,7 +11,7 @@ Last updated: 2026-04-12
 
 ## Outcomes
 
-- `agent-creator` compressed to 138 lines
+- `agent-launcher` compressed to 138 lines
 - Added Gotchas and Example coverage to:
   - `agent-system-architecture`
   - `architectural-decision-log`
@@ -32,7 +32,7 @@ Last updated: 2026-04-12
 
 ## Line Count Snapshot
 
-- `agent-creator`: 138
+- `agent-launcher`: 138
 - `agent-system-architecture`: 105
 - `architectural-decision-log`: 103
 - `generate-changelog`: 105

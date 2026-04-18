@@ -68,7 +68,7 @@ Read:
 ### Step 5 — Verdict
 
 **PASS:** All checks pass. Record PASS against the architecture spec ID, then
-hand off to `agent-creator` with the architecture spec path. agent-creator
+hand off to `agent-launcher` with the architecture spec path. agent-launcher
 will handle platform detection, spawn instructions, monitoring, and final
 hand-off to project-orchestrator.
 
@@ -114,7 +114,7 @@ All other checks: PASS (decomposition quality, tool availability, outcome defini
 SETUP EVALUATION: PASS
 All checks passed (5 decomposition, 5 architecture, 3 cross-validation).
 PASS recorded for: docs/architecture/2026-04-10-015-arch.md
-Handing off to agent-creator.
+Handing off to agent-launcher.
     </output>
   </example>
 </examples>
@@ -130,5 +130,5 @@ Issues found: [N]
 Decomposition checks: [passed/total]
 Architecture checks: [passed/total]
 Cross-validation checks: [passed/total]
-Next: agent-creator (if PASS) | agent-builder revision (if FAIL)
+Next: agent-launcher (if PASS) | agent-builder revision (if FAIL)
 ```

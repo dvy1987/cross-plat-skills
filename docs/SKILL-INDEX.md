@@ -91,6 +91,24 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ---
 
+### `skill-deconflict`
+**Triggers:** "deconflict skills", "check for naming collisions", "audit trigger overlap", "review intent coverage", "find duplicate triggers", "check skill names", "are any skills too similar", "which skills overlap", "deconflict the library", "check for confusing skill names", "intent audit"
+**What it does:** Detects and resolves three classes of skill library problems: names that sound alike but do different things, descriptions with overlapping trigger phrases causing misrouting, and descriptions with too few or too similar intent examples. Rates ambiguity, produces PASS/RENAME/REVISE verdicts in single-skill mode, or a full library audit report.
+**Called by:** `universal-skill-creator` (Step 8, after creation), `improve-skills` (Step 2h, per-skill)
+**Output:** No files. Deconflict report in chat with name collisions, trigger overlaps, and intent diversity scores.
+**Impact report:** Skills scanned, name collisions, trigger overlaps, diversity failures/warnings/passes, verdict
+
+---
+
+### `skill-routing`
+**Triggers:** "which skill should handle this", "route this request", "I'm not sure which skill to use", "disambiguate this", "skill routing"
+**What it does:** Matches a user request to the right skill using trigger matching, project context, and conversation history. Scores ambiguity 1–10. At 1–3: routes silently. At 4–6: reads context signals (project phase, conversation history, trigger precision, upstream/downstream position) to resolve. At 7–10: asks exactly one disambiguation question as a binary choice. Owns the full skill routing table.
+**Called by:** `project-orchestrator` (Step 2)
+**Output:** No files. Routing decision with skill name, ambiguity score, candidates, and resolution method.
+**Impact report:** Skill routed, ambiguity score, candidates considered, resolution method, question asked yes/no
+
+---
+
 ### `prune-skill`
 **Triggers:** "prune skills", "check for outdated techniques", "verify citations", "update for new model"
 **What it does:** Evidence-only removal of wrong, outdated, or poorly-cited content. Audits every citation for trust tier (High=NeurIPS/ICML/ICLR, Medium=arXiv 50+ citations, Low=blogs, Zero=unverifiable). Checks the obsolete techniques list. Never prunes without a citable source. Appends a Prune Log to every skill it touches.
@@ -525,6 +543,7 @@ universal-skill-creator → research-skill (Step 2, always)
                         → split-skill (Step 7, if >200 + seam)
                         → compress-skill (Step 7, if >200, no seam)
                         → validate-skills (Step 8, quality gate)
+                        → skill-deconflict (Step 8, name/trigger gate)
                         → library-skill (after creation, to sync indexes)
                         → publish-skill (Step 9, optional)
 
@@ -534,9 +553,11 @@ improve-skills → validate-skills (Step 1, pre-flight)
                → research-skill (Step 2c, per skill)
                → split-skill (Step 2g, if >200 + seam)
                → compress-skill (Step 2g, if >200, no seam)
+               → skill-deconflict (Step 2h, per skill)
                → library-skill (after structural changes)
 
-project-orchestrator → [any skill] (routes based on project state + user intent)
+project-orchestrator → skill-routing (Step 2, always)
+                     → [any skill] (routes based on project state + user intent)
                      → project-setup (if no AGENTS.md exists)
 
 learn-from → learn-from-paper (if academic paper/PDF/arXiv)
@@ -574,5 +595,5 @@ reality-check → adversarial-hat (Step 7, pressure-test claims)
               → implementation-plan (Step 8, structure roadmap)
 
 Leaf nodes (call nothing):
-  validate-skills  research-skill  prune-skill  publish-skill  generate-changelog
+  validate-skills  research-skill  prune-skill  publish-skill  generate-changelog  skill-routing  skill-deconflict
 ```

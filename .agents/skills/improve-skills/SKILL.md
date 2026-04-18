@@ -88,17 +88,20 @@ BACKGROUND and EDGE_CASE move to `references/` with specific load triggers.
 6. Move BACKGROUND to `references/background.md`
 7. Bump `metadata.version`
 
-**2h — Post-Rewrite Score** — report delta: `X/14 → Y/14`
+**2h — Deconflict Name and Triggers**
+Invoke `skill-deconflict` in single-skill mode. If RENAME or REVISE verdict, apply fixes before proceeding. Report findings in the per-skill output.
 
-**2i — Size Check**
+**2i — Post-Rewrite Score** — report delta: `X/14 → Y/14`
+
+**2j — Size Check**
 ```bash
 wc -l .agents/skills/<skill>/SKILL.md
 ```
-Under 200 → proceed to 2j.
+Under 200 → proceed to 2k.
 Over 200 → invoke `split-skill`. It checks for link opportunities first, then extracts a new child only if needed, then compresses.
 **Exception:** `secure-skill` — never compress, only split. Threshold is 180 lines (not 200). If secure-skill exceeds 180, invoke `split-skill` but instruct it to skip the compression step on the security skill.
 
-**2j — Validate and Commit**
+**2k — Validate and Commit**
 ```bash
 agentskills validate .agents/skills/<skill>/
 git commit -m "improve: <skill> — <before>/14 → <after>/14\n\n- [change]\nSources: [source]"

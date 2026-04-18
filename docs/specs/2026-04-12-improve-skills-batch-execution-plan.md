@@ -24,7 +24,7 @@ After all 10 skills are done, execute the Post-Batch Steps at the bottom.
 
 | # | Skill | File | Current | Target | Action |
 |---|-------|------|---------|--------|--------|
-| 1 | agent-creator | `.agents/skills/agent-creator/SKILL.md` | 262 lines, 12/14 | ≤200 lines, 13+/14 | Compress (P0) |
+| 1 | agent-launcher | `.agents/skills/agent-launcher/SKILL.md` | 262 lines, 12/14 | ≤200 lines, 13+/14 | Compress (P0) |
 | 2 | agent-system-architecture | `.agents/skills/agent-system-architecture/SKILL.md` | 92 lines, 8/14 | ≤150 lines, 12+/14 | Add Gotchas + Examples |
 | 3 | architectural-decision-log | `.agents/skills/architectural-decision-log/SKILL.md` | 86 lines, 8/14 | ≤150 lines, 12+/14 | Narrow role + add Gotchas + Examples |
 | 4 | generate-changelog | `.agents/skills/generate-changelog/SKILL.md` | 92 lines, 8/14 | ≤150 lines, 12+/14 | Narrow role + add Gotchas + Examples |
@@ -37,9 +37,9 @@ After all 10 skills are done, execute the Post-Batch Steps at the bottom.
 
 ---
 
-## Skill 1 — agent-creator (P0: COMPRESS)
+## Skill 1 — agent-launcher (P0: COMPRESS)
 
-**File:** `.agents/skills/agent-creator/SKILL.md`
+**File:** `.agents/skills/agent-launcher/SKILL.md`
 **Problem:** 262 lines — 62 lines over the 200-line limit.
 **Root cause:** Step 4 has three separate topology templates (parallel/sequential/hierarchical) that repeat the same structure, plus two full examples that repeat template content.
 
@@ -419,20 +419,20 @@ Insert after Gotchas, before `## Impact Report`:
 **Date:** 2026-04-12 | **Health Score:** 7/10
 
 **The "Big 3" (High-Interest Items):**
-1. **agent-creator at 262 lines** — 62 lines over the 200-line limit. Blocks validation pipeline. Blast radius: every improve-skills run flags this as a failure. Fix: compress topology templates and consolidate examples. Effort: 30min.
+1. **agent-launcher at 262 lines** — 62 lines over the 200-line limit. Blocks validation pipeline. Blast radius: every improve-skills run flags this as a failure. Fix: compress topology templates and consolidate examples. Effort: 30min.
 2. **10 skills below 10/14 score** — missing Gotchas and Examples sections. These skills produce lower-quality agent behavior because the agent has no failure-mode awareness or output examples to pattern-match against. Fix: batch improvement pass. Effort: 2h.
 3. **No automated validation in CI** — skill quality is manually checked. Regressions can slip in silently. Fix: add validate-skills as a pre-commit hook. Effort: 1h.
 
 **Debt Catalog:**
 | Item | Quadrant | Interest | Location |
 |------|----------|----------|----------|
-| Oversized agent-creator | Prudent/Deliberate | High | `.agents/skills/agent-creator/SKILL.md` |
+| Oversized agent-launcher | Prudent/Deliberate | High | `.agents/skills/agent-launcher/SKILL.md` |
 | Missing structural sections | Prudent/Inadvertent | High | 10 skills (see queue) |
 | No CI validation | Prudent/Inadvertent | Medium | repo root |
 | Stale cross-references | Reckless/Inadvertent | Low | various SKILL.md files |
 
 **Recommended Next Actions:**
-1. Compress agent-creator (30min)
+1. Compress agent-launcher (30min)
 2. Run improve-skills batch on 10-skill queue (2h)
 3. Add validate-skills to pre-commit (1h)
 
@@ -776,7 +776,7 @@ Stage only the changed SKILL.md files and shared docs. Commit with message:
 ```
 improve-skills: batch improvement of 10 skills (structural gaps)
 
-- Compressed agent-creator from 262 to ≤200 lines
+- Compressed agent-launcher from 262 to ≤200 lines
 - Added Gotchas + Examples to 6 skills (8-9/14 → 12+/14)
 - Added Impact Reports to 3 secure-* skills (11/14 → 13+/14)
 - Ran cross-link-skills and library-skill sync

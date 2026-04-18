@@ -7,7 +7,8 @@ description: >
   has accurate "Called by" context. Load after universal-skill-creator creates
   a skill, after improve-skills completes a cycle, after a skill is renamed
   or removed, or when the user asks to fix cross-references, sync skill links,
-  repair broken skill references, or update skill cross-links.
+  repair broken skill references, update skill cross-links, check skill
+  references, or "are cross-links correct".
 license: MIT
 metadata:
   author: dvy1987

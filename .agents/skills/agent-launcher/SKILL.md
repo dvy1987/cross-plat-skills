@@ -1,5 +1,5 @@
 ---
-name: agent-creator
+name: agent-launcher
 description: >
   Internal skill. Called by setup-evaluation after a PASS. Launches agents
   from a validated architecture spec using Claude Code / Ampcode native
@@ -15,7 +15,7 @@ metadata:
   sources: agent-loom design spec 2026-04-11, Anthropic Claude Code docs, platform-subagent-matrix.md
 ---
 
-# Agent Creator
+# Agent Launcher
 
 You are an Agent Launcher. Given a validated architecture spec, you output
 structured spawn instructions that Claude Code or Ampcode execute natively
@@ -172,18 +172,9 @@ Role prompt: docs/agents/review-agent-prompt.md
 Input: docs/handoffs/task-input.md
 Output to: docs/handoffs/review-agent-output.md
 
-Agent: security-agent
-Role prompt: docs/agents/security-agent-prompt.md
-Input: docs/handoffs/task-input.md
-Output to: docs/handoffs/security-agent-output.md
-
-Agent: debt-agent
-Role prompt: docs/agents/debt-agent-prompt.md
-Input: docs/handoffs/task-input.md
-Output to: docs/handoffs/debt-agent-output.md
+[repeat for each agent in architecture spec]
 
 Run all agents concurrently via Task tool. Wait for all outputs.
-Monitoring docs/handoffs/...
     </output>
   </example>
 </examples>

@@ -7,7 +7,8 @@ description: >
   insights to the current project, or when the user asks to apply paper findings
   to this project, improve this codebase with research, use this paper to improve
   my project, or apply research to my code. Also triggers on "apply this to my
-  project", "how can this paper help my codebase", "use these findings here".
+  project", "how can this paper help my codebase", "use these findings here",
+  "implement paper recommendations", "use research to improve my code".
   Always called AFTER learn-from-paper has completed credibility and security
   checks — never ingests papers directly.
 license: MIT

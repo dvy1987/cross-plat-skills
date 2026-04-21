@@ -11,12 +11,13 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
   sources: >
     arXiv:2602.08672 (GER-Eval), Twine rubric guide 2026,
     Anthropic eval guide 2026, ICER 2025 rubric paper,
-    Google evaluation guidance, NIST AI RMF
+    Google evaluation guidance, NIST AI RMF,
+    AlphaEval (Lu et al. 2026, credibility 8/12)
 ---
 
 # Eval Rubric Design
@@ -56,6 +57,7 @@ Choose from the dimension library (adapt names to the domain):
 | **Reasoning quality** | When the output requires logical steps or analysis |
 | **Tone / audience fit** | When output targets a specific reader |
 | **Safety / compliance** | When policy, legal, or ethical constraints exist (always pass/fail) |
+| **Internal consistency** | When outputs are long-form (>1 page) — checks for contradictions across sections (e.g., differing figures, conflicting claims). AlphaEval 2026 documents this as a top agent failure mode. |
 | **Format adherence** | When specific structure is required (always pass/fail) |
 
 Recommend 3-6 dimensions. More than 6 causes reviewer fatigue and reduces consistency.
@@ -143,6 +145,7 @@ Tell the user:
 ## Gotchas
 
 - "Accuracy" means different things in different contexts: factual correctness vs. faithfulness to source vs. alignment with expected output. Always define which one.
+- Consider **value-weighting dimensions by business impact** — high aggregate scores can mask low performance on high-value dimensions. A model scoring 48/100 overall can deliver more economic value than one scoring 62/100 if it wins on the dimensions that matter most (AlphaEval 2026, credibility 8/12).
 - Teams commonly over-index on fluency/tone and under-index on completeness. Ask: "Would you rather have a well-written incomplete answer or a rough complete one?"
 - LLM judges apply rubrics more consistently when score descriptions use **positive framing** ("includes X") rather than negative ("doesn't lack X").
 - A rubric with >6 dimensions causes reviewer fatigue — split into two rubrics (core + extended) if needed.

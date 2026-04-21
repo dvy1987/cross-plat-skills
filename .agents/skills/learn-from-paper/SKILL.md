@@ -12,7 +12,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "2.0"
+  version: "2.1"
   category: meta
 ---
 
@@ -67,7 +67,7 @@ Scan `.agents/skills/*/SKILL.md` for skills whose domain overlaps. Map each insi
 Present application plan with agent recommendation per insight, using `learn-from` shared application protocol (six outcomes).
 
 ### Step 6 — Apply
-Apply per `learn-from` shared application protocol (contradiction resolution, 200-line gate, validate-skills ≥10/14, version bump, citation).
+Apply per `learn-from` shared application protocol, including the mandatory **Post-Application Hardening Cycle**: run ALL `secure-*` skills on each modified/created skill, enforce 200-line gate via `compress-skill` / `split-skill`, then `validate-skills` (must score ≥10/14).
 
 **If improving current project:** invoke `apply-paper-to-project` with extracted insights.
 

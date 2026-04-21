@@ -12,12 +12,13 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
   sources: >
     Red Hat eval-driven dev 2026, DeepEval framework,
     Arize eval pipelines (AIEWF 2025), NVIDIA NeMo Evaluator,
-    NIST AI RMF, OWASP Top 10 LLM 2026
+    NIST AI RMF, OWASP Top 10 LLM 2026,
+    AlphaEval (Lu et al. 2026, credibility 8/12)
 ---
 
 # Eval Pipeline
@@ -171,6 +172,7 @@ Tell the user:
 - **Sampling rates matter for cost.** LLM-as-judge on 100% of PR traffic burns budget fast. Start at 20% and increase for high-risk changes only.
 - **Eval datasets go stale.** As the system evolves, old test cases may no longer represent real usage. Schedule quarterly dataset refresh.
 - **Don't evaluate the model when you mean to evaluate the system.** RAG failures are often retrieval problems, not generation problems. Layer evaluators to isolate root causes.
+- **Multi-step agent pipelines need per-step intermediate validation.** Cascade dependency is the #1 pipeline failure mode — an error in an early step (e.g., identifying anchor dates) invalidates all downstream steps. Design checkpoints between pipeline stages, not just end-to-end evaluation (AlphaEval 2026, credibility 8/12).
 
 ---
 

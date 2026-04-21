@@ -14,7 +14,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: meta
 ---
 
@@ -92,12 +92,14 @@ For `CONTRADICTION`, present per `learn-from` shared protocol (side-by-side + re
 
 With explicit user approval:
 
-1. **Check size first.** Read affected skill's line count. If already at 200 lines, the new content must replace something or trigger `compress-skill` / `split-skill`.
-2. **Apply the change.** Add GOTCHAs to `## Gotchas`, FAILURE_MODEs as guardrails to `## Hard Rules` or `## Gotchas`, TECHNIQUEs to `## Workflow` steps.
-3. **Contradiction resolution per `learn-from` shared protocol.**
+1. **Capacity pre-check.** Read affected skill's line count. If already near 200 lines, plan a replacement or compression instead of a blind append.
+2. **Apply the change.** Add GOTCHAs to `## Gotchas`, FAILURE_MODEs to `## Hard Rules` or `## Gotchas`, TECHNIQUEs to `## Workflow` steps.
+3. **Contradiction resolution** per `learn-from` shared protocol.
 4. **Bump `metadata.version`** on each modified skill.
 5. **Add citation:** `Discovered during [brief context description], [YYYY-MM-DD]`
-6. **Run `validate-skills`** on every modified skill. Must score ≥10/14.
+6. **Modified-skill security sweep.** Run ALL `secure-*` skills (discover via `ls .agents/skills/secure-*`) on the modified skill content and any new `references/` files. This scans the resulting skill, not the source. BLOCKED → revise or revert.
+7. **200-line gate.** Check final line count. Over 200 → invoke `compress-skill`. If CORE still over 200 → invoke `split-skill`.
+8. **Run `validate-skills`** on every modified skill. Must score ≥10/14. Runs AFTER any compress/split.
 
 ### Step 6 — Log
 

@@ -12,9 +12,11 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
-  sources: agent-loom design spec 2026-04-10
+  sources: >
+    agent-loom design spec 2026-04-10,
+    AlphaEval (Lu et al. 2026, credibility 8/12)
 ---
 
 # Process Decomposer
@@ -94,6 +96,7 @@ Execution feedback is owned by `project-orchestrator` (Section 4.1 of design spe
 - `skill-chain` tasks still execute under `project-orchestrator` so the learning loop stays intact.
 - This skill does NOT replace `brainstorming` or `implementation-plan`. Brainstorming = what to build. This = how to execute.
 - When the user brings a problem that needs planning artifacts (spec, plan, TODO), route to `problem-to-plan` — do not try to produce those deliverables here.
+- **Agents miss implicit domain constraints.** They optimize for explicitly stated goals while violating unstated professional norms, regulatory expectations, or domain conventions. During Step 0 (problem understanding), actively probe for implicit constraints: "Are there industry norms, compliance rules, or unwritten expectations that an outsider wouldn't know?" This remains a top failure mode even with good decomposition (AlphaEval 2026, credibility 8/12).
 
 ---
 

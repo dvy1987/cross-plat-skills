@@ -10,9 +10,11 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
-  sources: agent-loom design spec 2026-04-10, arXiv:2601.02577, Addy-Osmani-Code-Agent-Orchestra
+  sources: >
+    agent-loom design spec 2026-04-10, arXiv:2601.02577, Addy-Osmani-Code-Agent-Orchestra,
+    AlphaEval (Lu et al. 2026, credibility 8/12)
 ---
 
 # Agent Builder
@@ -79,6 +81,8 @@ For non-agent-chain cases that still produced an architecture spec, hand the spe
 
 - "Single agent" is not "no agent" — a single agent still needs a role prompt and skill stack.
 - Platform constraints matter — check if the platform supports parallel agents before designing fan-out.
+- **Scaffold choice is a first-order performance driver.** The same model varies 11+ points across scaffolds (e.g., Opus 4.6: 64.41 on Claude Code vs 53.45 on Codex). When designing architectures, consider scaffold/platform search behavior, retry strategies, and persistence characteristics — not just model capability (AlphaEval 2026, credibility 8/12).
+- **When agents work on related outputs, design cross-agent validation checkpoints.** Independent optimization across agent boundaries produces globally suboptimal results — 26% cost overruns documented in procurement tasks where agents optimized components independently instead of jointly (AlphaEval 2026, credibility 8/12).
 - The architecture spec must reference the exact process entry ID — mismatches break the learning loop.
 - Don't over-architect: 2 agents is almost always better than 5. Combine where boundaries are fuzzy.
 

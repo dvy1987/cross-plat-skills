@@ -13,9 +13,11 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
-  sources: CohnReznick-SoftwareDueDiligence-2025, arXiv-2604.02837-SecureSkills, Euvic-TechDD-Guide, DEBATE-arXiv-2405.09935
+  sources: >
+    CohnReznick-SoftwareDueDiligence-2025, arXiv-2604.02837-SecureSkills, Euvic-TechDD-Guide,
+    DEBATE-arXiv-2405.09935, AlphaEval (Lu et al. 2026, credibility 8/12)
 ---
 
 # Reality Check
@@ -181,6 +183,7 @@ Tell the user:
 
 ## Gotchas
 
+- **Best agent configurations achieve <65% on production benchmarks** (AlphaEval 2026: 94 real-world tasks from 7 companies, top score 64.41/100). Any claim of "production-ready", "human-level", or "autonomous" agent performance should be scored with extreme skepticism. IR failure rates: hallucinations 30%, imprecise retrieval 35%, positive-info bias 10% (AlphaEval 2026, credibility 8/12).
 - Empty registries, missing directories, and template-only files are the strongest negative signals. "Designed but not populated" ≠ "works."
 - README examples that describe what WOULD happen (aspirational flow diagrams) are not evidence of capability. Check for actual execution artifacts.
 - Cross-platform claims require per-platform verification. "Installed everywhere" ≠ "works equally everywhere."

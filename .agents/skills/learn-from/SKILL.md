@@ -12,7 +12,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "2.0"
+  version: "2.1"
   category: meta
 ---
 
@@ -75,12 +75,14 @@ If the source is `docs/learnings/research-learnings.md` or `docs/learnings/chat-
 - **KEEP BOTH**: Add both as named alternatives with `When to use which:` heuristic. Default to current when ambiguous.
 - **PARTIAL**: Apply only the specified subset. Document what was applied and what was explicitly rejected, with reasons.
 
-### Post-Application Rules
+### Post-Application Hardening Cycle
 
-- Bump `metadata.version` on every modified skill
-- **200-line gate**: if over, invoke `compress-skill`; if CORE still over, invoke `split-skill`
-- Run `validate-skills` on every modified/created skill - must score >=10/14
-- Add citation with source, credibility score, and what was applied
+For every modified or newly created skill, after approved edits are applied, run this sequence in order:
+
+1. **Modified-skill security sweep.** Run ALL `secure-*` skills (discover via `ls .agents/skills/secure-*`) on the resulting `SKILL.md` and any new `references/` files created by the change. This is separate from the source-ingestion security scan — it covers the modified skill itself. SAFE only if every security skill returns SAFE. If any returns BLOCKED, revise or revert and stop.
+2. **Version + citation.** Bump `metadata.version`. Add citation with source, credibility score, and what was applied.
+3. **200-line gate.** Check final `SKILL.md` line count. Over 200 → invoke `compress-skill`. If CORE still over 200 or skill has a clean seam → invoke `split-skill`.
+4. **Validation gate.** Run `validate-skills` on every modified/created skill. Must score >=10/14. This runs AFTER any compress/split so the final form is validated.
 
 ---
 
@@ -104,10 +106,10 @@ Accept: URL, file path, pasted content, or in-conversation trigger.
 Invoke the matched sub-skill. It handles: ingestion, credibility assessment, security scan, insight extraction, and skill matching.
 
 ### Step 4 - Apply Shared Protocol
-After sub-skill extracts and matches insights, apply the Shared Application Protocol above. State your recommendation per insight before asking the user to decide.
+After sub-skill extracts and matches insights, present recommendations and get user approval. Once changes are applied, run the mandatory **Post-Application Hardening Cycle** on every modified or created skill before marking the workflow complete.
 
 ### Step 5 - Unified Report
-Present the unified report (see Output Format). If blocked at credibility or security, report why and stop.
+Present the unified report (see Output Format). Include post-apply check results per skill. If blocked at credibility, security, or post-apply security, report why and stop.
 
 ---
 
@@ -115,10 +117,10 @@ Present the unified report (see Output Format). If blocked at credibility or sec
 
 ```
 learn-from (orchestrator)
-|- learn-from-paper   -> secure-* -> universal-skill-creator -> apply-paper-to-project -> validate-skills
-|- learn-from-repo    -> secure-* (esp. repo-ingestion) -> universal-skill-creator -> validate-skills
-|- learn-from-article -> secure-* -> universal-skill-creator -> validate-skills
-\- learn-from-chat    -> validate-skills
+|- learn-from-paper   -> secure-* (source) -> apply -> secure-* (modified skill) -> compress/split -> validate-skills
+|- learn-from-repo    -> secure-* (source+repo-ingestion) -> apply -> secure-* (modified skill) -> compress/split -> validate-skills
+|- learn-from-article -> secure-* (source) -> apply -> secure-* (modified skill) -> compress/split -> validate-skills
+\- learn-from-chat    -> apply -> secure-* (modified skill) -> compress/split -> validate-skills
 ```
 
 ---
@@ -182,4 +184,5 @@ Credibility: [score] | Security: [SAFE/BLOCKED]
 Insights: [N] GOTCHAs, [N] TECHNIQUEs, [N] FAILURE_MODEs, [N] METRICs, [N] CONTRADICTIONs
 Recommendations: [N] APPLY, [N] PARTIAL, [N] SKIP, [N] KEEP CURRENT
 Skills modified: [list] | Created: [list]
+Post-apply: [skill]: security [SAFE/BLOCKED] | resize [none/compress/split] | validate [score]/14
 ```

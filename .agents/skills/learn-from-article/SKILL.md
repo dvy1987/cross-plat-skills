@@ -12,7 +12,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "2.0"
+  version: "2.1"
   category: meta
 ---
 
@@ -74,7 +74,7 @@ Classify production-backed findings using taxonomy from `learn-from`.
 - If only part applies: "Recommend: PARTIAL - apply [X], skip [Y] because [reason]."
 
 ### Step 5 - Match and Apply
-Match insights to existing skills and apply per `learn-from` shared application protocol.
+Match insights to existing skills and apply per `learn-from` shared application protocol, including the mandatory **Post-Application Hardening Cycle** on every modified/created skill: modified-skill security sweep via ALL `secure-*` skills, 200-line gate via `compress-skill` / `split-skill`, then `validate-skills` (≥10/14).
 
 ### Step 6 - Log and Cite
 Citation format:

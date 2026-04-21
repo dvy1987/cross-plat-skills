@@ -12,12 +12,13 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
   sources: >
     arXiv:2306.05685 (MT-Bench LLM-as-Judge), arXiv:2602.08672 (GER-Eval),
     arXiv:2305.17926 (LLMs not fair evaluators), arXiv:2406.07791 (position bias),
-    DeepEval G-Eval, Anthropic eval guide 2026
+    DeepEval G-Eval, Anthropic eval guide 2026,
+    AlphaEval (Lu et al. 2026, credibility 8/12)
 ---
 
 # Eval Judge
@@ -145,6 +146,7 @@ Key differentiator: [what decided it]
 ## Gotchas
 
 - **Length ≠ quality.** Longer responses are systematically rated higher by LLM judges. Actively check: "Would a shorter version with the same content score equally?"
+- **Long-form outputs need internal consistency checks.** Agents produce contradictory statements across sections of long deliverables (e.g., different market size figures on different pages). For any output >1 page, add an internal consistency pass: scan for numeric contradictions, conflicting claims, and logical inconsistencies across sections (AlphaEval 2026, credibility 8/12).
 - **Confident tone ≠ accuracy.** Authoritative-sounding responses get higher scores even when wrong. Always verify factual claims against rubric criteria, not delivery style.
 - **Chain-of-thought improves reliability 15-25%** but also increases token cost. Worth it for quality-critical evals; consider sampling for high-volume pipelines.
 - In pairwise mode, if one output is much longer, the position swap is especially critical — length bias and position bias can compound.

@@ -32,46 +32,13 @@ You are a Skill Router. Given a user request, project state, and conversation co
 
 ## Workflow
 
-### Step 1 — Match Request Against Routing Table
+### Step 1 — Discover Candidate Skills
 
-Compare the user's request against trigger phrases. Find all candidate skills:
+Do NOT use a hardcoded routing table. Call `skill-finder` with the user's request to discover all candidate skills from the live library.
 
-| User says | Route to | Pre-req |
-|-----------|----------|---------|
-| "new feature" / "I have an idea" | `brainstorming` (→ `product-soul` if missing) | — |
-| "product strategy" / "product soul" | `product-soul` | — |
-| "write a PRD" | `prd-writing` | Design spec |
-| "plan implementation" | `implementation-plan` | PRD |
-| "plan this change" / "spec this out" / "create TODO" | `problem-to-plan` | — |
-| "build this" / "implement" | `test-driven-development` | Plan |
-| "technical debt" / "code health" | `technical-debt-audit` | Code exists |
-| "changelog" / "release notes" | `generate-changelog` | Commits exist |
-| "think through this" / "I'm stuck" | `deep-thinking` | — |
-| "stress test this plan" | `adversarial-hat` | Plan/doc |
-| "what could go wrong" / "pre-mortem" | `pre-mortem` | Plan/doc |
-| "architect the agent system" | `agent-system-architecture` | Requirements |
-| "record this decision" | `architectural-decision-log` | Decision made |
-| "set up this project" | `project-setup` | — |
-| "create a skill" | `universal-skill-creator` | — |
-| "what should I do next" | `project-orchestrator` | — |
-| "decompose" / "break this down" / "what steps" | `process-decomposer` | — |
-| "design agent" / "architect this" / "multi-agent" | `agent-builder` | Process entry |
-| "find a skill for" / "which skill handles" | `skill-finder` | — |
-| "what tool" / "is [tool] available" | `tool-finder` | — |
-| "create agent prompt" / "write role prompt" | `create-agent-prompt` | Agent spec |
-| "evaluate setup" / "validate architecture" | `setup-evaluation` | Process + arch spec |
-| "review this code" / "check this PR" | `code-review-crsp` | Code changes |
-| "understand this repo" / "explain architecture" | `codebase-understanding` | — |
-| "learn from" / "extract insights" | `learn-from` | — |
-| "fix this bug" / "debug this" | `debug-and-fix` | — |
-| "evaluate output" / "score response" / "run eval" / "LLM as judge" | `eval-output` | LLM/agent output |
-| "design rubric" / "eval criteria" | `eval-rubric-design` | — |
-| "reality-check" / "evaluate claims" | `reality-check` | — |
-| "deconflict skills" / "check naming" | `skill-deconflict` | — |
-
-If exactly 1 skill matches → return it. Done. Ambiguity = 1.
-If 0 skills match → read all skill descriptions in `.agents/skills/*/SKILL.md` for a broader match.
-If 2+ skills match → proceed to Step 2.
+- **1 candidate** → return it. Done. Ambiguity = 1.
+- **0 candidates** → `skill-finder` found nothing. Return `no-match` to the caller.
+- **2+ candidates** → proceed to Step 2.
 
 ### Step 2 — Score Ambiguity (1–10)
 

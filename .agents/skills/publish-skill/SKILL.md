@@ -14,6 +14,9 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: meta
+  resources:
+    references:
+      - publish-checklist.md
 ---
 
 # Publish Skill

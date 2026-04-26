@@ -17,6 +17,10 @@ metadata:
   version: "1.0"
   category: project-specific
   sources: Marty-Cagan-Product-Strategy, Gibson-Biddle-DHM, Amplitude-North-Star, Shreyas-Doshi, Lenny-Rachitsky
+  resources:
+    references:
+      - discovery-questions.md
+      - product-soul-schema.md
 ---
 
 # Product Soul

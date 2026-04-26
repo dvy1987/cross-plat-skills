@@ -107,37 +107,20 @@ Tell the user:
 
 ```markdown
 # Evaluation Rubric: [Task Name]
-
-## Purpose
-[What this rubric evaluates and what decisions it supports]
-
-## Applicable to
-[Human reviewers / LLM judge / Both]
-
+## Purpose — [what it evaluates, what decisions it supports]
+## Applicable to — [Human / LLM judge / Both]
 ## Hard Gates (pass/fail)
 | Gate | Pass condition | Fail condition |
-|------|---------------|----------------|
 | [name] | [concrete pass] | [concrete fail] |
-
 ## Quality Dimensions
-### [Dimension 1]: [Definition]
+### [Dimension]: [Definition]
 | Score | Description |
-|-------|-------------|
 | 5 | [observable behavior] |
 | 3 | [observable behavior] |
 | 1 | [observable behavior] |
 **Edge cases:** [2-3 ambiguous situations with guidance]
-
-### [Dimension 2]: ...
-
-## Scoring Rules
-- Score each dimension independently
-- Hard gate failure = overall FAIL regardless of dimension scores
-- Do not average scores into a single number without explicit weighting
-- Require justification before each score
-
-## Calibration Notes
-[Known tricky cases, common reviewer disagreements, recommended pilot size]
+## Scoring Rules — independent dimensions, gate failure = FAIL, justify before score, no unweighted averages
+## Calibration Notes — [tricky cases, reviewer disagreements, pilot size]
 ```
 
 ---

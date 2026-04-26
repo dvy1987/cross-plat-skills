@@ -11,12 +11,13 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
   sources: >
     arXiv:2602.08672 (GER-Eval), arXiv:2306.05685 (MT-Bench/LLM-as-Judge),
     Anthropic eval guide 2026, Twine rubric guide 2026,
-    github/awesome-copilot/agentic-eval, DeepEval framework
+    github/awesome-copilot/agentic-eval, DeepEval framework,
+    AlphaEval (Lu et al. 2026, credibility 8/12)
 ---
 
 # Eval Output
@@ -93,6 +94,9 @@ Eval type: [rubric-design / direct-scoring / pairwise / pipeline-design]
 - If the user provides two outputs to compare, route to `eval-judge` in pairwise mode — not two separate direct scoring runs.
 - Rubrics drift over time as tasks and models evolve. Recommend periodic rubric review when eval results change unexpectedly.
 - Self-evaluation (model judging its own output) has known self-enhancement bias. Recommend a different model for judging when possible.
+- **High aggregate scores can mask low business value.** Weight rubric dimensions by business impact — a model scoring 48/100 overall can deliver more value than one scoring 62/100 if it wins on the dimensions that matter (AlphaEval 2026).
+- **Long-form agent outputs contradict themselves.** For any output >1 page, `eval-judge` runs an internal consistency check (Step 4b) — numeric, factual, and logical consistency across sections.
+- **Multi-step agent pipelines need per-step evaluation.** Cascade dependency is the #1 pipeline failure mode. `eval-pipeline` enforces per-step checkpoints before end-to-end eval.
 
 ---
 

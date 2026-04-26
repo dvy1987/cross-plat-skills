@@ -23,7 +23,13 @@ Template:
 ## 2026-04-20 - AlphaEval: Production agent evaluation reveals scaffold dominance, value-score disconnect, and cascade fragility
 - Source: Lu, Xu, Zhang et al. (2026). "AlphaEval: Evaluating Agents in Production". arXiv preprint.
 - Type: paper
-- Credibility: 8/12 (PASS — Moderate). Large author team including Pengfei Liu. arXiv preprint, no peer review. Strong methodology (94 tasks, 7 companies, 4 scaffolds). Recent (2026).
+- Credibility: 8/12 (PASS — Moderate). Breakdown:
+    - Author expertise: 2/2 — large team including Pengfei Liu (established NLP researcher)
+    - Publication venue: 1/2 — arXiv preprint, no peer review yet
+    - Evidence type: 2/2 — production data from 94 tasks across 7 companies
+    - Reproducibility: 1/2 — benchmark described but dataset not publicly released
+    - Recency: 2/2 — 2026, current models and scaffolds
+    - Cross-reference: 0/2 — no independent replication at time of ingestion
 - Security: SAFE (local PDF, text-only, no executable content)
 - Classification: GOTCHA × 3, FAILURE_MODE × 5, TECHNIQUE × 2, METRIC × 2
 - Insights:

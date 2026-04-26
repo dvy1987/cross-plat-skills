@@ -14,6 +14,13 @@ metadata:
   # created: YYYY-MM-DD
   # spec: agentskills.io/specification
   # sources: repos or docs you drew from
+  # resources:                    ← declare L3 resources for progressive disclosure
+  #   references:
+  #     - file.md
+  #   scripts:
+  #     - script.py
+  #   templates:
+  #     - template.md
 # Optional fields:
 # compatibility: Requires Python 3.10+ and git
 # allowed-tools: Bash(git:*) Read Write    ← experimental, Codex/Copilot

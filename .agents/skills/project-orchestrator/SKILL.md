@@ -16,6 +16,11 @@ metadata:
   version: "1.0"
   category: project-specific
   sources: arXiv:2601.02577, Addy-Osmani-Code-Agent-Orchestra, Augment-Intent-orchestration, Cursor-2.4-subagents, Codex-subagent-docs
+  resources:
+    references:
+      - agents-md-refresh-check.md
+      - orchestration-patterns.md
+      - platform-subagent-matrix.md
 ---
 
 # Project Orchestrator

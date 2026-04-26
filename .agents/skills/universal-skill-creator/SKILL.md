@@ -18,6 +18,18 @@ metadata:
   version: "2.1"
   spec: agentskills.io/specification
   sources: anthropics/skills, openai/skills, warpdotdev/oz-skills, agentskills.io, arXiv:2602.12430, arXiv:2603.29919, NeurIPS-2025
+  resources:
+    references:
+      - platform-matrix.md
+      - advanced-patterns.md
+      - github-repo-research.md
+      - research-papers.md
+      - examples.md
+    scripts:
+      - skill_scaffold.py
+    templates:
+      - SKILL-template.md
+      - SKILL-OUTPUTS-template.md
 ---
 
 # Universal Skill Creator
@@ -65,9 +77,13 @@ metadata:
   author: your-name
   version: "1.0"
   category: meta
+  resources:               # declare L3 resources for progressive disclosure
+    references:
+      - file.md
 ---
 ```
 Description formula: `[Domain verb phrase] + [trigger conditions] + [synonyms]`
+Include `resources` in metadata for any skill with `references/`, `scripts/`, or `templates/`. Omit for Atomic tier.
 
 Category rules:
 - `meta` — manages other skills; always global
@@ -89,17 +105,8 @@ Classify every block before finalising. Over 60% of skill bodies in the wild are
 | Output format / schema | Extra examples beyond 2 | — |
 
 ### Step 7 — Size Check and Resize
-```bash
-wc -l .agents/skills/<skill-name>/SKILL.md
-```
-If under 200 lines → proceed to Step 8.
-
-If over 200 lines:
-1. If the excess is mostly BACKGROUND, EDGE_CASE, rationale, or extra examples → invoke `compress-skill` immediately
-2. If the excess is a distinct sub-capability or duplicated sub-workflow → invoke `split-skill`
-3. If unsure → invoke `compress-skill` first; if CORE content still exceeds 200 lines, `compress-skill` must escalate to `split-skill`
-
-Never rely on `split-skill` to compress automatically. `split-skill` verifies line counts after splitting; `compress-skill` owns the compression path.
+Run `wc -l .agents/skills/<skill-name>/SKILL.md`. If ≤200 → Step 8.
+If over 200: (1) excess is BACKGROUND/EDGE_CASE/rationale → `compress-skill`, (2) distinct sub-capability → `split-skill`, (3) unsure → `compress-skill` first, it escalates to `split-skill` if CORE still exceeds 200.
 
 ### Step 8 — Deconflict Name and Triggers
 Invoke `skill-deconflict` in single-skill mode on the new skill. If verdict is RENAME — rename before proceeding. If REVISE — fix trigger overlap or add missing triggers. Only proceed on PASS.
@@ -135,29 +142,10 @@ Read `references/examples.md` for complete worked examples of Atomic and Advance
 
 ## Mandatory Requirements for Every Skill You Create
 
-Every skill created by this skill MUST include two things in its body:
-
-**1. An `## Impact Report` section** (at the end of SKILL.md) that the agent delivers in-chat after the skill runs. The format must be specific to what that skill produces. See `references/examples.md` for examples.
-
-**2. A file-output logging instruction** — if the skill generates any files (markdown docs, PRDs, design docs, reports, configs), it must:
-
-```markdown
-### Log Output
-After creating any file, append an entry to `docs/skill-outputs/SKILL-OUTPUTS.md`
-(create the file and directory if they don't exist):
-
-```markdown
-| YYYY-MM-DD HH:MM | [skill-name] | [file path] | [one-line description] |
-```
-
-Then tell the user:
-> "[File description] saved to `[path]`. Logged in `docs/skill-outputs/SKILL-OUTPUTS.md`."
-```
-
-This applies to all project-level output files — PRDs, design docs, reports, changelogs, generated configs, exported data. It does NOT apply to skill files themselves (those go to `.agents/skills/`, not `docs/skill-outputs/`).
-
----
-**3. Learnings provenance tracking** - if the new skill is created from `docs/learnings/research-learnings.md` or `docs/learnings/chat-learnings.md`, update the source learning entry with the created skill name, skill path, and creation date. Then append that learnings-file update to `docs/skill-outputs/SKILL-OUTPUTS.md` so the provenance is visible in the project log.
+Every skill MUST include:
+1. **`## Impact Report`** section — skill-specific format, delivered in-chat after run. See `references/examples.md`.
+2. **File-output logging** — if the skill generates files, append `| YYYY-MM-DD HH:MM | [skill-name] | [path] | [description] |` to `docs/skill-outputs/SKILL-OUTPUTS.md` and tell the user. Applies to project files only, not skill files.
+3. **Learnings provenance** — if created from `docs/learnings/*.md`, update source entry with skill name, path, date.
 ## Verification Checklist
 - [ ] Starts with `---` on line 1, name matches directory
 - [ ] Description has trigger keywords and action verbs
@@ -167,19 +155,20 @@ This applies to all project-level output files — PRDs, design docs, reports, c
 - [ ] Under 200 lines, `agentskills validate` passes
 - [ ] `## Impact Report` section present at end of SKILL.md
 - [ ] If skill generates files: file-output logging to `docs/skill-outputs/SKILL-OUTPUTS.md` included
+- [ ] If skill has references/scripts/templates: `resources` field in frontmatter metadata
 - [ ] If sourced from `docs/learnings/*.md`: source learning entry updated with created skill provenance
 ---
 
 ## Reference Files
 
-- **`references/platform-matrix.md`**: All platform directory paths and invocation methods. Read when asked "where do I install this?".
-- **`references/advanced-patterns.md`**: XML tags, openai.yaml, Factory frontmatter, parameterized skills, plan-validate-execute, skill stacking. Read for Advanced/System tier.
-- **`references/github-repo-research.md`**: Patterns from anthropics/skills, openai/skills, warpdotdev/oz-skills. Read for community patterns.
-- **`references/research-papers.md`**: arXiv:2602.12430, arXiv:2603.29919 (SkillReducer), NeurIPS 2025. Read for architectural decisions.
-- **`references/examples.md`**: Complete worked examples (Atomic: conventional-commits, Advanced: db-migrate). Read when the user wants to see a full skill output.
-- **`scripts/skill_scaffold.py`**: CLI scaffolder. Run with `--name`, `--tier`, `--platform` flags.
-- **`templates/SKILL-template.md`**: Production-ready cross-platform template. Starting point for all new skills.
-- **`templates/SKILL-OUTPUTS-template.md`**: Template for `docs/skill-outputs/SKILL-OUTPUTS.md`. Copy into any project that uses skills to get automatic output tracking. Skills append to this file whenever they generate project files.
+- **`references/platform-matrix.md`**: Read when asked "where do I install this?"
+- **`references/advanced-patterns.md`**: Read for Advanced/System tier (XML tags, openai.yaml, Factory frontmatter, skill stacking)
+- **`references/github-repo-research.md`**: Read for community patterns
+- **`references/research-papers.md`**: Read for architectural decisions
+- **`references/examples.md`**: Read when user wants a full skill output example
+- **`scripts/skill_scaffold.py`**: CLI scaffolder (`--name`, `--tier`, `--platform`)
+- **`templates/SKILL-template.md`**: Starting point for all new skills
+- **`templates/SKILL-OUTPUTS-template.md`**: Template for project output tracking
 
 ---
 

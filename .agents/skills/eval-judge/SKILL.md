@@ -86,6 +86,14 @@ Rate confidence per dimension (0.0-1.0):
 - **0.3-0.5:** Ambiguous, edge case, or insufficient evidence
 - **<0.3:** Cannot reliably score — flag for human review
 
+### Step 4b — Internal Consistency Check (long-form outputs only)
+
+If the output is >1 page or >500 words, run before final scoring:
+1. **Numeric consistency** — are the same figures cited identically across sections?
+2. **Factual consistency** — do assertions in one section contradict another?
+3. **Logical consistency** — do conclusions follow from the analysis presented?
+Any contradiction found = hard gate FAIL with cited evidence (section, claim, contradiction).
+
 ### Step 5 — Produce Evaluation Report
 
 Use the output format below. Save to `docs/evals/YYYY-MM-DD-<task>-eval.md` if user requests.
@@ -96,49 +104,32 @@ Use the output format below. Save to `docs/evals/YYYY-MM-DD-<task>-eval.md` if u
 
 ```
 === Evaluation Report ===
-Target: [output description]
-Rubric: [rubric name/path]
-Mode: Direct scoring
+Target: [description] | Rubric: [name/path] | Mode: Direct scoring
 
 === Hard Gates ===
 | Gate | Verdict | Evidence |
-|------|---------|----------|
 | [name] | PASS/FAIL | [specific evidence] |
 
 === Dimension Scores ===
-### [Dimension 1] — Score: [N]/[max] (confidence: [0-1])
-Evidence: [specific quotes/observations from the output]
-Reasoning: [how evidence maps to rubric score descriptions]
-Improvement: [one specific fix]
-
-### [Dimension 2] — ...
+### [Dimension] — Score: [N]/[max] (confidence: [0-1])
+Evidence: [quotes/observations] | Reasoning: [maps to rubric] | Improvement: [one fix]
 
 === Summary ===
-Hard gates: [N] pass, [N] fail
-Dimensions: [list scores]
-Lowest-scoring: [dimension] — [why and what to fix]
-Overall verdict: [PASS (all gates pass) / FAIL (gate failure)]
+Gates: [N] pass, [N] fail | Lowest: [dimension] — [fix]
+Verdict: [PASS / FAIL (gate failure)]
 ```
 
 ## Output Format — Pairwise Comparison
 
 ```
 === Pairwise Evaluation ===
-Comparing: [A description] vs [B description]
+Comparing: [A] vs [B]
 
-=== Per-Dimension Comparison ===
 ### [Dimension]
-Pass 1 (A first): Winner [A/B/TIE], confidence [0-1]
-Pass 2 (B first): Winner [A/B/TIE], confidence [0-1]
-Consistent: [yes/no]
-Final: [A/B/TIE], confidence [0-1]
-Reasoning: [evidence-based comparison]
+Pass 1 (A first): [A/B/TIE] [0-1] | Pass 2 (B first): [A/B/TIE] [0-1]
+Consistent: [yes/no] | Final: [A/B/TIE] [0-1] | Reasoning: [evidence]
 
-=== Final Verdict ===
-Winner: [A/B/TIE]
-Confidence: [0-1]
-Position consistency: [N]/[N] dimensions consistent
-Key differentiator: [what decided it]
+=== Verdict: [A/B/TIE] | Confidence: [0-1] | Position consistency: [N]/[N]
 ```
 
 ---
@@ -146,7 +137,6 @@ Key differentiator: [what decided it]
 ## Gotchas
 
 - **Length ≠ quality.** Longer responses are systematically rated higher by LLM judges. Actively check: "Would a shorter version with the same content score equally?"
-- **Long-form outputs need internal consistency checks.** Agents produce contradictory statements across sections of long deliverables (e.g., different market size figures on different pages). For any output >1 page, add an internal consistency pass: scan for numeric contradictions, conflicting claims, and logical inconsistencies across sections (AlphaEval 2026, credibility 8/12).
 - **Confident tone ≠ accuracy.** Authoritative-sounding responses get higher scores even when wrong. Always verify factual claims against rubric criteria, not delivery style.
 - **Chain-of-thought improves reliability 15-25%** but also increases token cost. Worth it for quality-critical evals; consider sampling for high-volume pipelines.
 - In pairwise mode, if one output is much longer, the position swap is especially critical — length bias and position bias can compound.

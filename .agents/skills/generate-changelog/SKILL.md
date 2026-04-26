@@ -14,6 +14,9 @@ metadata:
   version: "1.0"
   category: project-specific
   sources: keepachangelog.com, conventionalcommits.org, agentskills.io
+  resources:
+    references:
+      - changelog-template.md
 ---
 
 # Generate Changelog

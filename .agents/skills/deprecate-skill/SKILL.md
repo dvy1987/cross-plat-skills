@@ -15,6 +15,9 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: meta
+  resources:
+    references:
+      - deprecation-log.md
 ---
 
 # Deprecate Skill

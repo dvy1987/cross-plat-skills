@@ -15,6 +15,10 @@ metadata:
   version: "1.2"
   category: project-specific
   sources: github/awesome-copilot prd, jamesrochabrun/skills prd-generator, agentskills.io
+  resources:
+    references:
+      - metrics-frameworks.md
+      - prd-schemas.md
 ---
 
 # PRD Writing

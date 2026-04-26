@@ -16,6 +16,11 @@ metadata:
   version: "1.0"
   category: project-specific
   sources: agentskills.io, OpenAI-Codex-AGENTS.md, arXiv:2601.20404, GitHub-blog-2500-repos-analysis, Augment-Code-AGENTS.md-guide
+  resources:
+    references:
+      - interview-questions.md
+    templates:
+      - agents-md-template.md
 ---
 
 # Project Setup
@@ -36,7 +41,22 @@ Always keep total AGENTS.md under 150 lines — bloat degrades agent performance
 
 ### Step 1 — Check Existing Context
 
-**Silent scan:** Look for `docs/product-soul.md`, `docs/prd/`, `docs/specs/`, `README.md`, `package.json` / `Cargo.toml` / `pyproject.toml` / `go.mod`, and any existing `AGENTS.md`. Import all discovered context. Ask only about what is missing.
+**1a. Silent scan:** Look for `docs/product-soul.md`, `docs/prd/`, `docs/specs/`, `README.md`, `package.json` / `Cargo.toml` / `pyproject.toml` / `go.mod`, `Makefile`, `Dockerfile`, and any existing `AGENTS.md`. Import all discovered context. Ask only about what is missing.
+
+**1b. Auto-extract commands:** If manifest files exist, extract key commands silently — do not ask the user for information that is already in the repo:
+- `package.json` → read `scripts` for dev, build, test, lint, typecheck
+- `Makefile` → read targets
+- `Cargo.toml` → infer `cargo build`, `cargo test`, `cargo clippy`
+- `pyproject.toml` → infer from `[tool.pytest]`, `[tool.ruff]`, `[scripts]`
+- `go.mod` → infer `go build`, `go test`
+Present extracted commands to the user for confirmation in Step 2 instead of asking them to type commands.
+
+**1c. Detect project structure for multi-file AGENTS.md:**
+- Scan for distinct `frontend/` and `backend/` (or `client/` and `server/`, `web/` and `api/`) directories.
+- **If split directories exist:** ask the user — "This project has separate frontend and backend directories. Want separate AGENTS.md files for each, or one root-level file?"
+- **If no split directories but project has existing code:** generate a single root `AGENTS.md`.
+- **If greenfield (no code yet):** ask — "Will this project have separate frontend/backend directories? If yes, I'll create scoped AGENTS.md files for each."
+Store the decision as `agents_md_mode: single | multi` for Steps 4–6.
 
 ### Step 2 — User Interview (Two Axes)
 
@@ -56,33 +76,41 @@ One question at a time. Stop each axis when you have enough.
 
 Read `references/interview-questions.md` for the full question bank when deeper probing is needed.
 
-### Step 3 — Map Skill Gaps
+### Step 3 — Map Skill Gaps (Dynamic)
 
-Based on the interview, identify which agent-loom fill the user's gaps:
+Based on the interview, identify the user's skill gaps as capability categories (e.g., "security", "testing", "architecture", "product thinking", "release management").
 
-| User Gap | Skills That Fill It |
-|----------|-------------------|
-| Product thinking | `product-soul`, `prd-writing`, `brainstorming` |
-| Architecture | `agent-system-architecture`, `architectural-decision-log` |
-| Security | `secure-skill` family (always included) |
-| Testing | `test-driven-development` |
-| Strategic thinking | `deep-thinking`, `inversion`, `pre-mortem` |
-| Tech debt awareness | `technical-debt-audit` |
-| Planning | `implementation-plan` |
-| Release management | `generate-changelog` |
+For each identified gap:
+1. **Call `skill-finder`** to search the entire installed skill library for skills that address the gap. Do not rely on a hardcoded list — scan what is actually installed.
+2. **If skill-finder finds a match:** map it to the gap.
+3. **If no skill exists for a gap:** ask the user — "No skill covers [gap]. Want me to create one?" If yes, call `universal-skill-creator` to build it before continuing.
+
+Always include the `secure-skill` family regardless of user gaps — security is non-optional.
 
 ### Step 4 — Generate the AGENTS.md
 
-Use `templates/agents-md-template.md` as the scaffold. The generated AGENTS.md must include:
+**4a. Platform detection:** Check which agent platform the user is on (or ask if ambiguous). Tailor output:
+- **Codex / Ampcode** — full format with Orchestration Map and skill routing
+- **Cursor** — use `.cursorrules` conventions; omit skill routing if no agent-loom installed
+- **Copilot** — use `.github/copilot-instructions.md` format if preferred
+- **Generic** — standard AGENTS.md (works everywhere)
+Default to full format if the user has agent-loom skills installed.
 
+**4b. Scaffold:** Use `templates/agents-md-template.md`. Populate **Key Commands** from Step 1b auto-extraction (user confirmed). The generated AGENTS.md must include:
 1. **Project Overview** — one sentence: what, stack, what's non-standard
-2. **Key Commands** — exact build/test/lint commands (file-scoped preferred)
+2. **Key Commands** — from auto-extracted commands (Step 1b), not user-typed
 3. **Project Structure** — only non-obvious parts
 4. **Code Style** — one real snippet showing the preferred pattern
 5. **Non-Obvious Patterns** — counterintuitive decisions with explanations
 6. **Boundaries** — Allowed / Ask First / Never (tuned to user's comfort)
 7. **User Context** — where user is strong (agents defer) vs where agents lead
 8. **Orchestration Map** — phase-based skill routing (see Step 5)
+
+**4c. Multi-file mode** (if `agents_md_mode: multi` from Step 1c):
+- Generate a **root `AGENTS.md`** with project-wide sections: Project Overview, User Context, Orchestration Map, shared Boundaries.
+- Generate **scoped `frontend/AGENTS.md`** and **`backend/AGENTS.md`** (or equivalent) with directory-specific: Key Commands, Code Style, Non-Obvious Patterns, and scoped Boundaries.
+- Each scoped file should reference the root: `See root AGENTS.md for project-wide context.`
+- Keep each file under 150 lines independently.
 
 ### Step 5 — Write the Orchestration Map
 
@@ -94,13 +122,12 @@ Structure as phase-based flow. Customise based on user's skill gaps:
 
 ### Step 6 — Present, Iterate, Save
 
-Show the AGENTS.md. Ask: "Are the boundaries right? Does the Orchestration Map match your workflow? Anything missing?"
+Show the AGENTS.md (all files if multi-file mode). Ask: "Are the boundaries right? Does the Orchestration Map match your workflow? Anything missing?"
 
-Save to project root `AGENTS.md`. If updating existing: show diff, get approval.
+**Single mode:** Save to project root `AGENTS.md`.
+**Multi mode:** Save root `AGENTS.md` + scoped files (e.g., `frontend/AGENTS.md`, `backend/AGENTS.md`). Stage all files together.
 
-```bash
-git add AGENTS.md && git commit -m "docs: add project AGENTS.md via project-setup"
-```
+If updating existing: show diff, get approval.
 
 Append to `docs/skill-outputs/SKILL-OUTPUTS.md`. Tell the user:
 > "AGENTS.md saved. Every agent tool will read this automatically. Re-run `project-setup` after writing a PRD or changing the stack."
@@ -160,7 +187,10 @@ AGENTS.md saved. 127 lines. Orchestration Map covers 5 phases with 8 skills.
 
 ```
 Project setup complete: [project name]
-File saved: AGENTS.md ([line count] lines)
+Platform: [Codex/Ampcode/Cursor/Copilot/Generic]
+Mode: [single | multi]
+Files saved: [list of AGENTS.md paths] ([line count] lines each)
+Commands auto-extracted: [yes/no] from [manifest files]
 User role: [role]
 Skill gaps filled: [list]
 Skills in Orchestration Map: [count] across [phase count] phases

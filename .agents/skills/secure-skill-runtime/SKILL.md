@@ -17,6 +17,9 @@ metadata:
   version: "1.0"
   category: meta
   sources: Snyk-ToxicSkills-2026, arXiv:2604.03081, Stellar-Cyber-2026, OWASP-Agentic-Top10-2026
+  resources:
+    references:
+      - no-go-repos.md
 ---
 
 # Secure Skill — Runtime

@@ -15,6 +15,9 @@ metadata:
   author: dvy1987
   version: "1.0"
   category: meta
+  resources:
+    references:
+      - validation-rubric.md
 ---
 
 # Validate Skills
@@ -186,13 +189,8 @@ P3 universal-skill-creator: add "skill engineer" to description trigger phrases
 
 ## Impact Report
 
-After completing, always deliver the full health report (Step 6 format) and then summarise:
+After completing, deliver the full health report (Step 6 format) and summarise:
 ```
-Validation complete: YYYY-MM-DD
-Skills checked: N
-P0 failures: N (agentskills validate failed)
-Over 200 lines: N
-Average quality score: X/14
-Recommended actions: N (P0: N, P1: N, P2: N, P3: N)
-No files were modified.
+Validation: YYYY-MM-DD | Skills: N | P0: N | >200 lines: N | Avg score: X/14
+Actions: P0: N, P1: N, P2: N, P3: N | No files modified.
 ```

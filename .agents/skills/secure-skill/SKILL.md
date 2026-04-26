@@ -19,6 +19,9 @@ metadata:
   version: "2.0"
   category: meta
   sources: Snyk-ToxicSkills-2026, arXiv:2602.12430, arXiv:2604.03081, OWASP-Agentic-Top10-2026, Vectra-AI-2026
+  resources:
+    references:
+      - threat-patterns.md
 ---
 
 # Secure Skill

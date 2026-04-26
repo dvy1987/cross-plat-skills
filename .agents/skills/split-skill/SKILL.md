@@ -15,6 +15,9 @@ metadata:
   author: dvy1987
   version: "1.1"
   category: meta
+  resources:
+    references:
+      - split-patterns.md
 ---
 
 # Split Skill

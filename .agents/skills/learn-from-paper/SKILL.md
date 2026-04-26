@@ -14,6 +14,9 @@ metadata:
   author: dvy1987
   version: "2.1"
   category: meta
+  resources:
+    references:
+      - credibility-rubric.md
 ---
 
 # Learn From Paper

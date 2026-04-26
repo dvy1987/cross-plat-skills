@@ -16,6 +16,9 @@ metadata:
   version: "1.1"
   category: meta
   sources: SkillReducer arXiv:2603.29919, agentskills.io best practices, Vercel AGENTS.md research
+  resources:
+    references:
+      - compression-theory.md
 ---
 
 # Compress Skill

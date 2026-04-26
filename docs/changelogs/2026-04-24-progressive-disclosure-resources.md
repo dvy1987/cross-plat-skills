@@ -52,7 +52,7 @@ The fix: add a `resources` field to frontmatter metadata that declares every fil
 
 ---
 
-## Writeup — LinkedIn Post
+## Writeup
 
 ---
 

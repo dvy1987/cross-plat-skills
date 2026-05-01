@@ -138,6 +138,11 @@ domain          | specialized, not universally needed      | install only when n
 "reality-check"       → reality-check
 "evaluate claims"     → reality-check
 "deconflict skills"   → skill-deconflict
+"build a frontend"    → frontend-design (orchestrator → design-archetype, design-tokens-craft, icon-craft, design-review)
+"pick a design direction" → design-archetype
+"design tokens for"   → design-tokens-craft
+"design icons"        → icon-craft
+"review this UI"      → design-review
 ```
 
 All other meta and supporting skills are called automatically. See `docs/SKILL-INDEX.md` → Call Graph.

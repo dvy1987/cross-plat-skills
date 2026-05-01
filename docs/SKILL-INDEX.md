@@ -4,7 +4,7 @@ Complete reference for all skills in this repo.
 Agents: read this when deciding which skill to invoke or checking what a skill produces.
 Humans: read this for a full picture of what's available and what each skill outputs.
 
-Last updated: 2026-04-10
+Last updated: 2026-04-30
 
 ---
 
@@ -447,6 +447,59 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 **Output file:** `docs/evals/YYYY-MM-DD-<system>-eval-pipeline.md`
 **Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
 **Impact report:** Maturity stage, evaluator layers, dataset splits, CI integration, cost estimate, file path
+
+---
+
+### `frontend-design`
+**Triggers:** "build a UI", "design a frontend", "build a landing page", "build a dashboard", "design a SaaS interface", "beautify a UI", "redesign this", "make this not look AI-generated", "give this real design polish", "frontend design"
+**What it does:** Orchestrator for the frontend-design suite. Diagnoses the ask (one-shot / full app / refactor / direct sub-skill), routes through `design-archetype` → optional research → `design-tokens-craft` → `icon-craft` → build → `design-review`. Hard-bans defaults (Inter-only, Tailwind grays, purple→pink gradient, Lucide drop-in, centered hero with 2 CTAs, 3-col feature grid) without archetype-grounded justification. Mobile-first, dark-mode-first. Real working code only — no placeholders.
+**Calls:** `design-archetype` (Step 2) → `design-tokens-craft` (Step 4) → `icon-craft` (Step 5) → `design-review` (Step 7). Max 2 review loops before escalating.
+**Output files:** `.design/<feature>/ARCHETYPE.md`, `RESEARCH.md`, `TOKENS.md`, `ICONS.md`, `REVIEW.md`, plus `src/...` build
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**References:** `references/anti-vibecoded-checklist.md` (banned defaults + distinctive moves), `references/build-conventions.md` (mobile-first, motion, a11y, framework conventions), `references/one-shot-flow.md` (compressed flow for posters/single artifacts)
+**Impact report:** Feature, archetype, path taken, sub-skills invoked, anti-vibecoded gates passed, review loops, distinctive moves applied
+
+---
+
+### `design-archetype`
+**Triggers:** "pick an aesthetic", "choose a design direction", "what should this look like", "make this feel like Linear / Stripe / Apple / Duolingo", "give me a design direction", "classify this product visually" — or called by `frontend-design` Step 2
+**What it does:** Sub-skill of `frontend-design`. Picks exactly one archetype from a curated catalog of 12: `b2b-productivity`, `enterprise-trust`, `premium-consumer`, `playful-consumer`, `editorial`, `brutalist-distinctive`, `dev-tool`, `marketing-landing`, `creative-tool` (Leonardo/Midjourney/Runway), `social-feed` (X/Threads/Bluesky), `conversational-ai` (ChatGPT/Claude/Perplexity), `spatial-canvas` (FigJam/Miro/tldraw). Each archetype = typography pair, color logic, motion philosophy, density, icon stance, 3 reference sites, anti-patterns. Scores candidates 0–3 on audience fit / job fit / distinctive fit. Outputs a `feels like X` claim grounded in a real product.
+**Called by:** `frontend-design` (Step 2)
+**Output file:** `.design/<feature>/ARCHETYPE.md`
+**References:** `references/selection-rubric.md` + 12 archetype files in `references/archetypes/`
+**Impact report:** Archetype selected, feels-like reference, top 3 scores, adaptations applied
+
+---
+
+### `design-tokens-craft`
+**Triggers:** "generate design tokens", "create a design system", "set up CSS custom properties", "build a token scale", "design tokens for", "set up a theme" — or called by `frontend-design` Step 4
+**What it does:** Sub-skill of `frontend-design`. Generates archetype-driven semantic tokens (color, typography, spacing, radius, motion, elevation). Hard-bans Tailwind-default palettes (`slate`, `zinc`, `gray`), Inter-only typography, purple→pink gradients, 9-step grayscale dumps, and inverted-lightness dark mode unless archetype demands it. Uses `oklch()` for color definitions. Outputs `tokens.css`, `tokens.ts`, and `TOKENS.md` rationale.
+**Called by:** `frontend-design` (Step 4)
+**Output files:** `src/styles/tokens.css`, `src/styles/tokens.ts`, `.design/<feature>/TOKENS.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**References:** `references/token-recipes.md` (per-archetype starter recipes), `references/typography-pairings.md` (paid + free pairings), `references/banned-palettes.md` (vibecoded tells)
+**Impact report:** Archetype, recipe used, color/type slot counts, banned defaults rejected, files written
+
+---
+
+### `icon-craft`
+**Triggers:** "pick icons", "design an icon set", "customize Lucide / Phosphor / Heroicons", "generate SVG icons", "make icons feel custom", "the icons look generic", "icons for this product" — or called by `frontend-design` Step 5
+**What it does:** Sub-skill of `frontend-design`. Picks ONE icon strategy: `tuned-phosphor`, `custom-svg`, `hand-drawn`, `mixed-metaphor`, or `system-native`. Solves the "Lucide everywhere" vibecoded tell. Matches stroke weight to typography, defines grid/keyline/radius/terminal style, generates SVG component set when archetype demands custom. Bans default Lucide drop-in.
+**Called by:** `frontend-design` (Step 5)
+**Output files:** `src/icons/index.tsx`, `public/icons/*.svg`, `.design/<feature>/ICONS.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**References:** `references/icon-strategies.md` (5 strategies + per-archetype defaults), `references/svg-craft.md` (grid, stroke, optical sizing, terminal style, export rules)
+**Impact report:** Strategy, source, icons inventoried, anti-Lucide-default audit, files written
+
+---
+
+### `design-review`
+**Triggers:** "review this UI", "audit this design", "is this design good", "does this feel like Linear", "design QA", "evaluate visual quality", "check if this looks vibecoded" — or called by `frontend-design` Step 7
+**What it does:** Sub-skill of `frontend-design`. Scores a built UI against its archetype's `feels like X` claim across 10 dimensions (archetype fidelity, anti-vibecoded gates, typography, color, iconography, layout & rhythm, motion, accessibility hard-gate, responsive, distinctive moves). Produces specific, prioritized fixes — never vibes-based feedback. Max 8 findings per pass, max 2 review loops before escalating. Supports paste-screenshot (manual) or Playwright MCP (automated multi-screen capture).
+**Called by:** `frontend-design` (Step 7)
+**Output file:** `.design/<feature>/REVIEW.md` (+ `AUTOMATED-AUDIT.md` if Playwright)
+**References:** `references/review-rubric.md` (0–3 scoring per dimension with anchors + verdict thresholds), `references/playwright-flow.md` (capture matrix + automated checks)
+**Impact report:** Review pass, verdict (SHIP/REVISE), hard gates, top dimension scores, findings raised
 
 ---
 

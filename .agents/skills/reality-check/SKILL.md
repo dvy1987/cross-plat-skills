@@ -17,7 +17,7 @@ metadata:
   category: project-specific
   sources: >
     CohnReznick-SoftwareDueDiligence-2025, arXiv-2604.02837-SecureSkills, Euvic-TechDD-Guide,
-    DEBATE-arXiv-2405.09935, AlphaEval (Lu et al. 2026, credibility 8/12)
+    DEBATE-arXiv-2405.09935, AlphaEval 2026 (credibility 8/12 — see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
 ---
 
 # Reality Check

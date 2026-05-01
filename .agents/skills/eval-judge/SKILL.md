@@ -18,7 +18,7 @@ metadata:
     arXiv:2306.05685 (MT-Bench LLM-as-Judge), arXiv:2602.08672 (GER-Eval),
     arXiv:2305.17926 (LLMs not fair evaluators), arXiv:2406.07791 (position bias),
     DeepEval G-Eval, Anthropic eval guide 2026,
-    AlphaEval (Lu et al. 2026, credibility 8/12)
+    AlphaEval 2026 (credibility 8/12 — see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
 ---
 
 # Eval Judge

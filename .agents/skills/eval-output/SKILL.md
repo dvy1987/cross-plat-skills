@@ -17,7 +17,7 @@ metadata:
     arXiv:2602.08672 (GER-Eval), arXiv:2306.05685 (MT-Bench/LLM-as-Judge),
     Anthropic eval guide 2026, Twine rubric guide 2026,
     github/awesome-copilot/agentic-eval, DeepEval framework,
-    AlphaEval (Lu et al. 2026, credibility 8/12)
+    AlphaEval 2026 (credibility 8/12 — see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
 ---
 
 # Eval Output

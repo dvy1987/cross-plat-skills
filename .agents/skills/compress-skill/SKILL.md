@@ -106,6 +106,17 @@ git commit -m "compress: <skill-name> — <before> → <after> lines, no regress
 
 ---
 
+## Gotchas
+
+- **`secure-*` skills are uncompressable.** Threshold is 180 lines and the only allowed action is `split-skill`. Compression silently removes threat coverage.
+- **Description compression loses triggers silently.** Always test the compressed description against ≥3 sample prompts that activated the original — phrasing changes that drop a trigger word kill routing.
+- **"Move to references/" without a load trigger is invisible.** Every referenced file MUST be referenced from SKILL.md with a specific load condition, or the agent will never read it.
+- **Imperative one-liners ≠ removing context.** Compressing "Ask at least 2 clarifying questions before writing the spec" to "Ask questions" loses the gate. Preserve numbers, thresholds, and MUST/NEVER verbs.
+- **A 200-line skill that lost a hard gate is worse than a 220-line skill that kept it.** When in doubt, restore content and invoke `split-skill`.
+- **LLM-already-knows is a judgment call.** Domain facts that look generic (e.g., "PRDs should be testable") are still skill-specific when they encode the project's discipline. Default to keeping; only delete when the line is unambiguously generic.
+
+---
+
 ## Example
 
 <examples>

@@ -14,7 +14,7 @@ metadata:
   category: project-specific
   sources: >
     agent-loom design spec 2026-04-10, arXiv:2601.02577, Addy-Osmani-Code-Agent-Orchestra,
-    AlphaEval 2026 (credibility 8/12 � see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
+    AlphaEval 2026 (credibility 8/12 � see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
 ---
 
 # Agent Builder
@@ -68,7 +68,7 @@ Update the process entry's `architecture_spec_ref` field to link to this file.
 
 ### Step 5 — Hand Off
 
-If `complexity_class = agent-chain`, invoke `setup-evaluator` with both `process_entry_ref` and `architecture_spec_ref`.
+If `complexity_class = agent-chain`, invoke `setup-evaluation` (the skill; runs from the `setup-evaluator` agent for independence) with both `process_entry_ref` and `architecture_spec_ref`.
 
 - PASS → hand approved setup to `project-orchestrator`
 - FAIL → revise the architecture using the returned issues, then re-run setup evaluation
@@ -131,5 +131,5 @@ Structure: single-agent | multi-agent-sequential | multi-agent-parallel | multi-
 Agents defined: [N]
 Architecture spec: docs/architecture/YYYY-MM-DD-<slug>-arch.md
 Process entry linked: [proc-ID]
-Next: setup-evaluator (if agent-chain) | project-orchestrator
+Next: setup-evaluation (if agent-chain) | project-orchestrator
 ```

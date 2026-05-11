@@ -122,6 +122,18 @@ If the runbook reveals significant engineering work (new events, new flag infras
 
 ---
 
+## Gotchas
+
+- **Exposure event must fire when the variant renders, not when the flag is fetched.** Server-side renders and async surfaces commonly log exposure before the variant actually loads — this guarantees SRM noise and unanalysable results.
+- **`$feature_flag_called` is PostHog's exposure event.** Capturing a custom event without `$feature_flag` and `$feature_flag_response` properties means PostHog's experiment UI cannot match exposures to assignments.
+- **Person-property assignment for B2B accounts is wrong.** Use group-property (account-level) — otherwise users on the same account land in different variants and contaminate the test.
+- **Salt the hash and lock it.** A drifting salt re-randomises mid-test; the same user gets different variants on different sessions, destroying causal interpretation. PostHog does this for you; verify other vendors.
+- **Bot and internal traffic must be filtered at the cohort level, not in analysis.** Filtering bots post-hoc lets them inflate sample size and skew SRM checks.
+- **A 1% ramp without an SRM dry-run is just a slow launch.** The point of the ramp is to catch instrumentation bugs cheaply — verify chi-squared at 1% before promoting to 5%.
+- **Holdout cohort flags must be permanent, not per-test.** Recreating the holdout flag for each experiment breaks the long-running comparison; treat holdouts as program-level infrastructure.
+
+---
+
 ## Output Format
 
 ```

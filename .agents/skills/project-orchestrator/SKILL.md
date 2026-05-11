@@ -65,7 +65,7 @@ Invoke `skill-routing` with the user's request and the project state from Step 1
 - **New complex request:** No process entry → route to `process-decomposer` for triage + decomposition.
 - **Phase recommendation:** `skill-routing` returned `project-orchestrator` for a "what next?" request → recommend based on Step 1.
 
-If `process-decomposer` returns `agent-chain`: wait for `agent-builder` and `setup-evaluator` to complete before proceeding to execution.
+If `process-decomposer` returns `agent-chain`: wait for `agent-builder` and `setup-evaluation` to complete before proceeding to execution.
 
 ### Step 3 — Plan and Present
 

@@ -99,6 +99,18 @@ Use `references/learnings-format.md`. Append a one-paragraph entry to `docs/expe
 
 ---
 
+## Gotchas
+
+- **SRM is the silent killer of trust.** A failed SRM invalidates everything downstream — not "with caveats", entirely. The chi-squared check runs first and is blocking. Phantom wins almost always trace to broken randomisation, not real lift.
+- **"Significant" is forbidden vocabulary for Directional and Instrumentation tests.** Watch for it slipping in via stakeholder summaries; strip it from every readout that wasn't pre-declared Causal with adequate power.
+- **Confidence intervals that exclude zero ≠ a "win" if a guardrail breached.** The decision rule is conjunctive — primary AND guardrails. A primary lift with a guardrail breach is KILL, not "ship with watchlist".
+- **Exposure parity gaps point at instrumentation, not user behaviour.** A 5%+ gap between assigned and exposed is almost always an asynchronous render or flag-fetch-before-render issue. Investigate before reporting metrics, not after.
+- **Novelty effects vanish from short tests.** A 7-day test on a UI change cannot reject novelty — the threat is real but unobservable in the window. If the spec flagged novelty, require Phase-2 holdout monitoring before declaring final ship.
+- **Append to learnings even on SRM-fails and inconclusives.** The cumulative `docs/experiments/learnings.md` is the institutional memory; skipping failed tests builds survivorship bias into future hypothesis generation.
+- **Pre-registered metrics only as headlines.** Discovering a "winner" in segment 7 of variant B is exploratory — interesting, never the ship justification. Tag every post-hoc finding `EXPLORATORY`.
+
+---
+
 ## Output Format
 
 ```

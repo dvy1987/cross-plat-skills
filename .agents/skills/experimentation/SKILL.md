@@ -90,6 +90,17 @@ After a readout produces a winner that graduates to a permanent feature → `prd
 
 ---
 
+## Gotchas
+
+- **A/B is not the universal answer.** Persistent treatments, lifecycle email, recommendations, and notification programs default to **holdouts**. Marketplaces / feeds / scheduling default to **switchbacks**. SEO / content default to **quasi-experiments**. Routing the user to the wrong method is the single biggest avoidable mistake.
+- **Decision class declared up front, never retrofitted.** A Directional test cannot become "Causal" after the fact because the lift looked nice. Once tagged Directional, claims are forever stripped of significance language.
+- **The orchestrator never analyses results itself.** Always route to `experiment-readout`. SRM and exposure-parity checks live there and are mandatory before any metric is reported.
+- **Skipping a stage is allowed, but only with a recorded justification.** If the user wants to launch without a spec ("just a copy tweak"), force a one-line note in the artefact — silent skips break the learnings log later.
+- **Funnel-ROI map is a default, not a rule.** Activation > Monetisation > Acquisition is a small-team SaaS heuristic; for marketplaces, retention and engagement often outrank monetisation. Validate against the user's stage before pushing back.
+- **`reality-check` integration is one-way.** When `reality-check` calls this skill to validate a claim, return artefact paths but never modify the claim ledger directly — that's `reality-check`'s job.
+
+---
+
 ## Output Format
 
 This skill produces no project files directly — children produce all artefacts under `docs/experiments/`. The orchestrator returns:

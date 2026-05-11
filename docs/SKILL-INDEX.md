@@ -4,7 +4,7 @@ Complete reference for all skills in this repo.
 Agents: read this when deciding which skill to invoke or checking what a skill produces.
 Humans: read this for a full picture of what's available and what each skill outputs.
 
-Last updated: 2026-05-02
+Last updated: 2026-05-05
 
 ---
 
@@ -606,6 +606,64 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ---
 
+### `venture-exploration`
+**Triggers:** "explore business ideas", "what business should I start", "should I build this", "is this a good business idea", "I have a startup idea", "evaluate this venture", "model this business", "validate this idea", "Mom Test", "Lean Canvas", "Business Model Canvas", "Value Proposition Canvas", "go/no-go on this idea"
+**What it does:** Orchestrator for the pre-decision business-idea lifecycle. Diagnoses stage (no idea → generate; have idea → model; have model → evaluate; evaluated → validate; surviving idea → handoff) and routes to exactly one child. Holds a binding 5-criteria handoff gate to `product-soul` (named segment, specific JTBD, current alternative, plausible distribution wedge, declared next kill test). Pre-decision suite — once one idea is committed, hands off to `product-soul`, then `brainstorming` → `prd-writing` → `experimentation`.
+**Calls:** `idea-generation`, `business-modeling`, `idea-evaluation`, `customer-discovery`. Downstream: `product-soul`, `brainstorming`, `prd-writing`, `experimentation`, `reality-check`.
+**Output:** No file directly — children produce all artefacts under `docs/ventures/`. Returns lifecycle stage, child invoked, handoff-gate status, next step.
+**References:** `references/routing-table.md` (stage diagnosis + out-of-scope routing + trigger overlap protection), `references/handoff-gate.md` (5-criteria check + override protocol)
+**Impact report:** Stage, child invoked, prerequisites status, handoff gate (N/5), next recommended step, logged route
+
+---
+
+### `idea-generation`
+**Triggers:** "generate business ideas", "give me startup ideas", "what should I build", "I don't know what to build", "ideate ventures", "blank-page idea generation", "find me a startup idea", "explore business opportunities" — or called by `venture-exploration`
+**What it does:** Sub-skill of `venture-exploration`. Generates 5–10 idea candidates from founder/domain context using 2–3 of: pain mining, JTBD interrogation, trend × capability matrix, constraint relaxation, adjacency search, schlep blindness, live-in-the-future, RFS scan. Every card has 7 fields (segment, JTBD, current alternative, why-now, distribution wedge, monetisation, "feels like") and is tagged obvious/non-obvious. Hard-bans "everyone" segments and label-only ideas ("Uber for X" with no JTBD).
+**Called by:** `venture-exploration` (generate path)
+**Calls:** Optional `first-principles`, `socratic` only when stuck.
+**Output file:** `docs/ventures/ideas/YYYY-MM-DD-batch.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**References:** `references/generation-methods.md` (8 methods + selection heuristic), `references/idea-card-template.md` (7-field template), `references/anti-patterns.md` (auto-strike rules)
+**Impact report:** Methods used, candidates produced (struck), non-obvious count, top 3 by rough score, next action
+
+---
+
+### `business-modeling`
+**Triggers:** "model this business", "fill the canvas", "Lean Canvas", "Business Model Canvas", "Value Proposition Canvas", "BMC", "VPC", "design the business model", "what's the business model" — or called by `venture-exploration`
+**What it does:** Sub-skill of `venture-exploration`. Picks ONE primary canvas (Lean default, BMC for revenue/ops, VPC for value-prop fit) and fills it with falsifiable specifics. One segment, top-3 critical assumptions with measurable falsification thresholds, optional VPC appendix. Hard-bans "everyone" segments, generic channels ("SEO/social/content/ads"), and "unfair advantage = AI/data/network effects" without a concrete asset.
+**Called by:** `venture-exploration` (model path)
+**Calls:** `fermi` (when revenue/cost numbers unknown).
+**Output file:** `docs/ventures/models/YYYY-MM-DD-<idea>-canvas.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**References:** `references/canvas-selector.md` (decision tree + stage heuristic), `references/canvas-templates.md` (Lean + BMC + VPC templates), `references/anti-patterns.md` (per-box fluff filter)
+**Impact report:** Canvas chosen, VPC appendix yes/no, boxes filled with specifics, hypothesis-marked boxes, anti-pattern flags, top 3 critical assumptions
+
+---
+
+### `idea-evaluation`
+**Triggers:** "evaluate this idea", "is this a good business idea", "score a startup idea", "screen this idea", "should I build this", "go/no-go on this idea", "kill or pursue", "is this worth pursuing" — or called by `venture-exploration`
+**What it does:** Sub-skill of `venture-exploration`. Scores an unbuilt idea on 11 dimensions (desirability, viability, feasibility, distribution wedge, why-now, founder-market-fit, market size, current alternatives, defensibility, capital intensity, regulatory/ethical risk) and returns a binding GO / ITERATE / KILL verdict. Mandatory composite output: kill criteria (90-day) + next kill test (assumption, method, cost, timeline, owner, success/kill thresholds). Verdict gate trumps composite — KILL on any of: pain-not-painful, no plausible wedge, no why-now, fatal regulatory blocker, SOM below threshold, capital intensity exceeds runway.
+**Called by:** `venture-exploration` (evaluate path)
+**Calls:** `fermi` (SOM sizing), `assumption-mapping` (top 5 critical-unvalidated), optional `pre-mortem` + `adversarial-hat` for high-stakes (>3 mo or >$50k commit).
+**Output file:** `docs/ventures/evaluations/YYYY-MM-DD-<idea>-eval.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**References:** `references/evaluation-rubric.md` (11 dimensions + 1–5 anchors + verdict gate), `references/kill-test-recipes.md` (7 cheap-test methods + thresholds), `references/anti-patterns.md` (vibecoded-business tells)
+**Impact report:** Verdict, composite/55, SOM, top assumptions, anti-pattern flags, next kill test, file path
+
+---
+
+### `customer-discovery`
+**Triggers:** "talk to customers", "validate the problem", "interview users", "Mom Test this", "did real users want it", "synthesize my interviews", "I just talked to N people", "design my interview guide", "run problem interviews" — or called by `venture-exploration`
+**What it does:** Sub-skill of `venture-exploration`. Runs Mom Test–style problem-discovery interviews — designs the guide (30-min structure: context → past behaviour → workaround interrogation → currency → wrap, no pitching, no "would you use this"), coaches live interviews, or synthesizes completed batches. Codes every quote into one of seven categories (FACT, PAIN, CURRENCY, WORKAROUND, OPINION, COMPLIMENT, SOLUTION-TINTED) with explicit verdict weights. Hard-bans pitching, friend/family-only ICP, and treating compliments as validation. Min 5 interviews before any positive verdict; strong disconfirming evidence can kill earlier. Calls `secure-*` before synthesizing any pasted external transcripts.
+**Called by:** `venture-exploration` (validate path), `idea-evaluation` (when next kill test = customer interview)
+**Calls:** `secure-*` skills (mandatory before external transcript synthesis).
+**Output file:** `docs/ventures/discovery/YYYY-MM-DD-<idea>-interviews.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**References:** `references/mom-test-rules.md` (3 core rules + bad→good question rewrites + signal weights), `references/interview-guide-template.md` (recruiting message + 30-min structure + probe banks), `references/synthesis-template.md` (7-code coding scheme + cross-interview aggregation + assumption-update format)
+**Impact report:** Mode (design/coach/synthesize), interviews count, painful-problem reports, currency evidence, verdict (CONFIRMED / WEAKENED / KILLED / NEED-MORE), assumption updates pushed
+
+---
+
 ### `project-orchestrator`
 **Triggers:** "what should I do next", "which skill should I use", "orchestrate this", "run the full workflow", "split into parallel tasks", "coordinate agents", "parallel execution", "task decomposition", "what phase am I in"
 **What it does:** Reads project state (which artefacts exist), classifies the user's request (single-skill / sequential chain / parallel decomposition / phase recommendation), builds an orchestration plan, and executes platform-aware. On Tier 1 platforms (Codex, Claude Code, Cursor, Gemini+Maestro, Replit 4) it spawns parallel subagents with scoped prompts and file boundaries. On Tier 2 platforms (Warp, Copilot Mission Control, Factory.ai) it writes a task plan file for the user to dispatch. On Tier 3 platforms (Bolt.new, VS Code) it executes sequentially. Contains a full skill routing table mapping user intent to the right skill.
@@ -734,6 +792,23 @@ User entry points:
   project-setup            ← "set up this project" / "create an AGENTS.md"
   project-orchestrator     ← "what should I do next" / "orchestrate" / "parallel tasks"
   spec-driven-development  ← "spec-driven development" / "SDD" / "specs-first" / "/specify" / "/plan" / "/analyze"
+  venture-exploration      ← "explore business ideas" / "what should I build" / "evaluate this venture" / "is this a good business idea"
+
+venture-exploration → idea-generation (generate stage)
+                    → business-modeling (model stage)
+                    → idea-evaluation (evaluate stage)
+                    → customer-discovery (validate stage)
+                    → product-soul (handoff after 5/5 gate passes)
+
+idea-evaluation → fermi (SOM sizing, always)
+                → assumption-mapping (top 5 critical-unvalidated, always)
+                → pre-mortem + adversarial-hat (high-stakes, optional)
+
+business-modeling → fermi (when revenue/cost numbers unknown)
+
+customer-discovery → secure-* skills (mandatory before external transcript synthesis)
+
+idea-generation → first-principles, socratic (optional, when stuck)
 
 universal-skill-creator → research-skill (Step 2, always)
                         → split-skill (Step 7, if >200 + seam)

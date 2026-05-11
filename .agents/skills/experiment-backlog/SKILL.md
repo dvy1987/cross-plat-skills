@@ -93,6 +93,17 @@ For the top 1–3 items, recommend the user route to `experiment-spec` to begin 
 
 ---
 
+## Gotchas
+
+- **Feasibility is a binary gate, not an ICE multiplier.** A high-ICE item with insufficient traffic at planned MDE is REJECTED — not "deprioritised". Letting it sit on the backlog wastes attention and creates phantom queues.
+- **ICE inflation.** Self-proposed ideas score themselves 8/9/8. Anchor scoring against past wins where you already know the lift size — recalibrate every quarter.
+- **Retention A/Bs without a holdout are fake.** Retention metrics need a long-running holdout cohort. Reject any retention test that lacks one and surface "fix the holdout first" as a blocking dependency.
+- **Don't replace the backlog file — append.** `docs/experiments/backlog.md` is a living portfolio with status. Replacing it loses the lifecycle history that downstream skills (especially `experiment-readout` learnings) depend on.
+- **Population stability is invisible until it bites.** Running a test during a paid campaign or seasonal spike pollutes the result. Schedule around known marketing or seasonal windows; don't just hope.
+- **"Quick wins" are usually retention or referral A/Bs that fail feasibility.** Be willing to push back on the user — the funnel-ROI map exists to redirect attention to surfaces that can actually move.
+
+---
+
 ## Output Format
 
 ```

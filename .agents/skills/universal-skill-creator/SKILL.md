@@ -12,10 +12,19 @@ description: >
   Also load for skill stacking, skill scoping, skill discovery, parameterized skills,
   skill publishing to GitHub or skills.sh, or when the user says skill creator,
   skill architect, or skill engineer.
+  Also MUST load for plural / suite / batch creation phrasings: "build all skills",
+  "build N skills", "build the planned skills", "build the suite", "implement
+  the suite", "ship the skills", "create these skills", "go ahead build", "go
+  ahead create", "make all of them", "build them all", "now build it", or any
+  post-planning execution phrase that implies authoring one or more SKILL.md
+  files. Hard rule: NEVER write `.agents/skills/<name>/SKILL.md` directly —
+  all skill creation must route through this skill so the Step 8 quality chain
+  (validate-skills → skill-deconflict → library-skill, optional publish-skill)
+  fires automatically.
 license: MIT
 metadata:
   author: dvy1987
-  version: "2.1"
+  version: "2.2"
   spec: agentskills.io/specification
   sources: anthropics/skills, openai/skills, warpdotdev/oz-skills, agentskills.io, arXiv:2602.12430, arXiv:2603.29919, NeurIPS-2025
   resources:
@@ -146,6 +155,21 @@ Every skill MUST include:
 1. **`## Impact Report`** section — skill-specific format, delivered in-chat after run. See `references/examples.md`.
 2. **File-output logging** — if the skill generates files, append `| YYYY-MM-DD HH:MM | [skill-name] | [path] | [description] |` to `docs/skill-outputs/SKILL-OUTPUTS.md` and tell the user. Applies to project files only, not skill files.
 3. **Learnings provenance** — if created from `docs/learnings/*.md`, update source entry with skill name, path, date.
+
+---
+
+## Gotchas
+
+- **NEVER write `.agents/skills/<name>/SKILL.md` directly outside this skill.** Bypassing this entry point skips the Step 8–10 quality chain (deconflict → validate → cross-link). Even after planning, even for "obvious" skills, even for batch builds — re-route through here.
+- **`secure-*` gating is NOT optional and runs twice.** Step 2 scans research INPUTS; Step 9 scans the GENERATED skill (because external patterns can be absorbed without you realising). Skipping either gate is a security incident.
+- **Description triggers must be additive, never replace.** When iterating on an existing skill, only add trigger phrases — removing them silently breaks routing for users whose phrasing matched the deleted trigger.
+- **`metadata.category` must be one of `meta | thinking | project-specific | domain`.** Custom values fail validation. `thinking` is also valid for structured-thinking frameworks even though only the four above are listed in `docs/SKILL-INDEX.md` — check existing thinking skills before forcing a category.
+- **`resources` field must list every reference / script / template** declared under the skill directory. Missing resources = the orchestrator can't find them and the agent can't load them.
+- **Atomic tier first; promote on demand.** Most skills don't need `references/` or `scripts/`. Bloat from "I might need this" hurts routing and token efficiency. The split decision lives in `compress-skill` / `split-skill`, not here.
+- **Skill name must match the directory exactly** — lowercase, hyphens only, 1–64 chars. The `name:` frontmatter and folder name being out of sync silently breaks every cross-link.
+
+---
+
 ## Verification Checklist
 - [ ] Starts with `---` on line 1, name matches directory
 - [ ] Description has trigger keywords and action verbs

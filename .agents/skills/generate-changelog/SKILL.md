@@ -11,7 +11,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
   sources: keepachangelog.com, conventionalcommits.org, agentskills.io
   resources:
@@ -29,6 +29,9 @@ Never just list commit messages — synthesize them into logical groups.
 Never include internal-only changes (e.g., "fixed typo in comment") in a user-facing changelog.
 Never skip the "Breaking Changes" section — it's the most important part.
 Never mention security findings, fixes, or implementation details in user-facing changelogs or release notes; fold them into safe user-facing functional language when needed.
+Never publish a value statement that fails the **Four-Dimension Test** — every user-facing entry MUST answer all four: WHAT changed, WHO benefits, WHY it matters, WHY act now (upgrade/install/clone/try). If you cannot answer one, the entry is incomplete.
+Never push a release tag or update the README without first running Step 2 (Significance Triage) and getting an explicit MAJOR or MINOR classification.
+Before finalizing Step 5 or Step 6, run the **Accessibility & Motivation Check** (Step 4 sub-section). If any item fails, rewrite.
 
 ---
 
@@ -38,7 +41,18 @@ Never mention security findings, fixes, or implementation details in user-facing
 Scan the commit history, PRs, and `docs/skill-outputs/SKILL-OUTPUTS.md`.
 Identify the time range or version tag to summarize.
 
-### Step 2 — Categorize the Changes
+### Step 2 — Significance Triage (MANDATORY GATE)
+Classify the release before drafting. This decides whether README + release push fire.
+
+| Level | Criteria | Triggers README update? | Triggers release push? |
+|---|---|---|---|
+| **MAJOR** | Breaking change, new top-level capability, renamed public surface, ≥5 new features, or any change that alters how a user installs/uses the project | ✅ Yes | ✅ Yes |
+| **MINOR** | New non-breaking feature, ≥3 user-visible improvements, new skill/module added | ✅ Yes (if README mentions the surface area) | ✅ Yes |
+| **PATCH** | Bug fixes, internal refactors, doc tweaks, single small enhancement | ❌ No | ❌ No (batch into next minor) |
+
+State the chosen level explicitly: `Significance: MAJOR | MINOR | PATCH — <one-line justification>`.
+
+### Step 3 — Categorize the Changes
 Use the "Keep a Changelog" standard:
 - **Added:** For new features.
 - **Changed:** For changes in existing functionality.
@@ -47,26 +61,59 @@ Use the "Keep a Changelog" standard:
 - **Fixed:** For any bug fixes.
 - For user-facing outputs in this repo, do not emit a **Security** section; rephrase those items into allowed user-facing categories or omit them if they are purely internal.
 
-### Step 3 — Synthesize the Value
-For each major change, write a one-sentence "Value Statement":
+### Step 4 — Synthesize the Value (Four-Dimension Test)
+For each entry, write a value statement that answers all four dimensions in plain language:
+1. **WHAT** — the concrete change (feature, fix, capability)
+2. **WHO** — which users or roles benefit
+3. **WHY IT MATTERS** — the pain it removes or outcome it unlocks
+4. **WHY NOW** — the reason a user should act now (install, upgrade, clone, or try) based on this change
+
+Format: `**<What>** — <Who benefits> can now <Why it matters>. <Why act now>.`
+
+#### Accessibility & Motivation Check (run for Step 5 changelog copy and Step 6 README copy; pass only if all are true)
+- Opens with a 1-sentence hook, then at most 3 top value statements before details.
+- Uses plain language; remove internal jargon, commit-speak, and unexplained acronyms.
+- Names the user outcome and one concrete CTA: `install`, `upgrade`, `clone`, `try`, or `read docs`.
+- Not a fifth dimension: **WHY NOW** explains relevance; this check makes the copy scannable and action-driving.
+
 - *Instead of:* "Updated auth logic"
-- *Write:* "Added biometric login for faster and more secure authentication."
+- *Write:* "**Biometric login** — mobile users can now sign in with Face ID instead of typing a password, removing the #1 cause of drop-off at sign-in. Upgrade now if your users have complained about login friction."
 
-### Step 4 — Draft the Changelog
-Follow the schema in `references/changelog-template.md`.
-Include:
+### Step 5 — Draft the Changelog
+Follow the schema in `references/changelog-template.md`. Include:
 - **Version & Date** (e.g., [1.2.0] - 2026-04-05).
-- **Executive Summary** (One paragraph on the theme of this release).
-- **Categorized Sections** (Added, Fixed, etc.).
-- **Breaking Changes** (Highlighted at the top).
+- **Significance level** (MAJOR / MINOR / PATCH).
+- **Executive Summary** (One paragraph: the theme + who this release is for + why act now; must pass the Accessibility & Motivation Check).
+- **Breaking Changes** (Highlighted at the top, even if only one).
+- **Categorized Sections** (Added, Fixed, etc.) with Four-Dimension value statements.
 
-### Step 5 — Present and Save
+### Step 6 — Conditional README Update (MAJOR or MINOR only)
+If Significance ≥ MINOR, update `README.md`:
+- Refresh the **What's New / Recent Highlights** section (top of README) with: 1-sentence hook, 1-3 value statements, and a concrete CTA (`install`, `clone`, `upgrade`, `try`); it must pass the Accessibility & Motivation Check.
+- Update any feature lists, install instructions, or capability tables that the release changes.
+- For skill-library structural changes (new/renamed/removed skills), delegate to `library-skill` instead — it owns the skill tables.
+- Append a row to `docs/skill-outputs/SKILL-OUTPUTS.md` for the README update.
+
+### Step 7 — Conditional Release Push (MAJOR or MINOR only)
+If Significance ≥ MINOR, propose the release push. **Always confirm with the user before tagging or pushing** — this is a non-reversible, externally-visible action.
+
+Proposed commands (present, do not auto-run):
+```bash
+git add docs/changelogs/vX.X.X.md README.md docs/skill-outputs/SKILL-OUTPUTS.md
+git commit -m "release: vX.X.X — <theme>"
+git tag -a vX.X.X -m "vX.X.X — <theme>"
+git push origin main --tags
+```
+
+For PATCH releases, skip this step and note: `PATCH — batched into next minor release; no push.`
+
+### Step 8 — Present and Save
 Present the changelog summary in chat.
 
 Save to file: `docs/changelogs/vX.X.X.md`
 Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 ```markdown
-| YYYY-MM-DD HH:MM | generate-changelog | docs/changelogs/vX.X.X.md | Changelog: vX.X.X |
+| YYYY-MM-DD HH:MM | generate-changelog | docs/changelogs/vX.X.X.md | Changelog: vX.X.X (<MAJOR|MINOR|PATCH>) |
 ```
 
 ---
@@ -74,12 +121,13 @@ Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 ## Output Format
 
 **Release Notes / Changelog:**
-1. **Version [X.X.X] - YYYY-MM-DD**
-2. **Summary** (The "Big Idea" of the release)
+1. **Version [X.X.X] - YYYY-MM-DD** + **Significance: MAJOR | MINOR | PATCH**
+2. **Summary** (The "Big Idea" + who this is for + why act now)
 3. **Breaking Changes** (🚨 Must-read for users)
-4. **Added** (New shiny things)
-5. **Fixed** (Bug squashing)
+4. **Added** (New shiny things — each entry passes Four-Dimension Test)
+5. **Fixed** (Bug squashing — each entry passes Four-Dimension Test)
 6. **Changed/Deprecated/Removed** (Maintenance)
+7. **README updated:** yes/no — **Release pushed:** yes/no/awaiting-confirmation
 
 ---
 
@@ -88,6 +136,12 @@ Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 - Agents default to listing every commit verbatim — this produces noise, not a changelog. Group 5-15 related commits into one user-facing change with a value statement.
 - Breaking changes buried under "Changed" get missed by users. They must be the FIRST section with a clear prefix, even if there is only one.
 - Internal refactors, dependency bumps, and CI fixes are not user-facing changes. Omit them from user-facing changelogs entirely — they belong in internal release notes only.
+- Agents tend to default every release to MAJOR. Be honest in Step 2 — most releases are PATCH. Only escalate when the criteria genuinely match.
+- Never run `git push` or `git tag` without explicit user confirmation, even on a MAJOR release. Step 7 proposes; the user disposes.
+- README updates for skill-library structural changes belong to `library-skill`, not here. For all other project surface area, this skill owns the README update.
+- A feature dump with no hook, user outcome, or CTA is accurate but not motivating.
+- Internal jargon, commit-speak, or unexplained acronyms in user-facing copy fail the accessibility bar.
+- README "What's New" text that lists changes without telling readers to install, clone, upgrade, or try is incomplete.
 
 ---
 
@@ -131,8 +185,11 @@ Ready for: release
 After completing, always report:
 ```
 Changelog generated: [version]
+Significance: [MAJOR | MINOR | PATCH]
 Changes categorized: [N]
 Breaking changes found: [N]
-User-facing value statements: [N]
+Four-Dimension value statements: [N]
+README updated: [yes / no / n-a]
+Release push: [proposed-awaiting-confirmation / pushed / skipped-patch]
 Ready for: release / stakeholder-update
 ```

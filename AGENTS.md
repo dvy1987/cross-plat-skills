@@ -109,6 +109,20 @@ If >200 lines → invoke `split-skill` (see `docs/SKILL-INDEX.md` for full decis
 
 ---
 
+## Skill Creation Invariant — Mandatory
+
+**NEVER write `.agents/skills/<name>/SKILL.md` directly.** All skill creation, including suite builds, plural builds, and "go ahead build" execution after a planning phase, MUST route through `universal-skill-creator`. The creator owns the Step 8 auto-chain that runs `validate-skills` → `skill-deconflict` → `library-skill` (and optionally `publish-skill`). Bypassing the creator skips these gates and rots the library.
+
+This applies even when:
+- The agent has already done the research / oracle / planning manually
+- The user said "go ahead build" instead of "create a skill"
+- Multiple skills are being built in one batch
+- The skill body feels obvious or "already designed"
+
+If a SKILL.md write is detected outside `universal-skill-creator`, stop and re-route through it. The trigger phrases for the creator now explicitly cover plural / suite / batch / go-ahead phrasings — there is no ambiguity to rationalise.
+
+---
+
 ## Skill Types (see docs/SKILL-INDEX.md for full details)
 
 ```
@@ -155,6 +169,11 @@ domain          | specialized, not universally needed      | install only when n
 "/clarify" / "resolve clarifications" → feature-spec (clarify mode)
 "/constitution" / "project rules" → project-constitution
 "/analyze" / "cross-check spec vs plan" → spec-crosscheck
+"explore business ideas" / "what should I build" → venture-exploration (orchestrator → idea-generation, business-modeling, idea-evaluation, customer-discovery)
+"generate startup ideas" / "blank-page idea" → idea-generation
+"is this a good business idea" / "evaluate this idea" → idea-evaluation
+"Lean Canvas" / "Business Model Canvas" / "VPC" → business-modeling
+"Mom Test" / "interview users" / "validate the problem" → customer-discovery
 ```
 
 All other meta and supporting skills are called automatically. See `docs/SKILL-INDEX.md` → Call Graph.

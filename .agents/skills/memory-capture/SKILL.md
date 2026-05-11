@@ -42,6 +42,8 @@ You turn useful session context into structured project memory. Capture only wha
 
 ## Capture Template
 
+Use this template only for state, learning, deferred, question, or session captures. Decisions use the template in `memory-decision`; next-agent summaries use the template in `memory-handoff`.
+
 ```markdown
 ## YYYY-MM-DD - <short title>
 Type: state | learning | deferred | question | session

@@ -23,5 +23,5 @@ New agents no longer need to infer prior work from chat fragments or git diffs a
 Global memory is intentionally small: `~/.agent-loom/memories/` is a curated operating manual, not a journal. The suite requires compaction before over-budget writes.
 
 ## Validation
-- Line counts: all new `SKILL.md` files are under 200 lines.
-- `agentskills validate`: not run because the CLI is not installed and no npm package named `agentskills` is available.
+- Line counts: verified via `wc -l .agents/skills/memory*/SKILL.md` — all new SKILL.md files ≤200 lines (largest: `memory` at 101).
+- `agentskills validate`: not run (CLI not installed in this environment).

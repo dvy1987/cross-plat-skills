@@ -170,6 +170,19 @@ Every skill MUST include:
 - [ ] If sourced from `docs/learnings/*.md`: source learning entry updated with created skill provenance
 ---
 
+## Reference Files
+
+- `references/platform-matrix.md` — read when asked "where do I install this?" or when targeting a specific agent platform.
+- `references/advanced-patterns.md` — read for Advanced/System tier (XML tags, openai.yaml, Factory frontmatter, Warp arguments, skill stacking).
+- `references/github-repo-research.md` — read when surveying community SKILL patterns or building from open-source skill libraries.
+- `references/research-papers.md` — read when architectural decisions need grounding in published research.
+- `references/examples.md` — read when the user wants a complete worked Atomic or Advanced skill example.
+- `scripts/skill_scaffold.py` — execute as the CLI scaffolder (`--name`, `--tier`, `--platform`) when bootstrapping a new skill directory.
+- `templates/SKILL-template.md` — copy as the starting point for every new `SKILL.md`.
+- `templates/SKILL-OUTPUTS-template.md` — copy to `docs/skill-outputs/SKILL-OUTPUTS.md` when bootstrapping a project's output log.
+
+---
+
 ## Impact Report
 
 After completing, always report:

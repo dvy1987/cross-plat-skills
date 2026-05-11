@@ -22,10 +22,11 @@ You inspect memory quality and produce an action list. Default is read-only unle
 2. Check target files exist and are referenced by the index.
 3. Check global line budgets and active total size.
 4. Find duplicates, stale entries, contradictions, missing provenance, missing revisit triggers, and unsafe content.
-5. Verify archived/superseded entries are not routed as active.
-6. Produce findings ordered by severity.
-7. Recommend `memory-compact`, `memory-forget`, `memory-decision`, or `memory-capture` as needed.
-8. If user asked to fix, apply one class of fix at a time and log project outputs.
+5. Cross-file overlap: flag any `Confidence: low` decision in `decision-log.md` that is also tracked as a line in `current-state.md` Active Risks. Recommend consolidating in `decision-log.md` and linking from `current-state.md`.
+6. Verify archived/superseded entries are not routed as active.
+7. Produce findings ordered by severity.
+8. Recommend `memory-compact`, `memory-forget`, `memory-decision`, or `memory-capture` as needed.
+9. If user asked to fix, apply one class of fix at a time and log project outputs.
 
 ## Severity
 

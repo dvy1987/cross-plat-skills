@@ -17,7 +17,7 @@ metadata:
     arXiv:2602.08672 (GER-Eval), Twine rubric guide 2026,
     Anthropic eval guide 2026, ICER 2025 rubric paper,
     Google evaluation guidance, NIST AI RMF,
-    AlphaEval 2026 (credibility 8/12 — see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
+    AlphaEval 2026 (credibility 8/12 â€” see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
 ---
 
 # Eval Rubric Design

@@ -18,7 +18,7 @@ metadata:
     Red Hat eval-driven dev 2026, DeepEval framework,
     Arize eval pipelines (AIEWF 2025), NVIDIA NeMo Evaluator,
     NIST AI RMF, OWASP Top 10 LLM 2026,
-    AlphaEval 2026 (credibility 8/12 — see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
+    AlphaEval 2026 (credibility 8/12 â€” see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
 ---
 
 # Eval Pipeline

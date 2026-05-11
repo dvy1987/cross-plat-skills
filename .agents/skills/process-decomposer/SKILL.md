@@ -16,7 +16,7 @@ metadata:
   category: project-specific
   sources: >
     agent-loom design spec 2026-04-10,
-    AlphaEval 2026 (credibility 8/12 — see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
+    AlphaEval 2026 (credibility 8/12 â€” see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
 ---
 
 # Process Decomposer

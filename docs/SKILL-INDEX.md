@@ -304,6 +304,64 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ---
 
+### `memory`
+**Triggers:** "remember this", "save context", "what happened last time", "manage memory", "continue from prior sessions", "update memory", "compact memory", "forget memory"
+**What it does:** Orchestrator for the memory suite. Routes startup context loading, task-specific recall, project memory capture, next-agent handoff, decision logging, global promotion, compaction, audit, and forgetting. Enforces project/global separation: project memory in `docs/memory/`, global memory in `~/.agent-loom/memories/`.
+**Calls:** `memory-startup`, `memory-recall`, `memory-capture`, `memory-handoff`, `memory-decision`, `memory-promote`, `memory-compact`, `memory-audit`, `memory-forget`, `secure-*` when external content is involved.
+**Output:** No files directly; child skills write memory artifacts.
+**Impact report:** Route selected, scope, files read/changed, compaction/security status
+
+### `memory-startup`
+**Triggers:** "start from memory", "load prior context", "what happened last time", "continue from previous session", "restore working context"
+**What it does:** Loads bounded working context for a new agent by reading memory routing and indexes first, then only relevant current state, latest handoff, decisions, deferred items, open questions, and applicable global preferences/rules. Creates missing `docs/memory/` skeleton when needed.
+**Output files:** Optional bootstrap of `docs/memory/` files.
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+
+### `memory-capture`
+**Triggers:** "remember this", "save this learning", "record what happened", "update project memory", "preserve this context"
+**What it does:** Captures durable project memories from session work, debates, debugging discoveries, learned conventions, deferred options, and open questions. Rejects trivial, sensitive, duplicate, or obvious content. Routes cross-project candidates to `memory-promote`.
+**Output files:** Updates `docs/memory/*` and `docs/memory/project-index.md`.
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+
+### `memory-handoff`
+**Triggers:** "handoff", "next agent should know", "save context", "summarize where we are", "switching agents", "memory handoff"
+**What it does:** Writes compact next-agent summaries after meaningful work or before switching tools/sessions. Captures done/debated/decisions/deferred/next steps/revisit triggers without journaling trivial interactions.
+**Output files:** `docs/memory/agent-handoffs.md`, optionally `docs/memory/current-state.md` and `project-index.md`.
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+
+### `memory-decision`
+**Triggers:** "record this decision", "we decided", "decision log", "why did we choose", "revisit this later", "capture rationale"
+**What it does:** Records decisions with rationale, alternatives, assumptions, status, consequences, and concrete revisit triggers. Distinguishes deferred from rejected and offers `architectural-decision-log` when an ADR is warranted.
+**Output files:** `docs/memory/decision-log.md` and `docs/memory/project-index.md`.
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+
+### `memory-recall`
+**Triggers:** "recall decisions about", "find memory about", "resume this task", "what did we decide", "what was deferred"
+**What it does:** Retrieves task-relevant project/global memory without loading the whole store. Reads routing and indexes first, cites source paths, and flags stale or superseded entries.
+**Output:** No files. Cited recall summary in chat.
+
+### `memory-promote`
+**Triggers:** "make this global", "remember across projects", "save this globally", "promote this learning", "global memory"
+**What it does:** Gatekeeper for global memory. Promotes only stable, cross-project, safe, repeatedly useful memories into `~/.agent-loom/memories/`. Enforces strict line budgets and invokes `memory-compact` before over-budget writes.
+**Output files:** Updates `~/.agent-loom/memories/*` and source project provenance.
+
+### `memory-compact`
+**Triggers:** "compact memory", "memory is too big", "global memory over budget", "compress memory", "clean up old memories"
+**What it does:** Reduces memory bloat while preserving decisions, rationale, revisit triggers, and provenance. Global active budgets: user preferences 100 lines, global rules 150, reusable learnings 200, global index 250, active total target 500-700.
+**Output files:** Updates memory files, archives stale entries, logs project file changes.
+
+### `memory-audit`
+**Triggers:** "audit memory", "check memory health", "clean memory", "verify memory quality", "find stale memories"
+**What it does:** Read-only by default. Finds bloat, stale decisions, duplicates, contradictions, unsafe content, missing provenance, broken routing, and over-budget global files. Recommends compact/forget/decision/capture actions.
+**Output:** Audit report in chat unless user asks to apply fixes.
+
+### `memory-forget`
+**Triggers:** "forget this", "delete memory", "remove that preference", "do not remember", "redact sensitive information", "retire stale memory"
+**What it does:** Deletes, redacts, archives, or retires project/global memory. Updates indexes/routing so forgotten memory is not recalled. Redacts secrets instead of archiving them.
+**Output files:** Updates target memory files and indexes; logs project file changes.
+
+---
+
 ### `implementation-plan`
 **Triggers:** "plan a feature", "create a technical roadmap", "break down a PRD into tasks", "design an implementation strategy", "/plan", "/tasks"
 **What it does:** Create a detailed, step-by-step implementation plan for a feature or project. Reads `docs/specs/<slug>-feature-spec.md` first when present (refuses to proceed if status≠Approved). Builds a Requirement Traceability table mapping every FR/NFR/C-N to tasks. Tags each task with the IDs it satisfies — read by `spec-crosscheck`. Supports tasks-only mode (called by `spec-driven-development /tasks`).

@@ -6,6 +6,18 @@ Agent instructions for working in this repo.
 
 ---
 
+## Startup Skill Loading - Mandatory
+
+Before routing or invoking any skill in this repo:
+1. Read `.agents/ROUTING.md` to apply repo skill priority and conflict rules.
+2. Read `docs/SKILL-INDEX.md` to identify the correct skill entry point.
+3. Open the selected `.agents/skills/<name>/SKILL.md` before claiming to use that skill.
+
+Discovering that a skill exists is not enough. A skill is only loaded when its `SKILL.md`
+has been opened and its workflow is being followed.
+
+---
+
 ## What This Repo Is
 
 Cross-platform agent skills (agentskills.io standard). Skills in `.agents/skills/` work across Codex, Ampcode, Claude Code, Warp, Gemini, Copilot, Cursor, Factory.ai, Replit, Bolt.new, VS Code.
@@ -174,6 +186,10 @@ domain          | specialized, not universally needed      | install only when n
 "is this a good business idea" / "evaluate this idea" → idea-evaluation
 "Lean Canvas" / "Business Model Canvas" / "VPC" → business-modeling
 "Mom Test" / "interview users" / "validate the problem" → customer-discovery
+"remember this" / "save context" / "what happened last time" → memory (orchestrator → memory-startup, memory-capture, memory-handoff, memory-decision, memory-recall, memory-promote, memory-compact, memory-audit, memory-forget)
+"handoff" / "next agent should know" → memory-handoff
+"record this decision" / "why did we choose" → memory-decision
+"audit memory" / "compact memory" / "forget this" → memory-audit / memory-compact / memory-forget
 ```
 
 All other meta and supporting skills are called automatically. See `docs/SKILL-INDEX.md` → Call Graph.

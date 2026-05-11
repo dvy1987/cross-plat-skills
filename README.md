@@ -178,6 +178,23 @@ Three categories of skills — **[`docs/SKILL-INDEX.md`](docs/SKILL-INDEX.md)** 
 | [`code-review-crsp`](.agents/skills/code-review-crsp/) | Review code changes against 6 criteria (correctness, completeness, conventions, tests, performance, completeness) with severity-classified findings | No files. Structured review with findings by severity in chat. | "review this code", "check this PR", "code review", "audit this diff" |
 | [`project-orchestrator`](.agents/skills/project-orchestrator/) | Route requests to the right skill, decompose complex work into parallel subagents (platform-aware), manage phase transitions | No files unless parallel plan written to `docs/task-plan.md`. Orchestration plan + routing in chat. | "what should I do next", "orchestrate this", "split into parallel tasks", "which skill should I use" |
 
+#### Memory Suite
+
+Cross-agent continuity without global memory bloat. Project memory lives in `docs/memory/`; global memory lives in `~/.agent-loom/memories/` with strict active size budgets and routing indexes.
+
+| Skill | What it does | Output / Outcome | Trigger phrases |
+|-------|-------------|-----------------|----------------|
+| [`memory`](.agents/skills/memory/) | Orchestrator - routes startup, recall, capture, handoff, decisions, promotion, compaction, audit, and forgetting | Routes to child skills; outputs go to `docs/memory/` or `~/.agent-loom/memories/` | "remember this", "save context", "what happened last time", "manage memory" |
+| [`memory-startup`](.agents/skills/memory-startup/) | Loads bounded working context for a new session by reading routing/index files first | Working-context summary; creates missing `docs/memory/` skeleton when needed | "start from memory", "load prior context", "what happened last time" |
+| [`memory-capture`](.agents/skills/memory-capture/) | Captures durable project memory from work, debates, discoveries, and parked options | Updates `docs/memory/*` + project index + logged | "remember this", "save this learning", "update project memory" |
+| [`memory-handoff`](.agents/skills/memory-handoff/) | Writes compact next-agent summaries after meaningful work or before switching agents/tools | Updates `docs/memory/agent-handoffs.md` + current state + logged | "handoff", "next agent should know", "save context" |
+| [`memory-decision`](.agents/skills/memory-decision/) | Records decisions with rationale, alternatives, assumptions, status, and revisit triggers | Updates `docs/memory/decision-log.md` + logged | "record this decision", "why did we choose", "revisit this later" |
+| [`memory-recall`](.agents/skills/memory-recall/) | Retrieves task-relevant memory without loading the whole store | No files. Cited recall summary in chat | "recall decisions about X", "find memory about this", "resume this task" |
+| [`memory-promote`](.agents/skills/memory-promote/) | Promotes only stable, cross-project, safe memories into strict global memory | Updates `~/.agent-loom/memories/*` and source provenance | "make this global", "remember across projects", "save this globally" |
+| [`memory-compact`](.agents/skills/memory-compact/) | Compresses bloated memory while preserving decisions, rationale, revisit triggers, and provenance | Updates memory files; archives stale entries; logged for project files | "compact memory", "memory is too big", "global memory over budget" |
+| [`memory-audit`](.agents/skills/memory-audit/) | Audits memory for bloat, stale decisions, contradictions, unsafe content, and broken routing | Read-only report unless fixes requested | "audit memory", "check memory health", "clean memory" |
+| [`memory-forget`](.agents/skills/memory-forget/) | Deletes, redacts, archives, or retires memory on request or policy | Updates target memory and indexes; logged for project files | "forget this", "delete memory", "do not remember" |
+
 #### Frontend Design Suite
 
 | Skill | What it does | Output / Outcome | Trigger phrases |

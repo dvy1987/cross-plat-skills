@@ -55,6 +55,10 @@ Note: Prefer file-scoped commands for lint, test, typecheck. Use project-wide bu
 - **Agents lead on:** [skill gaps — agents handle more autonomously]
 - **Working style:** [preferences: small PRs, test-first, review-everything, etc.]
 
+## Memory Checkpoints — Mandatory
+<!-- Include only if memory suite installed and user did not opt out in Axis 1 Q5. -->
+Memory sub-skills auto-fire at producer events — not only when the user asks. Before ending a session, after writing a changelog/ADR/spec/plan, after a major commit (>20 files or breaking), or after creating/significantly editing a skill, the agent MUST consult `~/.agent-loom/skills/memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints and invoke the listed sub-skill. Skipping a checkpoint loses durable context for the next agent.
+
 ## Orchestration Map
 
 ### Phase: Ideation

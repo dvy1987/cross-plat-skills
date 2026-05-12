@@ -59,6 +59,9 @@ Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 | YYYY-MM-DD HH:MM | architectural-decision-log | docs/adr/ADR-NNN-<title-slug>.md | ADR: <title> |
 ```
 
+### Step 6 — Memory Checkpoint (Mandatory)
+Per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints (event: ADR written), invoke `memory-decision` to mirror this ADR into the decision log with rationale, alternatives, and revisit triggers.
+
 ---
 
 ## Output Format

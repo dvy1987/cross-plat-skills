@@ -9,12 +9,25 @@ This is the single source of truth for scoring. The same rubric is referenced by
 ## Frontmatter Checks (before scoring)
 
 These are checked first. Any failure here is a structural issue — fix before scoring.
+Loader-safety failures are P0 — the skill will not load on at least one major agent platform.
 
 | Check | Pass | Fail | Fix |
 |-------|------|------|-----|
+| **Loader: UTF-8 no BOM** | File is valid UTF-8 with no BOM | BOM present, or invalid UTF-8 bytes | `file SKILL.md` shows `UTF-8 Unicode text` (no `with BOM`); re-save as UTF-8 |
+| **Loader: byte 0 is `-`** | First byte of file is `-` (start of `---`) | First byte is whitespace, BOM, or anything else | `head -c 3 SKILL.md` must return `---`; strip leading whitespace/BOM |
+| **Loader: closing `---`** | Frontmatter has both opening and closing `---` fence | Missing closing fence — loader treats whole file as YAML | Add `---` line after last frontmatter field |
+| **Loader: description ≤1024 chars** | Folded `description:` is ≤1024 characters | >1024 — some loaders truncate or reject | Move long trigger catalogs to body, AGENTS.md, or docs/SKILL-INDEX.md |
 | `metadata.category` present | `meta`, `project-specific`, or `domain` | Missing or wrong value | Add field; see `docs/SKILL-INDEX.md` for definitions |
 | `## Impact Report` section | Present at end of SKILL.md | Missing | Add section specific to what this skill produces |
 | File-output logging | Present if skill generates project files | Missing | Add `docs/skill-outputs/SKILL-OUTPUTS.md` append instruction |
+
+### Loader-safety command reference
+```bash
+file .agents/skills/<name>/SKILL.md          # must say "UTF-8 Unicode text" (no "with BOM")
+head -c 3 .agents/skills/<name>/SKILL.md     # must be "---"
+grep -c '^---$' .agents/skills/<name>/SKILL.md  # must be ≥2 (open + close)
+awk '/^description: >/{f=1; next} f && /^[a-z_]+:/{f=0} f' SKILL.md | wc -c   # ≤1024
+```
 
 ---
 

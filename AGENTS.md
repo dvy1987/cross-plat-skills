@@ -18,6 +18,17 @@ has been opened and its workflow is being followed.
 
 ---
 
+## Memory Checkpoints - Mandatory
+
+Memory sub-skills are auto-trigger, not opt-in. Before ending a session, after writing a
+changelog/ADR/spec/plan, after a major commit (>20 files or breaking), or after creating or
+significantly editing a skill, the agent MUST consult `.agents/skills/memory/SKILL.md` →
+Mandatory Auto-Trigger Checkpoints and invoke the listed sub-skill. Skipping a checkpoint
+loses durable context for the next agent. Producer skills reference the same registry in
+their final step — if a producer skill is added, it MUST register a checkpoint there.
+
+---
+
 ## What This Repo Is
 
 Cross-platform agent skills (agentskills.io standard). Skills in `.agents/skills/` work across Codex, Ampcode, Claude Code, Warp, Gemini, Copilot, Cursor, Factory.ai, Replit, Bolt.new, VS Code.

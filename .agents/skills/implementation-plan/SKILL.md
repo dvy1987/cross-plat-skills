@@ -89,6 +89,9 @@ Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 Tell the user:
 > "Implementation plan saved to `docs/plans/YYYY-MM-DD-<slug>-plan.md`. Next: run `spec-driven-development /analyze` (or `spec-crosscheck` directly) to gate-check before implementation."
 
+### Step 6 — Memory Checkpoint (Mandatory)
+Per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints (event: plan written), invoke `memory-capture` with plan slug, phases, and parallel-opportunity hints for next-agent continuity.
+
 ---
 
 ## Gotchas

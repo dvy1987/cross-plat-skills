@@ -116,6 +116,9 @@ Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 | YYYY-MM-DD HH:MM | generate-changelog | docs/changelogs/vX.X.X.md | Changelog: vX.X.X (<MAJOR|MINOR|PATCH>) |
 ```
 
+### Step 9 — Memory Checkpoint (Mandatory)
+Per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints (event: changelog written), invoke `memory-capture` with the changelog summary and any decisions/learnings worth preserving for future agents.
+
 ---
 
 ## Output Format

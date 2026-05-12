@@ -57,6 +57,22 @@ Global active memory is a small curated operating manual, not a journal.
 | "audit memories" | `memory-audit` |
 | "forget this", "delete memory" | `memory-forget` |
 
+## Mandatory Auto-Trigger Checkpoints
+
+Memory sub-skills MUST auto-fire at these producer events — not only when the user explicitly asks. Producer skills reference this table in their final step.
+
+| Trigger event | Auto-invoke | Scope |
+|---|---|---|
+| Changelog written (`docs/changelogs/*.md`) | `memory-capture` | learning + provenance |
+| ADR or architectural-decision written | `memory-decision` | decision-log |
+| Feature-spec, implementation-plan, or PRD written | `memory-capture` | spec provenance |
+| Major commit (>20 files OR breaking change) | `memory-capture` | state |
+| Skill created or significantly edited | `memory-capture` | provenance |
+| Session end signal, long pause, or user says "ending session" | `memory-handoff` | continuity |
+| Pre-commit on large change | `memory-handoff` | continuity |
+
+Skipping a checkpoint loses durable context for the next agent. If multiple checkpoints fire together (e.g. changelog + session end), invoke each sub-skill in the order: capture/decision first, handoff last.
+
 ## Hard Rules
 
 - Never append to global memory when a file is over budget; compact first.

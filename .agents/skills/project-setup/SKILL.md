@@ -73,6 +73,7 @@ One question at a time. Stop each axis when you have enough.
 2. "Which areas do you feel confident handling yourself?"
 3. "Which areas should agents handle more autonomously — security, testing, architecture, DevOps, frontend, database design?"
 4. "Any strong preferences for how agents should work?"
+5. "Want auto-memory checkpoints (handoff on session end, capture on changelog/ADR/spec)?" — default yes if memory suite installed.
 
 **Axis 2 — Project Context.** Core questions (skip what was discovered in Step 1):
 1. "What are you building, in one sentence?"
@@ -111,6 +112,7 @@ Default to full format if the user has agent-loom skills installed.
 6. **Boundaries** — Allowed / Ask First / Never (tuned to user's comfort)
 7. **User Context** — where user is strong (agents defer) vs where agents lead
 8. **Orchestration Map** — phase-based skill routing (see Step 5)
+9. **Memory Checkpoints — Mandatory** — only if memory suite is installed (skill-finder check on `memory`). Template ships with this block; remove only if the user opted out in Axis 1 Q5.
 
 **4c. Multi-file mode** (if `agents_md_mode: multi` from Step 1c):
 - Generate a **root `AGENTS.md`** with project-wide sections: Project Overview, User Context, Orchestration Map, shared Boundaries.
@@ -126,14 +128,7 @@ Structure as phase-based flow. Customise based on user's skill gaps:
 - **Solo founder:** all phases; emphasise pre-mortem and assumption-mapping
 - **Team:** tune boundaries per role if multiple AGENTS.md files needed
 
-If `sdd_mode: on`, add the SDD chain to the Orchestration Map:
-```
-project-constitution → brainstorming (optional design exploration)
-→ feature-spec /specify → feature-spec /clarify → implementation-plan /plan
-→ implementation-plan /tasks → spec-crosscheck /analyze
-→ test-driven-development /implement
-```
-Also add a rule to AGENTS.md: "When behavior changes, update the feature-spec first; the plan and tasks regenerate from it. Never edit code that violates the latest crosscheck PASS."
+If `sdd_mode: on`, add the SDD chain to the Orchestration Map: `project-constitution → brainstorming (optional) → feature-spec /specify → /clarify → implementation-plan /plan → /tasks → spec-crosscheck /analyze → test-driven-development /implement`. Add AGENTS.md rule: "When behavior changes, update feature-spec first; never edit code that violates the latest crosscheck PASS."
 
 ### Step 6 — Present, Iterate, Save
 
@@ -144,8 +139,7 @@ Show the AGENTS.md (all files if multi-file mode). Ask: "Are the boundaries righ
 
 If updating existing: show diff, get approval.
 
-Append to `docs/skill-outputs/SKILL-OUTPUTS.md`. Tell the user:
-> "AGENTS.md saved. Every agent tool will read this automatically. Re-run `project-setup` after writing a PRD or changing the stack."
+Append to `docs/skill-outputs/SKILL-OUTPUTS.md` and tell the user: "AGENTS.md saved. Every agent tool reads it automatically. Re-run `project-setup` after writing a PRD or changing the stack."
 
 ---
 
@@ -160,7 +154,7 @@ When invoked with `UPDATE_ONLY=true`, skip the full interview. Only update secti
 - **Boundaries** — if new protected dirs, "never touch" files, or permission gates emerged from architectural decisions
 
 **What to preserve (never touch in update mode):**
-User Context, Code Style, Project Overview, Boundaries (unless explicitly affected).
+User Context, Code Style, Project Overview, Boundaries (unless explicitly affected), Memory Checkpoints.
 
 **Process:** Read existing AGENTS.md → update only affected sections → show brief diff → commit.
 
@@ -187,11 +181,7 @@ User Context, Code Style, Project Overview, Boundaries (unless explicitly affect
   <example>
     <input>Set up agents for my project. I'm a PM building a React Native habit tracker. Not confident in architecture, testing, or security.</input>
     <output>
-[Interview: 3 questions — PM role, strong in product/UX, gaps in arch+testing+security, RN+Expo+Supabase, solo]
-
-Writing AGENTS.md with: architecture autonomy HIGH, testing autonomy HIGH, product decisions LOW (user is strong). Orchestration Map emphasises implementation-plan and test-driven-development phases. Boundaries: agents can create components and write tests without asking; must ask before architecture changes or schema changes.
-
-AGENTS.md saved. 127 lines. Orchestration Map covers 5 phases with 8 skills.
+Interview: 3 questions — PM, strong in product/UX, gaps in arch+testing+security, RN+Expo+Supabase, solo. AGENTS.md: architecture autonomy HIGH, testing autonomy HIGH, product decisions LOW. Orchestration Map emphasises implementation-plan and test-driven-development. Boundaries: agents create components and tests freely; must ask before architecture or schema changes. Memory checkpoints included (capture on changelog/ADR/spec, handoff on session end). AGENTS.md saved. 127 lines.
     </output>
   </example>
 </examples>
@@ -201,13 +191,10 @@ AGENTS.md saved. 127 lines. Orchestration Map covers 5 phases with 8 skills.
 ## Impact Report
 
 ```
-Project setup complete: [project name]
-Platform: [Codex/Ampcode/Cursor/Copilot/Generic]
-Mode: [single | multi]
-Files saved: [list of AGENTS.md paths] ([line count] lines each)
-Commands auto-extracted: [yes/no] from [manifest files]
-User role: [role]
-Skill gaps filled: [list]
-Skills in Orchestration Map: [count] across [phase count] phases
+Project setup complete: [name] | Platform: [target] | Mode: [single|multi]
+Files saved: [paths] ([line counts]) | Commands auto-extracted from: [manifests]
+User role: [role] | Skill gaps filled: [list]
+Orchestration Map: [skill count] across [phase count] phases
+Memory checkpoints included: [yes/no]
 Logged to: docs/skill-outputs/SKILL-OUTPUTS.md
 ```

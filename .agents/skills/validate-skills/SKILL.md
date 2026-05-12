@@ -47,6 +47,16 @@ for d in .agents/skills/*/; do agentskills validate "$d"; done
 ```
 Any skill that fails validation is a P0 — it must be fixed before anything else.
 
+### Step 2a — Loader-Safety Check (P0)
+A skill that won't load is worse than one that scores poorly. `head -c 3` returning `---` covers both "no BOM" and "byte 0 is `-`":
+```bash
+for f in .agents/skills/*/SKILL.md; do
+  [ "$(head -c 3 "$f")" = "---" ] || echo "byte-0 not '---' (BOM/whitespace): $f"
+  [ "$(grep -c '^---$' "$f")" -ge 2 ] || echo "missing closing ---: $f"
+done
+```
+Any failure = P0 loader-unsafe. See `references/validation-rubric.md` → Frontmatter Checks for description-length check and fix steps.
+
 ### Step 3 — Score Each Skill (7 criteria, 0–2 each)
 
 For each skill, score against the rubric (full details in `references/validation-rubric.md`):
@@ -67,6 +77,7 @@ These flags feed directly into `improve-skills` Step 2b — every flag is a conc
 
 Check every skill for:
 - **Over limit**: SKILL.md > 200 lines → flag with exact count (fix: split-skill or compress-skill)
+- **Loader-unsafe**: BOM present, byte 0 not `-`, missing closing `---`, or description >1024 chars (fix: see `references/validation-rubric.md` Frontmatter Checks; P0 — skill will not load)
 - **Missing category**: `metadata.category` not set to `meta`, `project-specific`, or `domain` (fix: add field, see `docs/SKILL-INDEX.md`)
 - **Missing Impact Report**: no `## Impact Report` section at end of SKILL.md (fix: add section specific to what the skill produces)
 - **Missing file-output logging**: skill generates project files but no `docs/skill-outputs/SKILL-OUTPUTS.md` append instruction (fix: add logging + terminal notification)
@@ -104,6 +115,11 @@ VALIDATION STATUS
 ─────────────────
 ✓ [skill]: passes agentskills validate
 ✗ [skill]: FAILS — [specific error]
+
+LOADER SAFETY (P0)
+──────────────────
+✓ [skill]: UTF-8 no BOM, opens with ---, closes with ---, description ≤1024
+✗ [skill]: BOM detected | byte 0 = 0xEF | missing closing --- | description = 1217 chars
 
 SIZE CHECK
 ──────────
@@ -149,32 +165,19 @@ P3 [skill]: no prune log — invoke prune-skill
   <example>
     <input>validate all skills</input>
     <output>
-Skill Library Health Report
-============================
-Generated: 2026-04-05
-Skills checked: 8
-
-VALIDATION STATUS
-✓ brainstorming, improve-skills, prd-writing, prune-skill
-✓ research-skill, compress-skill, split-skill, universal-skill-creator
-
-SIZE CHECK
-✓ All skills under 200 lines
-
+Skill Library Health Report | Generated: 2026-04-05 | Skills: 8
+VALIDATION: ✓ all 8 pass agentskills validate
+LOADER SAFETY: ✓ all 8 UTF-8 no BOM, frontmatter intact
+SIZE: ✓ all under 200 lines
 QUALITY SCORES
-brainstorming:           13/14 — examples: output slightly truncated
-prd-writing:             12/14 — gotchas: only 1, domain has 3+ known failure modes
-universal-skill-creator: 12/14 — routing: missing "skill engineer" trigger phrase
-improve-skills:          14/14 ✓
-prune-skill:             14/14 ✓
-
-STRUCTURAL ISSUES
-None found.
-
+  brainstorming:           13/14 — examples: output slightly truncated
+  prd-writing:             12/14 — gotchas: only 1, domain has 3+ failure modes
+  universal-skill-creator: 12/14 — routing: missing "skill engineer" trigger
+  others:                  14/14 ✓
 RECOMMENDED ACTIONS
-P2 brainstorming: complete the truncated example output
-P2 prd-writing: add 2 gotchas (discovery skipped for "simple" requests; vague metrics)
-P3 universal-skill-creator: add "skill engineer" to description trigger phrases
+  P2 brainstorming: complete truncated example output
+  P2 prd-writing: add 2 gotchas (discovery skipped; vague metrics)
+  P3 universal-skill-creator: add "skill engineer" trigger phrase
     </output>
   </example>
 </examples>

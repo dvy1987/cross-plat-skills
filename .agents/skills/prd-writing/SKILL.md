@@ -96,6 +96,9 @@ Tell the user:
 Ask: "Which sections need refinement?"
 Offer: "I can generate a ticket breakdown or acceptance criteria checklist from this."
 
+### Step 9 — Memory Checkpoint (Mandatory)
+Per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints (event: PRD written), invoke `memory-capture` with PRD slug, persona, and core user stories for next-agent continuity.
+
 ---
 
 ## Gotchas

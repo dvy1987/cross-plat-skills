@@ -102,26 +102,25 @@ Classify every block before finalising. Over 60% of skill bodies in the wild are
 | Output format / schema | Extra examples beyond 2 | — |
 
 ### Step 7 — Size Check and Resize
-Run `wc -l .agents/skills/<skill-name>/SKILL.md`. If ≤200 → Step 8.
-If over 200: (1) excess is BACKGROUND/EDGE_CASE/rationale → `compress-skill`, (2) distinct sub-capability → `split-skill`, (3) unsure → `compress-skill` first, it escalates to `split-skill` if CORE still exceeds 200.
+Run `wc -l .agents/skills/<skill-name>/SKILL.md`. If ≤200 → Step 8. Over 200: BACKGROUND/EDGE_CASE excess → `compress-skill`; distinct sub-capability → `split-skill`; unsure → `compress-skill` first (it escalates to `split-skill` if CORE still over).
 
 ### Step 8 — Deconflict Name and Triggers
-Invoke `skill-deconflict` in single-skill mode on the new skill. If verdict is RENAME — rename before proceeding. If REVISE — fix trigger overlap or add missing triggers. Only proceed on PASS.
+Invoke `skill-deconflict` in single-skill mode. RENAME → rename before proceeding; REVISE → fix trigger overlap or add missing triggers; only proceed on PASS.
 
 ### Step 9 — Validate and Security-Scan Output
-Invoke `validate-skills` on the new skill. Must score ≥10/14.
-Then invoke ALL `secure-*` skills (discover via `ls .agents/skills/secure-*`) to scan the GENERATED skill — not just the inputs. This catches cases where external patterns were absorbed into the output. BLOCKED = revise and re-scan before committing.
-
+Invoke `validate-skills` (must score ≥10/14), then ALL `secure-*` skills (discover via `ls .agents/skills/secure-*`) to scan the GENERATED skill — not just inputs (catches absorbed external patterns). BLOCKED = revise and re-scan before committing.
 ```bash
 agentskills validate .agents/skills/<skill-name>/
 ```
 
 ### Step 10 — Cross-Link Repair
-Invoke `cross-link-skills` with trigger `created — <skill-name>`. It scans all SKILL.md files for missing or stale cross-references involving the new skill and fixes them.
+Invoke `cross-link-skills` with trigger `created — <skill-name>` to repair missing or stale cross-references involving the new skill.
 
 ### Step 11 — Publish (Optional)
-Ask the user: "Would you like to publish this skill to skills.sh?"
-If yes — invoke `publish-skill`. It handles packaging, README, and registry submission.
+If user opts in, invoke `publish-skill` (handles packaging, README, registry submission).
+
+### Step 12 — Memory Checkpoint (Mandatory)
+Per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints (event: skill created), invoke `memory-capture` with skill name, tier, validate-skills score, and provenance for next-agent continuity.
 
 ---
 

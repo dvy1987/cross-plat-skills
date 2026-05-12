@@ -101,6 +101,9 @@ Append to `docs/skill-outputs/SKILL-OUTPUTS.md`:
 Tell the user:
 > "Feature spec saved (status: <status>). <N> clarifications remain — run me in clarify mode to resolve them, or invoke `spec-driven-development /clarify`."
 
+### Step 6 — Memory Checkpoint (Mandatory)
+Per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints (event: feature-spec written), invoke `memory-capture` with spec slug, status, and key requirements/constraints for next-agent continuity.
+
 ---
 
 ## Workflow — clarify mode

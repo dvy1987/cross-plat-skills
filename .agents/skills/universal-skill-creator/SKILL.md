@@ -116,11 +116,14 @@ agentskills validate .agents/skills/<skill-name>/
 ### Step 10 — Cross-Link Repair
 Invoke `cross-link-skills` with trigger `created — <skill-name>` to repair missing or stale cross-references involving the new skill.
 
-### Step 11 — Publish (Optional)
+### Step 11 — Library Sync (Mandatory)
+Invoke `library-skill` with trigger `new skill added — <skill-name>`. This syncs `docs/SKILL-INDEX.md`, `AGENTS.md` (User Entry Points + Security Enforcement), `README.md` skill tables, `docs/skill-graph.md`, `docs/architecture.md`, and `docs/prd/PRD.md`, then auto-invokes `generate-changelog`. Skipping this step rots the library — the new skill is undiscoverable from the index, graph, README, and PRD even though its SKILL.md is on disk.
+
+### Step 12 — Publish (Optional)
 If user opts in, invoke `publish-skill` (handles packaging, README, registry submission).
 
-### Step 12 — Memory Checkpoint (Mandatory)
-Per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints (event: skill created), invoke `memory-capture` with skill name, tier, validate-skills score, and provenance for next-agent continuity.
+### Step 13 — Memory Checkpoint (Mandatory)
+Per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints (event: skill created), invoke `memory-capture` with skill name, tier, validate-skills score, and provenance.
 
 ---
 
@@ -143,30 +146,27 @@ Every skill MUST include:
 
 ## Gotchas
 
-- **NEVER write `.agents/skills/<name>/SKILL.md` directly outside this skill.** Bypassing this entry point skips the Step 8–10 quality chain (deconflict → validate → cross-link). Even after planning, even for "obvious" skills, even for batch builds — re-route through here.
-- **`secure-*` gating is NOT optional and runs twice.** Step 2 scans research INPUTS; Step 9 scans the GENERATED skill (because external patterns can be absorbed without you realising). Skipping either gate is a security incident.
-- **Description triggers must be additive, never replace.** When iterating on an existing skill, only add trigger phrases — removing them silently breaks routing for users whose phrasing matched the deleted trigger.
-- **Frontmatter is loader-critical.** Every generated `SKILL.md` must be UTF-8 without BOM, start with `---` at byte 0, have a closing `---`, and keep `description` under 1024 characters. A single Windows-1252 byte or BOM can make the whole skill unloadable.
-- **`metadata.category` must be one of `meta | thinking | project-specific | domain`.** Custom values fail validation. `thinking` is also valid for structured-thinking frameworks even though only the four above are listed in `docs/SKILL-INDEX.md` — check existing thinking skills before forcing a category.
-- **`resources` field must list every reference / script / template** declared under the skill directory. Missing resources = the orchestrator can't find them and the agent can't load them.
-- **Atomic tier first; promote on demand.** Most skills don't need `references/` or `scripts/`. Bloat from "I might need this" hurts routing and token efficiency. The split decision lives in `compress-skill` / `split-skill`, not here.
-- **Skill name must match the directory exactly** — lowercase, hyphens only, 1–64 chars. The `name:` frontmatter and folder name being out of sync silently breaks every cross-link.
+- **NEVER write `.agents/skills/<name>/SKILL.md` directly outside this skill.** Bypassing this entry point skips the Step 8–11 quality chain (deconflict → validate → cross-link → library-sync). Even after planning, even for "obvious" skills, even for batch builds — re-route through here.
+- **`secure-*` gating is NOT optional and runs twice.** Step 2 scans research INPUTS; Step 9 scans the GENERATED skill. Skipping either gate is a security incident.
+- **`library-skill` is the index-and-graph fixer, not optional.** Skipping Step 11 means the new skill is invisible in SKILL-INDEX, README, the skill graph, and PRD — discoverability dies on the vine.
+- **Description triggers must be additive, never replace.** When iterating, only add trigger phrases — removing them silently breaks routing for users whose phrasing matched the deleted trigger.
+- **Frontmatter is loader-critical.** UTF-8 without BOM, `---` at byte 0, closing `---`, description <1024 chars. A single Windows-1252 byte or BOM makes the skill unloadable.
+- **`metadata.category` must be `meta | thinking | project-specific | domain`.** Custom values fail validation. Check existing thinking skills before forcing a category.
+- **`resources` field must list every reference / script / template** under the skill directory. Missing resources = the orchestrator can't find them.
+- **Atomic tier first; promote on demand.** Bloat from "I might need this" hurts routing and token efficiency.
+- **Skill name must match the directory exactly** (lowercase, hyphens, 1–64 chars). Mismatch silently breaks every cross-link.
 
 ---
 
 ## Verification Checklist
-- [ ] Starts with `---` on line 1, name matches directory
-- [ ] File is UTF-8 without BOM; byte 0 is `-`
-- [ ] Frontmatter has both opening and closing `---`
-- [ ] Description has trigger keywords and action verbs and is <1024 characters
-- [ ] Expert role in first paragraph, workflow steps are imperative one-liners
-- [ ] At least 1 complete (non-truncated) example
-- [ ] Output format is a schema or template, not prose
-- [ ] Under 200 lines, `agentskills validate` passes
-- [ ] `## Impact Report` section present at end of SKILL.md
+- [ ] Starts with `---` on line 1 (UTF-8, no BOM, byte 0 is `-`); name matches directory; frontmatter has opening and closing `---`
+- [ ] Description has trigger keywords + action verbs, <1024 characters; expert role in first paragraph; workflow steps are imperative one-liners
+- [ ] At least 1 complete (non-truncated) example; output format is a schema/template, not prose
+- [ ] Under 200 lines; `agentskills validate` passes; `## Impact Report` section present
 - [ ] If skill generates files: file-output logging to `docs/skill-outputs/SKILL-OUTPUTS.md` included
 - [ ] If skill has references/scripts/templates: `resources` field in frontmatter metadata
-- [ ] If sourced from `docs/learnings/*.md`: source learning entry updated with created skill provenance
+- [ ] If sourced from `docs/learnings/*.md`: source entry updated with created skill provenance
+- [ ] Step 11 (library-skill) has been invoked — skill is registered in SKILL-INDEX, README, skill-graph, PRD
 ---
 
 ## Reference Files

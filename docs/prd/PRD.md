@@ -1,7 +1,7 @@
 # Product Requirements Document — agent-loom
 
 **Status:** Living Document (source of truth)
-**Last updated:** 2026-04-18
+**Last updated:** 2026-05-13
 **Owner:** Divya
 **Point-in-time PRDs:** See dated files in this directory for historical snapshots.
 
@@ -101,7 +101,7 @@ Structured reasoning frameworks. Always global. Platform-agnostic. Output is alw
 | `fermi` | Decompose unknowns into estimable factors |
 | `ooda` | Boyd's OODA loop for fast-moving situations |
 
-### 4.3 Project-Specific Skills (17)
+### 4.3 Project-Specific Skills (18)
 
 Global install, project-scoped output. Cover the full product and engineering lifecycle.
 
@@ -118,6 +118,7 @@ Global install, project-scoped output. Cover the full product and engineering li
 | `architectural-decision-log` | Captures the "why" behind technical choices |
 | `codebase-understanding` | Maps architecture, traces flows, surfaces hotspots |
 | `project-setup` | Generates tailored AGENTS.md for any project |
+| `retroactive-project-setup` | Bootstraps full agent infrastructure (AGENTS.md + architecture + soul + ADR-0001 + memory seed) over an existing codebase without modifying source code |
 | `project-orchestrator` | Routes requests, decomposes complex work, manages phases |
 | `process-decomposer` | Conversational problem understanding + complexity triage + decomposition |
 | `problem-to-plan` | Produces mini-spec, detailed plan, and TODO.md from a problem description |

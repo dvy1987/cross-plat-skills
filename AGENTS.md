@@ -18,8 +18,21 @@ has been opened and its workflow is being followed.
 
 ---
 
-## Memory Checkpoints - Mandatory
+## Session Lifecycle - Mandatory
 
+### Session Start
+Before doing any new work in a fresh session, the agent MUST:
+1. Invoke `memory-startup` to load **bounded** continuity — `docs/memory/project-index.md`,
+   the latest entry in `docs/memory/agent-handoffs.md`, and only directly relevant decisions.
+   Do NOT read every memory file or the full handoff log.
+2. Run `git status` and `git log --oneline -5` to confirm repo state matches the handoff.
+3. In 2–4 lines, state: (a) recovered context, (b) planned next action, (c) any drift from
+   the handoff. Wait for the user to confirm or redirect before proceeding.
+
+Skip this only if the user explicitly says "fresh start" or "ignore prior context". If no
+prior memory exists, report that briefly and continue.
+
+### During & End of Session
 Memory sub-skills are auto-trigger, not opt-in. Before ending a session, after writing a
 changelog/ADR/spec/plan, after a major commit (>20 files or breaking), or after creating or
 significantly editing a skill, the agent MUST consult `.agents/skills/memory/SKILL.md` →
@@ -164,6 +177,7 @@ domain          | specialized, not universally needed      | install only when n
 "improve skills"      → improve-skills
 "learn from"          → learn-from (orchestrator → learn-from-paper, learn-from-repo, learn-from-article, learn-from-chat)
 "set up this project" → project-setup
+"backfill agent infra" / "retroactive project setup" → retroactive-project-setup
 "what should I do"    → project-orchestrator
 "orchestrate / split" → project-orchestrator
 "break this down"     → process-decomposer (triage + decompose)

@@ -38,13 +38,14 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 ---
 
 ### `improve-skills`
-**Triggers:** "improve all skills", "skill audit", "upgrade skills with latest research", "run improvement pass"
-**What it does:** Full improvement cycle for every skill (or a named subset). Per-skill sequence: prune → fix structural gaps → link check → research → rewrite → resize.
-**Calls:** `validate-skills` (pre-flight) → `deprecate-skill` (if 0–5/14) → `prune-skill` → [fix gaps] → [link check] → `research-skill` → [rewrite] → `split-skill`/`compress-skill` → validate + commit
+**Triggers:** "improve all skills", "skill audit", "upgrade skills with latest research", "run improvement pass" — and `improve-skills TARGET=<skill> [SKIP_RESEARCH=true]` for single-skill fixes (entry point for `learn-from-chat` Step 5 escalation)
+**What it does:** Full improvement cycle for every skill (or a named subset). Per-skill sequence: prune → fix structural gaps → link check → research → rewrite → resize. Ingests `docs/learnings/chat-learnings.md` in Step 1b, triages OPEN entries (IMPLEMENTED/REJECTED/DEFERRED/keep OPEN), and writes terminal statuses back in Step 2l.
+**Modes:** `FULL_PASS` (default — all skills) and `TARGETED` (single skill; optional `SKIP_RESEARCH=true` skips only Step 2e when the change source is already trusted).
+**Calls:** `validate-skills` (pre-flight) → `deprecate-skill` (if 0–5/14) → `prune-skill` → [fix gaps] → [link check] → `research-skill` → [rewrite] → `split-skill`/`compress-skill` → validate + commit → `cross-link-skills`
 **Structural gap fixing (Step 2b):** Automatically fixes every flag from validate-skills — missing category, missing Impact Report, missing file-output logging, stale rubric references, orphaned reference files, missing load triggers.
 **Link check (Step 2d):** Scans the full library for delegation opportunities. Links when output is directly consumable OR when a marginal adaptation to the target skill would make it consumable (allowed if target stays ≤200 lines, core purpose unchanged, existing callers unaffected). Documents new links and any target skill changes in AGENTS.md and commit message.
-**Output:** Modified SKILL.md files for every improved skill
-**Impact report:** Per-skill score deltas, structural gaps fixed, new links created, sources used, all files modified
+**Output:** Modified SKILL.md files for every improved skill; updated statuses in `docs/learnings/chat-learnings.md`.
+**Impact report:** Per-skill score deltas, structural gaps fixed, new links created, sources used, all files modified, chat-learnings closed (count by terminal status).
 
 ---
 
@@ -191,10 +192,10 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ### `learn-from-chat`
 **Triggers:** "we should update the skill for this", "this should be a skill rule", "add this as a gotcha", "the skill should know about this", "update the process for this", "learn from this", "remember this for next time"
-**What it does:** Sub-skill of `learn-from`. Captures learnings from the current conversation — when the agent or user discovers a skill or process needs updating. No external fetch needed. Evidence comes from what happened in the chat. Checks generalizability before modifying skills. Logs to `docs/learnings/chat-learnings.md`.
-**Calls:** `validate-skills` (post-apply)
-**Output:** Chat learning report + proposed changes (diff-style) in chat. Modified SKILL.md files with citations.
-**Impact report:** Learning captured, classification, skills modified, contradictions resolved, logged path
+**What it does:** Sub-skill of `learn-from`. Captures learnings from the current conversation — when the agent or user discovers a skill or process needs updating. No external fetch needed. Evidence comes from what happened in the chat. Checks generalizability before modifying skills. Step 5 escalation gate: append-only edits land here; restructuring or anything that crosses the 200-line gate escalates to `improve-skills TARGET=<skill> SKIP_RESEARCH=true`. Logs every learning to `docs/learnings/chat-learnings.md` with a `Status` field (`OPEN` / `IMPLEMENTED` / `ESCALATED` / `REJECTED` / `DEFERRED`).
+**Calls:** `validate-skills` (post-apply for in-scope edits), `improve-skills TARGET=<skill> SKIP_RESEARCH=true` (Step 5 escalation for restructure-class edits)
+**Output:** Chat learning report + proposed changes (diff-style) in chat. Modified SKILL.md files with citations. Status-tagged entry in `docs/learnings/chat-learnings.md`.
+**Impact report:** Learning captured, classification, status, skills modified, contradictions resolved, logged path
 
 ---
 
@@ -468,6 +469,18 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 **Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
 **Impact report:** User role, skill gaps filled, skills in orchestration map, agent autonomy level per phase
 **References:** `references/interview-questions.md` (full question bank), `templates/agents-md-template.md` (scaffold)
+**See also:** `retroactive-project-setup` for backfilling agent infrastructure onto an existing codebase without modifying source code.
+
+---
+
+### `retroactive-project-setup`
+**Triggers:** "retroactive project setup", "backfill agent infrastructure", "bootstrap agents for this existing repo", "onboard agents to a legacy codebase", "set up agents without touching code", "fill in missing agent context for this project"
+**What it does:** Bootstraps the full agent layer (AGENTS.md, docs/architecture.md, docs/product-soul.md, ADR-0001 backfill, docs/memory/ seed) over an existing, already-coded project — without modifying source code, configs, manifests, lockfiles, or build files. Surveys the repo (manifests, README, CHANGELOG, git history, source samples) to auto-infer everything answerable, then runs a targeted ≤6-question interview only for genuine gaps. Tags low-confidence inferences with `[INFERRED — confirm]`. Enforces a strict write-allowlist; aborts on any out-of-allowlist write. Refuses if a populated AGENTS.md already exists and routes the user to `project-setup UPDATE_ONLY=true` instead.
+**Calls:** `codebase-understanding` (architecture), `product-soul` (in inference mode for soul), `architectural-decision-log` (ADR-0001 synthesis), `project-setup` (with `RETROACTIVE=true` for AGENTS.md), `memory-capture` (checkpoint at end)
+**Output files:** `AGENTS.md`, `docs/architecture.md`, `docs/product-soul.md`, `docs/adr/ADR-0001-initial-backfill.md`, `docs/memory/{project-index,current-state,agent-handoffs,learnings}.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** Repo, mode (single/multi), files created, sub-skills invoked, `[INFERRED — confirm]` tag count, source files modified (always 0), synthetic handoff seeded
+**Pairs with:** `project-setup` (interview-first, new/forward-looking projects) — this is the archaeology-first counterpart for legacy repos.
 
 ---
 
@@ -878,12 +891,15 @@ universal-skill-creator → research-skill (Step 2, always)
 
 improve-skills → validate-skills (Step 1, pre-flight)
                    → deprecate-skill (if score 0–5/14, user decides)
+               → [ingest docs/learnings/chat-learnings.md] (Step 1b, triage OPEN entries)
                → prune-skill (Step 2a, per skill)
-               → research-skill (Step 2c, per skill)
-               → split-skill (Step 2g, if >200 + seam)
-               → compress-skill (Step 2g, if >200, no seam)
+               → research-skill (Step 2e, per skill — skipped when SKIP_RESEARCH=true)
+               → split-skill (Step 2j, if >200 + seam)
+               → compress-skill (Step 2j, if >200, no seam)
                → skill-deconflict (Step 2h, per skill)
+               → cross-link-skills (Step 3)
                → library-skill (after structural changes)
+               → [close chat-learnings] (Step 2l, write terminal statuses back)
 
 project-orchestrator → skill-routing (Step 2, always)
                      → [any skill] (routes based on project state + user intent)
@@ -907,7 +923,9 @@ learn-from-article → secure-* skills (Step 3, mandatory)
                    → universal-skill-creator (Step 6, if creating new skill)
                    → validate-skills (Step 6, post-apply)
 
-learn-from-chat → validate-skills (Step 5, post-apply)
+learn-from-chat → validate-skills (Step 5, post-apply, in-scope path only)
+                → improve-skills TARGET=<skill> SKIP_RESEARCH=true (Step 5 escalation for restructure-class edits or >200-line skills)
+                → [append entry with Status field] (Step 6, docs/learnings/chat-learnings.md)
 
 apply-paper-to-project → architectural-decision-log (optional, for significant changes)
 

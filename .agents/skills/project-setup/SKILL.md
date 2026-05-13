@@ -73,7 +73,7 @@ One question at a time. Stop each axis when you have enough.
 2. "Which areas do you feel confident handling yourself?"
 3. "Which areas should agents handle more autonomously — security, testing, architecture, DevOps, frontend, database design?"
 4. "Any strong preferences for how agents should work?"
-5. "Want auto-memory checkpoints (handoff on session end, capture on changelog/ADR/spec)?" — default yes if memory suite installed.
+5. "Want the full Session Lifecycle block (session-start: load handoff + bounded memory; session-end: auto handoff/capture on producer events)?" — default yes if memory suite installed.
 
 **Axis 2 — Project Context.** Core questions (skip what was discovered in Step 1):
 1. "What are you building, in one sentence?"
@@ -112,7 +112,7 @@ Default to full format if the user has agent-loom skills installed.
 6. **Boundaries** — Allowed / Ask First / Never (tuned to user's comfort)
 7. **User Context** — where user is strong (agents defer) vs where agents lead
 8. **Orchestration Map** — phase-based skill routing (see Step 5)
-9. **Memory Checkpoints — Mandatory** — only if memory suite is installed (skill-finder check on `memory`). Template ships with this block; remove only if the user opted out in Axis 1 Q5.
+9. **Session Lifecycle — Mandatory** — only if memory suite is installed (skill-finder check on `memory`). Covers BOTH session start (invoke `memory-startup`, read latest handoff, confirm git state, state recovered context in 2–4 lines before acting) AND session-end / producer-event checkpoints. Template ships with this block; remove only if the user opted out in Axis 1 Q5.
 
 **4c. Multi-file mode** (if `agents_md_mode: multi` from Step 1c):
 - Generate a **root `AGENTS.md`** with project-wide sections: Project Overview, User Context, Orchestration Map, shared Boundaries.
@@ -145,6 +145,8 @@ Append to `docs/skill-outputs/SKILL-OUTPUTS.md` and tell the user: "AGENTS.md sa
 
 ## Update Mode (called by project-orchestrator)
 
+**Sibling skill — Retroactive Bootstrap:** For an existing, already-coded project with no AGENTS.md, route to `retroactive-project-setup` (surveys repo, infers from manifests/README/git, asks only about gaps, never modifies code). When invoked by that skill, run in `RETROACTIVE=true` mode: skip interview, accept inferred matrix + gap answers, emit AGENTS.md only.
+
 When invoked with `UPDATE_ONLY=true`, skip the full interview. Only update sections of AGENTS.md that are actually affected. The orchestrator calls this only when it detects a change that affects agent behaviour — not for every new artefact.
 
 **What to update (only the sections that changed):**
@@ -154,7 +156,7 @@ When invoked with `UPDATE_ONLY=true`, skip the full interview. Only update secti
 - **Boundaries** — if new protected dirs, "never touch" files, or permission gates emerged from architectural decisions
 
 **What to preserve (never touch in update mode):**
-User Context, Code Style, Project Overview, Boundaries (unless explicitly affected), Memory Checkpoints.
+User Context, Code Style, Project Overview, Boundaries (unless explicitly affected), Session Lifecycle.
 
 **Process:** Read existing AGENTS.md → update only affected sections → show brief diff → commit.
 
@@ -167,11 +169,10 @@ User Context, Code Style, Project Overview, Boundaries (unless explicitly affect
 
 ## Gotchas
 
-- **The interview is the highest-leverage step.** 3 minutes of interview → 10x better AGENTS.md. Never skip it.
+- **The interview is the highest-leverage step.** 3 minutes of interview → 10x better AGENTS.md. Never skip it (except in `RETROACTIVE=true` mode).
 - **Skill gaps are the secret sauce.** A PM's AGENTS.md looks completely different from an engineer's.
 - **150-line limit is non-negotiable.** Longer files increase inference costs 20%+ and reduce success rates.
-- **The Orchestration Map ages fastest.** Re-run after major milestones.
-- **Never auto-generate without the interview.** LLM-generated context files without human input reduce task success ~3%.
+- **Orchestration Map ages fastest; never auto-generate without interview.** Re-run after milestones. LLM-generated context without human input reduces task success ~3%.
 
 ---
 
@@ -181,7 +182,7 @@ User Context, Code Style, Project Overview, Boundaries (unless explicitly affect
   <example>
     <input>Set up agents for my project. I'm a PM building a React Native habit tracker. Not confident in architecture, testing, or security.</input>
     <output>
-Interview: 3 questions — PM, strong in product/UX, gaps in arch+testing+security, RN+Expo+Supabase, solo. AGENTS.md: architecture autonomy HIGH, testing autonomy HIGH, product decisions LOW. Orchestration Map emphasises implementation-plan and test-driven-development. Boundaries: agents create components and tests freely; must ask before architecture or schema changes. Memory checkpoints included (capture on changelog/ADR/spec, handoff on session end). AGENTS.md saved. 127 lines.
+Interview: 3 questions — PM, strong in product/UX, gaps in arch+testing+security, RN+Expo+Supabase, solo. AGENTS.md: architecture autonomy HIGH, testing autonomy HIGH, product decisions LOW. Orchestration Map emphasises implementation-plan and test-driven-development. Boundaries: agents create components and tests freely; must ask before architecture or schema changes. Session Lifecycle block included (start: memory-startup + handoff + git check; end: capture on changelog/ADR/spec, handoff on session end). AGENTS.md saved. 127 lines.
     </output>
   </example>
 </examples>
@@ -195,6 +196,6 @@ Project setup complete: [name] | Platform: [target] | Mode: [single|multi]
 Files saved: [paths] ([line counts]) | Commands auto-extracted from: [manifests]
 User role: [role] | Skill gaps filled: [list]
 Orchestration Map: [skill count] across [phase count] phases
-Memory checkpoints included: [yes/no]
+Session Lifecycle block included: [yes/no]
 Logged to: docs/skill-outputs/SKILL-OUTPUTS.md
 ```

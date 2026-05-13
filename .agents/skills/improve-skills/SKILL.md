@@ -7,11 +7,13 @@ description: >
   "improve all skills", "update the skill library", "skill audit", or "run an
   improvement pass". Applies live domain research, fixes structural gaps, checks
   for skill linking opportunities, then rewrites and resizes each skill.
-  All skills are in scope including meta skills.
+  Supports TARGETED mode (`TARGET=<skill> [SKIP_RESEARCH=true]`) for single-skill
+  fixes — used by `learn-from-chat` Step 5 escalation. All skills are in scope
+  including meta skills.
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.2"
+  version: "1.3"
   category: meta
   sources: arXiv:2602.12430, arXiv:2603.29919, agentskills.io best practices
 ---
@@ -20,6 +22,11 @@ metadata:
 
 You are a Senior AI Skill Engineer running a systematic improvement pass over a skill library. For each skill: prune → fix gaps → link → research → rewrite → resize. Compression without improved quality is failure. All skills are in scope including meta skills.
 
+## Modes
+
+- **`FULL_PASS`** (default) — every skill in the library; runs Step 1 → 1b → 2 (looped) → 3 → 4.
+- **`TARGETED`** — invoked as `improve-skills TARGET=<skill> [SKIP_RESEARCH=true]`. Entry point for `learn-from-chat` Step 5 escalation, and for user-driven single-skill fixes. Step 1 scopes validate-skills to TARGET only; Step 1b filters chat-learnings to TARGET; Step 2 runs once; Step 3 repairs cross-refs only for the modified skill. `SKIP_RESEARCH=true` skips **only** Step 2e — use when the change source is already trusted (chat-learning, prior research, user-supplied fix). Never skip 2b, 2h, 2j, 2k, 2l.
+
 ## Hard Rules
 
 **Improve before compressing.** Compressing a weak skill produces a smaller weak skill.
@@ -27,6 +34,8 @@ You are a Senior AI Skill Engineer running a systematic improvement pass over a 
 **Split before compressing.** Check for seams and duplication before trimming prose.
 
 **Fix structural gaps before rewriting.** Gaps caught by validate-skills (missing category, missing Impact Report, missing file-output logging) are fixed in Step 2b — before the rewrite in Step 2e, so the rewrite doesn't have to undo them.
+
+**Chat learnings are an input, not a mandate.** `docs/learnings/chat-learnings.md` is consumed in Step 1b. Apply discretion — not every OPEN entry must land in a skill. Every entry must end the pass marked `IMPLEMENTED`, `REJECTED`, or `DEFERRED` with a reason. Silent skipping is a failure.
 
 ---
 
@@ -40,6 +49,17 @@ Invoke `validate-skills` across the full library. Use the report to:
 - Flag any skills scoring 0–5/14 as `deprecate-skill` candidates (present to user, don't auto-deprecate)
 
 Report the queue with scores and structural flags. Ask for confirmation before starting.
+
+### Step 1b — Ingest Chat Learnings
+
+Read `docs/learnings/chat-learnings.md` (canonical log of chat-discovered learnings). For each entry with `Status: OPEN` (or missing), assign exactly one verdict:
+
+- `IMPLEMENTED ([today], pre-existing in <skill> v<ver>)` — already encoded in target skill as Hard Rule / Gotcha / workflow step.
+- `REJECTED (<reason>)` — not generalizable; project- or context-specific.
+- `DEFERRED (<reason>)` — target skill not in queue, or needs design work first.
+- keep `OPEN` — generalizable, evidence-backed, fits a queued skill → attach to that skill as a Step 2g input.
+
+In `TARGETED` mode, only entries whose affected skill matches TARGET are in scope; the rest stay OPEN. Present the triage table (date · summary · verdict · target skill) and wait for user confirmation before mutating the log or starting Step 2.
 
 ### Step 2 — Per-Skill Improvement Cycle
 
@@ -81,12 +101,13 @@ BACKGROUND and EDGE_CASE move to `references/` with specific load triggers.
 
 **2g — Rewrite in priority order**
 1. Fix routing — add missing trigger phrases
-2. Add gotchas from research
-3. Sharpen workflow — imperative one-liners, MUST/NEVER
-4. Replace synthetic examples with realistic ones
-5. Tighten output format schema
-6. Move BACKGROUND to `references/background.md`
-7. Bump `metadata.version`
+2. Merge any chat-learnings queued for this skill in Step 1b into the matching section (GOTCHA → Gotchas, FAILURE_MODE → Hard Rules or Gotchas, TECHNIQUE → Workflow). Cite: `Chat learning [YYYY-MM-DD]`.
+3. Add gotchas from research
+4. Sharpen workflow — imperative one-liners, MUST/NEVER
+5. Replace synthetic examples with realistic ones
+6. Tighten output format schema
+7. Move BACKGROUND to `references/background.md`
+8. Bump `metadata.version`
 
 **2h — Deconflict Name and Triggers**
 Invoke `skill-deconflict` in single-skill mode. If RENAME or REVISE verdict, apply fixes before proceeding. Report findings in the per-skill output.
@@ -107,11 +128,14 @@ agentskills validate .agents/skills/<skill>/
 git commit -m "improve: <skill> — <before>/14 → <after>/14\n\n- [change]\nSources: [source]"
 ```
 
+**2l — Close Chat Learnings**
+For every chat-learning entry merged into this skill in 2g, edit its entry in `docs/learnings/chat-learnings.md`: change `Status: OPEN` → `Status: IMPLEMENTED ([YYYY-MM-DD], <skill> v<new-version>)`. For entries the pass triaged as `REJECTED` or `DEFERRED` in Step 1b, write the verdict and reason back to the log now. Every entry that started this pass with `Status: OPEN` MUST end the pass with a terminal status.
+
 ### Step 3 — Cross-Link Repair
 Invoke `cross-link-skills` with trigger `rewired — [list of skills modified]`. It scans all SKILL.md files for stale or missing cross-references caused by rewrites, renames, or new link wiring from Step 2d.
 
 ### Step 4 — Library Summary
-Report scores, structural gaps fixed, new links created, cross-references repaired, sources used, files modified.
+Report scores, structural gaps fixed, new links created, cross-references repaired, sources used, files modified, and chat-learnings closed (count by terminal status).
 
 ---
 
@@ -121,6 +145,8 @@ Report scores, structural gaps fixed, new links created, cross-references repair
 - Description rewrites must preserve all existing trigger phrases — only add, never remove.
 - Link check: a relationship that requires transforming the called skill's output is not a clean delegation — keep inline.
 - Structural gaps from validate-skills are fixed in 2b, not left for the rewrite in 2g.
+- Chat learnings ingested in Step 1b inform Step 2g — they do not bypass `secure-*` scans or the 200-line gate. A learning that can't fit is `DEFERRED`, not crammed.
+- Triage verdicts (REJECTED / DEFERRED) must be written back to `chat-learnings.md` in the same pass — leaving them OPEN re-surfaces them next cycle.
 
 ---
 
@@ -136,23 +162,10 @@ Pre-flight validate-skills report:
   research-skill: 12/14 | structural: none
 Queue confirmed (all skills, lowest score first).
 
-prd-writing (1):
-  2a Prune: 1 stale CoT instruction removed (Wharton GAIL 2025)
-  2b Gaps: none
-  2c Score: 9/14
-  2d Link check: prd-writing Step 3 (discovery) overlaps with brainstorming output
-    → brainstorming already produces docs/specs/ — prd-writing should read that first
-    → Already wired: "reads brainstorming design docs as foundation when available" ✓
-    → No new link needed
-  2e Research: 2 new gotchas, 1 workflow improvement
-  2g Rewrite: +3 pts → 12/14 | 139 lines ✓ | committed
-
-brainstorming (2):
-  2b Gaps: Prune Log missing → added empty Prune Log section
-  2d Link check: brainstorming Step 9 offers prd-writing — already wired ✓
-  Post-rewrite: 13/14 | 170 lines ✓ | committed
-
-Summary: 2 skills improved, avg +3 pts, 1 structural gap fixed, 0 new links
+1b Chat learnings: 4 OPEN → 1 queued (prd-writing), 2 pre-existing, 1 deferred.
+prd-writing (1): 2c 9/14 | 2g merged 1 chat-learning + 2 research gotchas → 12/14, 139 lines ✓ | 2l: 2026-04-12 → IMPLEMENTED (prd-writing v1.3)
+brainstorming (2): Prune Log added; 13/14; 170 lines ✓
+Summary: 2 skills improved (+3 avg); chat-learnings: 4 OPEN → 1 impl · 2 pre-existing · 1 deferred
     </output>
   </example>
 </examples>
@@ -178,6 +191,7 @@ Skills deprecated: N | split: N | compressed: N
 
 Per-skill: [skill]: X/14 → Y/14 | [lines] lines | [key change]
 Sources: [source] → [skill]
+Chat learnings: N OPEN at start → I implemented · R rejected · D deferred
 Files modified: [list]
 Files created: [list]
 ```

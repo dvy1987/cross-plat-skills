@@ -55,9 +55,20 @@ Note: Prefer file-scoped commands for lint, test, typecheck. Use project-wide bu
 - **Agents lead on:** [skill gaps — agents handle more autonomously]
 - **Working style:** [preferences: small PRs, test-first, review-everything, etc.]
 
-## Memory Checkpoints — Mandatory
+## Session Lifecycle — Mandatory
 <!-- Include only if memory suite installed and user did not opt out in Axis 1 Q5. -->
-Memory sub-skills auto-fire at producer events — not only when the user asks. Before ending a session, after writing a changelog/ADR/spec/plan, after a major commit (>20 files or breaking), or after creating/significantly editing a skill, the agent MUST consult `~/.agent-loom/skills/memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints and invoke the listed sub-skill. Skipping a checkpoint loses durable context for the next agent.
+
+### Session Start
+Before doing any new work in a fresh session, the agent MUST:
+1. Invoke `memory-startup` to load **bounded** continuity — routing index + latest handoff + directly relevant decisions only. Do NOT read every memory file.
+2. Read the latest entry in `docs/memory/agent-handoffs.md` to learn what the previous agent expected next.
+3. Run `git status` and `git log --oneline -5` to confirm repo state matches the handoff.
+4. In 2–4 lines, state: (a) recovered context, (b) planned next action, (c) any drift from handoff. Wait for the user to confirm or redirect before proceeding.
+
+Skip this only if the user explicitly says "fresh start" or "ignore prior context". If no prior memory exists, report that and continue.
+
+### During & End of Session
+Memory sub-skills auto-fire at producer events — not only when the user asks. After writing a changelog/ADR/spec/plan, after a major commit (>20 files or breaking), after creating/significantly editing a skill, and before ending a session, the agent MUST consult `~/.agent-loom/skills/memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints and invoke the listed sub-skill. Skipping a checkpoint loses durable context for the next agent.
 
 ## Orchestration Map
 

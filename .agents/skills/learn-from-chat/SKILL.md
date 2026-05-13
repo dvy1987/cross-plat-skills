@@ -14,7 +14,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.1"
+  version: "1.2"
   category: meta
 ---
 
@@ -90,28 +90,40 @@ For `CONTRADICTION`, present per `learn-from` shared protocol (side-by-side + re
 
 ### Step 5 — Apply (user approval required)
 
-With explicit user approval:
+**Escalation gate.** Before applying, classify the proposed change:
 
-1. **Capacity pre-check.** Read affected skill's line count. If already near 200 lines, plan a replacement or compression instead of a blind append.
+- **In-scope here** (append-only) — adding one bullet to `## Gotchas` or `## Hard Rules`, fixing a one-line workflow phrasing, adding a single citation. Proceed below.
+- **Out of scope — escalate** — adding or renumbering a workflow step, restructuring a section, introducing a new `references/` file, modifying routing triggers, or any edit that crosses the 200-line gate. STOP. Escalate to `improve-skills TARGET=<skill> SKIP_RESEARCH=true` and hand off this learning as the queued chat-learning input. Do not apply the change yourself.
+
+With explicit user approval (in-scope path only):
+
+1. **Capacity pre-check.** Read affected skill's line count. If already near 200 lines, escalate per above instead of a blind append.
 2. **Apply the change.** Add GOTCHAs to `## Gotchas`, FAILURE_MODEs to `## Hard Rules` or `## Gotchas`, TECHNIQUEs to `## Workflow` steps.
 3. **Contradiction resolution** per `learn-from` shared protocol.
 4. **Bump `metadata.version`** on each modified skill.
 5. **Add citation:** `Discovered during [brief context description], [YYYY-MM-DD]`
 6. **Modified-skill security sweep.** Run ALL `secure-*` skills (discover via `ls .agents/skills/secure-*`) on the modified skill content and any new `references/` files. This scans the resulting skill, not the source. BLOCKED → revise or revert.
-7. **200-line gate.** Check final line count. Over 200 → invoke `compress-skill`. If CORE still over 200 → invoke `split-skill`.
-8. **Run `validate-skills`** on every modified skill. Must score ≥10/14. Runs AFTER any compress/split.
+7. **200-line gate.** Check final line count. Over 200 → escalate to `improve-skills TARGET=<skill> SKIP_RESEARCH=true` rather than calling compress/split directly from here.
+8. **Run `validate-skills`** on every modified skill. Must score ≥10/14.
 
 ### Step 6 — Log
 
 Ensure `docs/learnings/` exists, then append to `docs/learnings/chat-learnings.md`:
 ```markdown
 ## [YYYY-MM-DD] — [one-line summary]
+- **Status:** OPEN | IMPLEMENTED ([date], <skill> v<ver>) | REJECTED (<reason>) | DEFERRED (<reason>) | ESCALATED (improve-skills TARGET=<skill>, <date>)
 - **Classification:** [tag]
 - **Evidence:** [what happened]
-- **Skills modified:** [list]
+- **Target skill(s):** [list]
+- **Skills modified:** [list — empty if ESCALATED or DEFERRED]
 - **Skills created from this learning:** [none yet / skill-name(s)]
-- **Changes:** [brief description of what was added/changed]
+- **Changes:** [brief description of what was added/changed — or "pending improve-skills target run"]
 ```
+
+**Status rules.**
+- If Step 5 took the in-scope path and the change was applied → write `Status: IMPLEMENTED ([today], <skill> v<new-version>)`.
+- If Step 5 escalated → write `Status: ESCALATED (improve-skills TARGET=<skill>, [today])`. The improvement pass will close this entry on completion (`improve-skills` Step 2l).
+- If the user rejected the change → write `Status: REJECTED (<reason>)`.
 
 Create the file if it doesn't exist. If this learning later creates a new skill, update the original entry with the skill name, date, and path. Tell user: "Logged in `docs/learnings/chat-learnings.md`."
 
@@ -124,6 +136,8 @@ Create the file if it doesn't exist. If this learning later creates a new skill,
 - Don't confuse user preference with a systematic gap — "I prefer X" is not evidence that a skill should change.
 - Multiple learnings from one chat should each be evaluated independently — don't batch-approve.
 - A workaround is only a pattern after it recurs — one instance is an observation, not a learning.
+- Don't restructure a skill from this skill. Restructuring, renumbering steps, or anything beyond append-only edits MUST escalate to `improve-skills TARGET=<skill> SKIP_RESEARCH=true` — that path runs the full per-skill cycle (security, validate, deconflict, size gate, library sync).
+- Every log entry needs a terminal `Status` or `Status: OPEN`. A blank Status hides the learning from `improve-skills` Step 1b.
 
 ---
 
@@ -159,7 +173,8 @@ After completing, always report:
 Chat learning captured: [YYYY-MM-DD]
 Discovered: [one-sentence insight]
 Classification: [tag] | Generalizable: [yes/no]
+Status: [IMPLEMENTED / ESCALATED / REJECTED]
 Skills modified: [list] | Contradictions resolved: [N]
-validate-skills: [skill]: [before] → [after]
+validate-skills: [skill]: [before] → [after]   (omit if ESCALATED)
 Logged: docs/learnings/chat-learnings.md
 ```

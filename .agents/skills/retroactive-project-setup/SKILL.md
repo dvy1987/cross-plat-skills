@@ -100,7 +100,7 @@ Invoke in this order, passing inferred context as input so each skill skips its 
 
 1. **`codebase-understanding`** → `docs/architecture.md` (full repo scope).
 2. **`product-soul`** in inference mode → `docs/product-soul.md`. Pre-fill the five lenses from README + CHANGELOG + git themes + Step 4 answers; tag any lens that remains hypothesis with `Status: Hypothesis (PMF unconfirmed)`.
-3. **`architectural-decision-log`** for ADR-0001 ONLY (synthesis) — title "Initial Backfill — Decisions Inferred From Repo State as of YYYY-MM-DD". List the top 3–5 architectural choices visible in the code (framework, DB, auth approach, state strategy, deployment target) with `Status: Accepted (retrospective)` and an honest `Context` noting these were inferred, not contemporaneous.
+3. **`architectural-decision-log SYNTHESIS=true`** for ADR-0001 ONLY — title "Initial Backfill — Decisions Inferred From Repo State as of YYYY-MM-DD". Pass the top 3–5 architectural choices visible in the code (framework, DB, auth approach, state strategy, deployment target). ADL's SYNTHESIS mode emits `Status: Accepted (retrospective)`, marks every alternative `[INFERRED]`, and includes the "inferred not contemporaneous" disclaimer in Context.
 4. **`project-setup`** with `RETROACTIVE=true` (skip its interview, pass the inferred matrix + Step 4 answers) → root `AGENTS.md` (and scoped files if monorepo detected). Always include the **Session Lifecycle — Mandatory** block.
 
 ### Step 6 — Memory Bootstrap

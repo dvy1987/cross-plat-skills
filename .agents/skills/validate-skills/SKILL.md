@@ -13,7 +13,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: meta
   resources:
     references:
@@ -81,6 +81,7 @@ Check every skill for:
 - **Missing category**: `metadata.category` not set to `meta`, `project-specific`, or `domain` (fix: add field, see `docs/SKILL-INDEX.md`)
 - **Missing Impact Report**: no `## Impact Report` section at end of SKILL.md (fix: add section specific to what the skill produces)
 - **Missing file-output logging**: skill generates project files but no `docs/skill-outputs/SKILL-OUTPUTS.md` append instruction (fix: add logging + terminal notification)
+- **Missing memory-checkpoint registration**: skill is a producer (generates an artifact listed in `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints — changelog, ADR, spec, plan, PRD, skill, or major commit) but its final workflow step does not invoke the corresponding memory sub-skill. See Step 4c for detection. (Fix: add a final "Memory Checkpoint" step naming the registry event and the sub-skill — e.g. `architectural-decision-log` invokes `memory-decision`; `generate-changelog` invokes `memory-capture`.)
 - **Stale version**: `metadata.version` unchanged after known edits (fix: bump version)
 - **Missing Prune Log**: skill has no prune record (fix: invoke prune-skill)
 - **Broken caller reference**: skill references a skill that doesn't exist in `.agents/skills/` (fix: remove or update reference)
@@ -90,6 +91,14 @@ Check every skill for:
 - **Unscanned external content**: skill references external repos or URLs but does not route through `secure-skill` (fix: add security gate)
 - **Missing security contract**: pipeline skill (split/prune/publish/deprecate/compress) lacks active `secure-*` invocation (fix: add mandatory gate)
 - **Security skill compression**: any `secure-*` skill routed through compressor instead of split-skill (fix: always split at 180, never compress)
+
+### Step 4c — Producer-Skill Checkpoint Audit
+
+Read `memory/SKILL.md` → "Mandatory Auto-Trigger Checkpoints" once to learn the canonical event → sub-skill map (changelog → `memory-capture`, ADR → `memory-decision`, spec/plan/PRD → `memory-capture`, skill creation → `memory-capture`, session end → `memory-handoff`).
+
+For each skill, classify as a **producer** if any of: (a) it writes to `docs/changelogs/`, `docs/adr/`, `docs/specs/`, `docs/plans/`, `docs/prd/`, `docs/memory/`, or generates a SKILL.md; (b) its description names a producer artifact ("write an ADR", "generate changelog", "create a feature spec"); (c) it appears in the registry's trigger column.
+
+For every producer skill, grep its workflow for an invocation of the matching memory sub-skill. If absent → raise the **Missing memory-checkpoint registration** flag in Step 4 with the specific event + sub-skill that's missing. This makes the rule self-enforcing rather than a written prayer.
 
 ### Step 4b — Run Security Sweep
 
@@ -106,43 +115,31 @@ Flag any skill named in the call graph that has no directory.
 ### Step 6 — Produce the Report
 
 ```
-Skill Library Health Report
-============================
-Generated: YYYY-MM-DD
-Skills checked: N
+Skill Library Health Report | Generated: YYYY-MM-DD | Skills: N
 
 VALIDATION STATUS
-─────────────────
 ✓ [skill]: passes agentskills validate
 ✗ [skill]: FAILS — [specific error]
 
 LOADER SAFETY (P0)
-──────────────────
-✓ [skill]: UTF-8 no BOM, opens with ---, closes with ---, description ≤1024
 ✗ [skill]: BOM detected | byte 0 = 0xEF | missing closing --- | description = 1217 chars
 
 SIZE CHECK
-──────────
-✓ [skill]: 147 lines
 ⚠ [skill]: 203 lines — 3 over limit
 
 QUALITY SCORES
-──────────────
 [skill]: 13/14 — [one-line summary of weak criterion]
-[skill]: 9/14  — [one-line summary: top 2 issues]
 [skill]: 5/14  — CRITICAL: consider deprecate-skill or full rewrite
 
 STRUCTURAL ISSUES
-─────────────────
 [skill]: references/examples.md has no load trigger in SKILL.md
+[skill]: producer skill (writes docs/adr/) missing memory-checkpoint registration → memory-decision
 [skill]: calls research-skill but research-skill not found in .agents/skills/
 
 DUPLICATE TRIGGER RISK
-──────────────────────
 [skill-A] + [skill-B]: overlapping description phrases — [specific phrases]
 
 RECOMMENDED ACTIONS (priority order)
-──────────────────────────────────────
 P0 [skill]: fails agentskills validate — fix before anything else
 P1 [skill]: 203 lines — invoke split-skill or compress-skill
 P2 [skill]: score 9/14 — invoke improve-skills

@@ -76,3 +76,15 @@ Created `retroactive-project-setup` (Atomic, 188 lines) to bootstrap full agent 
 - **Why:** Previously these two skills were disconnected — chat learnings were orphaned from the next improvement pass, and `learn-from-chat` could silently restructure skills outside the canonical creator/improver gate.
 - **Library sync:** SKILL-INDEX (entries + Call Graph), skill-graph (added lfc node + 2 edges + loop bullet), README rows, SKILL-OUTPUTS (7 rows), changelog `2026-05-13-chat-learnings-loop.md`.
 - **Verified:** improve-skills 197, learn-from-chat 180; both ≤200.
+
+## 2026-05-14 — Three deferred items closed via TARGETED improve-skills path
+
+- **What:** Cleared the 3 deferred items from the 2026-05-13 handoff (`reality-check` 255-line violation; ADL synthesis-mode idiom alignment; `validate-skills` producer-checkpoint enforcement).
+- **Mechanism:**
+  - `reality-check` v1.2: extracted Step 8 deliverable templates (Findings Report + Roadmap markdown) to `references/deliverable-templates.md`; tightened Step 0 and example. 255 → 189 lines.
+  - `architectural-decision-log` v1.1: added `Modes` section with `INTERACTIVE` (default) and `SYNTHESIS=true` (retrospective backfill — skips interview, reads rationale off codebase, `Status: Accepted (retrospective)`, mandatory `[INFERRED]` tags on alternatives, "inferred not contemporaneous" Context disclaimer). Updated `retroactive-project-setup` Step 5.3 to invoke `architectural-decision-log SYNTHESIS=true` by name. ADL: 132 → 148 lines.
+  - `validate-skills` v1.1: added Step 4c Producer-Skill Checkpoint Audit (reads `memory/SKILL.md` registry; classifies producers by output dir / description / registry trigger; greps for matching memory sub-skill invocation); new structural flag "Missing memory-checkpoint registration"; mirrored row in `references/validation-rubric.md`. Step 6 example trimmed to compensate. 199 → 196 lines.
+- **Validation:** Dry-run of new Step 4c against all 6 current producer skills (`generate-changelog`, `architectural-decision-log`, `feature-spec`, `implementation-plan`, `prd-writing`, `universal-skill-creator`) — all 6 pass with explicit `Per memory/SKILL.md → Mandatory Auto-Trigger Checkpoints` invocations. Zero false positives, zero false negatives.
+- **Significance:** First real end-to-end test of the `improve-skills TARGET=<skill> SKIP_RESEARCH=true` path shipped 2026-05-13. Used for all three items; worked without escalation back to FULL_PASS in any case.
+- **Library sync:** SKILL-INDEX entries + call graph; README rows; skill-graph (caption on `rps` edges + 2 new "Reading the Graph" bullets); SKILL-OUTPUTS (10 rows); changelog `2026-05-14-three-improvements.md`.
+- **Files at end:** reality-check 189, ADL 148, retroactive-project-setup 188, validate-skills 196 — all ≤200.

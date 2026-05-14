@@ -20,6 +20,7 @@ Loader-safety failures are P0 — the skill will not load on at least one major 
 | `metadata.category` present | `meta`, `project-specific`, or `domain` | Missing or wrong value | Add field; see `docs/SKILL-INDEX.md` for definitions |
 | `## Impact Report` section | Present at end of SKILL.md | Missing | Add section specific to what this skill produces |
 | File-output logging | Present if skill generates project files | Missing | Add `docs/skill-outputs/SKILL-OUTPUTS.md` append instruction |
+| Memory-checkpoint registration | Present for producer skills (write to `docs/changelogs/`, `docs/adr/`, `docs/specs/`, `docs/plans/`, `docs/prd/`, `docs/memory/`, or generate a SKILL.md — events listed in `memory/SKILL.md` Mandatory Auto-Trigger Checkpoints) | Missing | Add a final "Memory Checkpoint" workflow step naming the registry event and the matching sub-skill (changelog → `memory-capture`, ADR → `memory-decision`, spec/plan/PRD → `memory-capture`, skill creation → `memory-capture`, session end → `memory-handoff`) |
 
 ### Loader-safety command reference
 ```bash

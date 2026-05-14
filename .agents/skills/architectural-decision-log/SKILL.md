@@ -6,11 +6,13 @@ description: >
   defines a system boundary, or changes a core architectural pattern.
   Also triggers on "record a decision", "write an ADR", "why did we do this",
   "document this architectural choice", or "architectural decision record".
+  Supports `SYNTHESIS=true` mode for retrospective ADR backfill from observed
+  repo state — used by `retroactive-project-setup` and any future backfill skill.
   Essential for long-term project maintainability and agent alignment.
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
   sources: adolfi.dev (AI generated ADR), salesforce.com (Architectural Decisions), Nygard ADR template
 ---
@@ -19,32 +21,42 @@ metadata:
 
 You are an Architectural Decision Recorder. You capture the rationale behind every critical technical choice — context, alternatives, trade-offs, and consequences — so future teams understand the "why" not just the "what."
 
+## Modes
+
+- **`INTERACTIVE`** (default) — contemporaneous capture. A decision is being made right now; ADL asks 1–2 questions (Step 2), records context + alternatives + consequences from live answers, and writes the ADR with `Status: Proposed` or `Accepted`.
+- **`SYNTHESIS`** — retrospective capture from observed repo state. Invoked as `architectural-decision-log SYNTHESIS=true`. Used by `retroactive-project-setup` (and any future backfill skill) to record the top 3–5 architectural choices visible in the code when no contemporaneous ADR exists. SYNTHESIS skips Step 2's interview (no live forces are available), accepts inferred alternatives and consequences from the codebase, writes `Status: Accepted (retrospective)`, and MUST include an honest `Context` line stating that the rationale is inferred not contemporaneous. The 2-alternatives Hard Rule still applies — list at least two plausible alternatives even if rejection reasons are reconstructed (mark each `[INFERRED]`).
+
 ## Hard Rules
 
-Never document a decision without at least two "Alternatives Considered."
-Never ignore "Consequences" — every choice has a cost (latency, complexity, vendor lock-in).
-Never mark a decision as "Accepted" without a clear "Status" (Proposed/Accepted/Deprecated/Superseded).
-Never skip the "Context" — what was the specific problem that forced this decision?
+Never document a decision without at least two "Alternatives Considered." In SYNTHESIS mode, alternatives may be `[INFERRED]` but must still be present and named.
+Never ignore "Consequences" — every choice has a cost (latency, complexity, vendor lock-in). In SYNTHESIS mode, consequences are read off the codebase (e.g. "no concurrent writes because SQLite is in use") rather than predicted.
+Never mark a decision as "Accepted" without a clear "Status" (Proposed/Accepted/Accepted (retrospective)/Deprecated/Superseded).
+Never skip the "Context" — what was the specific problem that forced this decision? In SYNTHESIS mode, the Context line MUST include "Decisions inferred from repo state as of YYYY-MM-DD; not contemporaneous."
 
 ---
 
 ## Workflow
 
 ### Step 1 — Identify the Decision
-Detect when the user or agent has made a non-trivial technical choice.
-If unclear, ask: "This seems like a major decision. Should we record it in the Architectural Decision Log (ADL)?"
+In `INTERACTIVE` mode: detect when the user or agent has made a non-trivial technical choice. If unclear, ask: "This seems like a major decision. Should we record it in the Architectural Decision Log (ADL)?"
+In `SYNTHESIS` mode: the caller (e.g. `retroactive-project-setup`) supplies the list of 3–5 architectural choices to record. Skip the user prompt.
 
 ### Step 2 — Gather Context & Options
-Ask 1–2 questions to capture the rationale:
+**`INTERACTIVE`** — ask 1–2 questions:
 - "What specific problem are we solving with this choice?"
 - "What other options did we consider, and why did we reject them?"
 
+**`SYNTHESIS`** — skip the interview. Read the rationale off the codebase:
+- Context comes from README + manifests + commit history near the change.
+- Alternatives come from "what other tools in this category exist?" — list 2+ plausible options, mark each `[INFERRED]`, and write a one-line rejection reason that the code itself supports (e.g. "PostgreSQL rejected [INFERRED]: no Docker/server config in repo, single `.db` file present").
+- Consequences come from observed code shape (e.g. no migrations dir → schema is hand-managed).
+
 ### Step 3 — Draft the ADR
-Follow the schema in `references/adr-template.md`.
 Ensure the ADR includes:
 - **Title:** Short, descriptive (e.g., "ADR 005: Choice of Vector Database").
-- **Context:** The situation and the problem.
+- **Context:** The situation and the problem. In `SYNTHESIS` mode, append: "Decisions inferred from repo state as of YYYY-MM-DD; not contemporaneous."
 - **Decision:** The chosen path.
+- **Alternatives Considered:** at least 2 (in `SYNTHESIS` mode, mark each `[INFERRED]`).
 - **Consequences:** The trade-offs and future impacts.
 
 ### Step 4 — Link to Previous Decisions
@@ -68,10 +80,10 @@ Per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints (event: ADR written
 
 **Architectural Decision Record (ADR):**
 1. **Title & Date**
-2. **Status** (Proposed/Accepted/Deprecated/Superseded)
-3. **Context** (The problem and forces at play)
+2. **Status** (Proposed/Accepted/Accepted (retrospective)/Deprecated/Superseded)
+3. **Context** (The problem and forces at play; in SYNTHESIS mode include the "inferred not contemporaneous" disclaimer)
 4. **Decision** (The chosen solution)
-5. **Alternatives Considered** (Options A, B, C)
+5. **Alternatives Considered** (Options A, B, C; in SYNTHESIS mode, mark each `[INFERRED]`)
 6. **Consequences** (Positive and negative impacts)
 
 ---
@@ -80,7 +92,8 @@ Per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints (event: ADR written
 
 - The highest-value ADR content is the rejected alternatives with rejection reasons — not the chosen option. Future teams re-evaluate the same alternatives; knowing why they were rejected saves weeks of repeat analysis.
 - ADRs written retrospectively produce confabulated reasoning. Write at decision time when the actual constraints and trade-offs are fresh. A rough ADR today beats a polished one written from memory next month.
-- "Accepted" is not permanent. Every ADR must have a status field (Proposed/Accepted/Deprecated/Superseded) and superseded ADRs must link forward to their replacement. Orphaned ADRs with stale status cause teams to follow outdated decisions.
+- "Accepted" is not permanent. Every ADR must have a status field (Proposed/Accepted/Accepted (retrospective)/Deprecated/Superseded) and superseded ADRs must link forward to their replacement. Orphaned ADRs with stale status cause teams to follow outdated decisions.
+- `SYNTHESIS` mode is honest, not confident. Every inferred alternative or consequence MUST carry an `[INFERRED]` tag and the Context MUST say the rationale is not contemporaneous. Removing those tags to make the ADR "look cleaner" turns the file into a confabulation hazard for every future agent that reads it.
 
 ---
 

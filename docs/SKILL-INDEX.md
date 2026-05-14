@@ -85,7 +85,7 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ### `validate-skills`
 **Triggers:** "validate skills", "skill health check", "check all skills", "are my skills ok"
-**What it does:** Read-only audit. Scores every skill on 7 criteria (max 14/14). Flags P0 failures, >200-line violations, broken caller references, orphaned reference files, duplicate trigger phrases.
+**What it does:** Read-only audit. Scores every skill on 7 criteria (max 14/14). Flags P0 failures, >200-line violations, broken caller references, orphaned reference files, duplicate trigger phrases, and **producer-skill checkpoint-registration gaps** (Step 4c: a producer that writes to `docs/changelogs/`, `docs/adr/`, `docs/specs/`, `docs/plans/`, `docs/prd/`, `docs/memory/`, or generates a SKILL.md must invoke the matching memory sub-skill per `memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints).
 **Output:** No files modified. Structured quality report in chat with P0/P1/P2/P3 actions.
 **Impact report:** Skills checked, P0 failures, average score, recommended actions
 **Rubric:** `.agents/skills/validate-skills/references/validation-rubric.md`
@@ -436,8 +436,9 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 ---
 
 ### `architectural-decision-log`
-**Triggers:** "record a decision", "write an ADR", "why did we do this", "document this architectural choice", "architectural decision record"
-**What it does:** Capture the "why" behind technical choices to prevent architectural drift
+**Triggers:** "record a decision", "write an ADR", "why did we do this", "document this architectural choice", "architectural decision record" — and `architectural-decision-log SYNTHESIS=true` for retrospective backfill from observed repo state
+**What it does:** Capture the "why" behind technical choices to prevent architectural drift. Two modes: `INTERACTIVE` (default — contemporaneous capture with live interview) and `SYNTHESIS` (retrospective — skips interview, reads rationale off the codebase, marks every alternative `[INFERRED]`, writes `Status: Accepted (retrospective)` with an "inferred not contemporaneous" disclaimer). SYNTHESIS mode is the entry point used by `retroactive-project-setup` and any future backfill skill.
+**Called by:** `retroactive-project-setup` (Step 5.3, with `SYNTHESIS=true` for ADR-0001 backfill)
 **Output file:** `docs/adr/ADR-NNN-<title-slug>.md`
 **Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
 **Impact report:** ADR recorded, number, status, alternatives considered, critical consequences, ready for
@@ -476,7 +477,7 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 ### `retroactive-project-setup`
 **Triggers:** "retroactive project setup", "backfill agent infrastructure", "bootstrap agents for this existing repo", "onboard agents to a legacy codebase", "set up agents without touching code", "fill in missing agent context for this project"
 **What it does:** Bootstraps the full agent layer (AGENTS.md, docs/architecture.md, docs/product-soul.md, ADR-0001 backfill, docs/memory/ seed) over an existing, already-coded project — without modifying source code, configs, manifests, lockfiles, or build files. Surveys the repo (manifests, README, CHANGELOG, git history, source samples) to auto-infer everything answerable, then runs a targeted ≤6-question interview only for genuine gaps. Tags low-confidence inferences with `[INFERRED — confirm]`. Enforces a strict write-allowlist; aborts on any out-of-allowlist write. Refuses if a populated AGENTS.md already exists and routes the user to `project-setup UPDATE_ONLY=true` instead.
-**Calls:** `codebase-understanding` (architecture), `product-soul` (in inference mode for soul), `architectural-decision-log` (ADR-0001 synthesis), `project-setup` (with `RETROACTIVE=true` for AGENTS.md), `memory-capture` (checkpoint at end)
+**Calls:** `codebase-understanding` (architecture), `product-soul` (in inference mode for soul), `architectural-decision-log SYNTHESIS=true` (ADR-0001 synthesis from observed repo state), `project-setup` (with `RETROACTIVE=true` for AGENTS.md), `memory-capture` (checkpoint at end)
 **Output files:** `AGENTS.md`, `docs/architecture.md`, `docs/product-soul.md`, `docs/adr/ADR-0001-initial-backfill.md`, `docs/memory/{project-index,current-state,agent-handoffs,learnings}.md`
 **Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
 **Impact report:** Repo, mode (single/multi), files created, sub-skills invoked, `[INFERRED — confirm]` tag count, source files modified (always 0), synthetic handoff seeded
@@ -508,6 +509,7 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 **Calls:** `adversarial-hat` (Step 7 — pressure-test strongest claims), `assumption-mapping` (Step 4 — surface hidden beliefs), `codebase-understanding` (Step 1 — map architecture), `implementation-plan` (Step 8 — structure roadmap)
 **Output files:** `docs/YYYY-MM-DD-reality-check-findings.md` + `docs/YYYY-MM-DD-roadmap-and-implementation-plan.md`
 **Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**References:** `references/deliverable-templates.md` — Findings Report + Roadmap markdown templates (loaded during Step 8)
 **Impact report:** Project name, claims evaluated, composite score, gaps by severity, competitors compared, solutions proposed, file paths
 
 ---

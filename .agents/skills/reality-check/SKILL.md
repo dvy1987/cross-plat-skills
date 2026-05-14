@@ -13,7 +13,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.1"
+  version: "1.2"
   category: project-specific
   sources: >
     CohnReznick-SoftwareDueDiligence-2025, arXiv-2604.02837-SecureSkills, Euvic-TechDD-Guide,
@@ -39,17 +39,7 @@ Always produce both deliverables: findings doc AND roadmap doc in `docs/`.
 
 ### Step 0 — Discover What the Project Claims to Be
 
-If the user provides specific claims → skip to Step 1.
-
-If not, probe with 2-3 questions before scanning. Ask only what you cannot infer from the repo:
-
-1. **"In one sentence, what is this project supposed to do?"** — establishes the core promise
-2. **"Who is the target user, and what problem does it solve for them?"** — reveals scope and audience claims
-3. **"What makes this different from alternatives?"** — surfaces differentiation and competitive claims
-
-If the user is evaluating someone else's project (not their own), skip these questions and extract claims directly from the repo's README, PRD, and marketing docs in Step 1.
-
-Do not proceed to scoring until you have a clear list of claims — either from the user's answers or from the repo's own documentation.
+If the user provides specific claims, or is evaluating someone else's project, skip to Step 1 and extract claims from README/PRD/marketing docs. Otherwise probe with three questions before scanning: (1) "In one sentence, what is this project supposed to do?" (core promise), (2) "Who is the target user, and what problem does it solve?" (scope + audience), (3) "What makes this different from alternatives?" (differentiation). Do not proceed to scoring until you have a concrete list of claims.
 
 ### Step 1 — Gather Evidence (Silent Scan)
 
@@ -121,63 +111,12 @@ Invoke `adversarial-hat` on the project's three strongest claims. If they surviv
 
 ### Step 8 — Write Deliverables
 
-**Deliverable 1: Findings Report** → `docs/YYYY-MM-DD-reality-check-findings.md`
-```
-# Reality Check Findings — [Project Name]
+Load `references/deliverable-templates.md` and produce both files — findings without a roadmap is critique without direction:
 
-## Executive Summary
-[2-3 sentences: what it is, what it claims, overall verdict]
+1. **Findings Report** → `docs/YYYY-MM-DD-reality-check-findings.md`
+2. **Roadmap** → `docs/YYYY-MM-DD-roadmap-and-implementation-plan.md`
 
-## Claim-by-Claim Assessment
-[Table: claim | verdict | score | evidence]
-
-## What's Genuinely Impressive
-[List with specific evidence — adversarial-hat survivors go here]
-
-## Architectural Gaps
-[Classified by severity with evidence]
-
-## Fundamental Limitations
-[Hard ceilings that more features won't solve]
-
-## Competitive Positioning
-[Comparison tables + honest positioning]
-
-## Creative Solutions
-[Per-gap approaches with pros/cons]
-
-## Risks and Guardrails
-[Risk | Mitigation table]
-
-## Final Verdict
-[Brutally honest + constructive versions]
-[Composite score + per-dimension scores]
-```
-
-**Deliverable 2: Roadmap** → `docs/YYYY-MM-DD-roadmap-and-implementation-plan.md`
-```
-# Roadmap — [Project Name]
-
-## Phases (sequenced: prove → build → scale)
-[Phase 0: Honest reframing]
-[Phase 1: Prove one wedge end-to-end]
-[Phase 2-N: Build infrastructure, then scale]
-
-## Success Metrics by Phase
-## Approach Comparison Matrices
-## Decision Framework
-```
-
-### Log Output
-After creating files, append entries to `docs/skill-outputs/SKILL-OUTPUTS.md`
-(create if missing):
-
-```
-| YYYY-MM-DD HH:MM | reality-check | [file path] | [one-line description] |
-```
-
-Tell the user:
-> "Findings saved to `[path]`. Roadmap saved to `[path]`. Logged in `docs/skill-outputs/SKILL-OUTPUTS.md`."
+After both files are written, append entries to `docs/skill-outputs/SKILL-OUTPUTS.md` (one row per file) and tell the user where each was saved. Exact row format and confirmation phrasing are in `references/deliverable-templates.md` → Output Logging.
 
 ---
 
@@ -199,33 +138,22 @@ Tell the user:
   <example>
     <input>Reality-check this agent skill library. It claims it can handle any coding or business process.</input>
     <output>
-[Step 1: Read README, PRD, architecture.md, all skill files, process registry, git log, changelogs, skill-outputs log]
+[Step 1: Read README, PRD, architecture.md, all skill files, process registry, git log, changelogs]
 
 ## Claim Assessment (sample)
-
 | Claim | Verdict | Score | Key Evidence |
 |-------|---------|:---:|--------------|
-| "Complete any process" | False | 1/10 | Process registry empty. No end-to-end execution proof. README lists 4 explicit missing capabilities. |
-| "Cross-platform" | Mostly true | 7/10 | Install scripts exist for 10 platforms. But agent-creator works on 2 only. |
-| "Self-improving" | Partially true | 4/10 | Meta layer designed. v1.1.1 changelog notes validator CLI not installed. No eval harness. |
+| "Complete any process" | False | 1/10 | Process registry empty. No end-to-end execution proof. |
+| "Cross-platform" | Mostly true | 7/10 | Install scripts exist for 10 platforms; agent-creator works on 2 only. |
+| "Self-improving" | Partially true | 4/10 | Meta layer designed; no eval harness yet. |
 
-## What's Genuinely Impressive
-1. Distribution model — symlink-based global install is elegant and practical
-2. Skill taxonomy — 4 categories with clear boundaries
-3. Meta-maintenance — principled prune→research→rewrite ordering
-
-## Top Gap: No persistent memory
-- Fatal: "learning from past chats" requires storage + retrieval. Neither exists.
-- Lightweight: Markdown run ledger with YAML frontmatter
-- Medium: Local SQLite + FTS5
-- Heavyweight: Hosted memory API
+## Top Gap: No persistent memory (Fatal)
+"Learning from past chats" requires storage + retrieval. Neither exists. Lightweight: markdown run ledger. Medium: local SQLite + FTS5. Heavyweight: hosted memory API.
 
 ## Verdict
-Composite: 2/10 for headline claim.
-Skill library: 7/10. Control plane: 4/10. Autonomous execution: 1/10.
+Composite: 2/10 for headline claim. Skill library: 7/10. Control plane: 4/10. Autonomous execution: 1/10.
 
-[Full findings saved to docs/2026-04-13-reality-check-findings.md]
-[Roadmap saved to docs/2026-04-13-roadmap-and-implementation-plan.md]
+[Findings: docs/2026-04-13-reality-check-findings.md | Roadmap: docs/2026-04-13-roadmap-and-implementation-plan.md]
     </output>
   </example>
 </examples>
@@ -238,6 +166,12 @@ Skill library: 7/10. Control plane: 4/10. Autonomous execution: 1/10.
 - `assumption-mapping` → Step 4 (surface hidden beliefs in top claims)
 - `codebase-understanding` → Step 1 (map architecture before judging)
 - `implementation-plan` → Step 8 (structure the roadmap deliverable)
+
+---
+
+## Reference Files
+
+- **`references/deliverable-templates.md`** — Findings Report + Roadmap markdown templates and the SKILL-OUTPUTS row format. Load during Step 8 when writing the two output files.
 
 ---
 

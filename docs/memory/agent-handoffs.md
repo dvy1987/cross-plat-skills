@@ -153,3 +153,48 @@ All 4 layers landed. Per the new checkpoint registry, this very entry is the `me
 ### Working Tree
 - Many files are modified/untracked from the memory-suite work. Review `git status --short` before editing.
 - Do not revert existing changes unless the user explicitly asks.
+
+---
+
+## 2026-05-14 - Handoff: Retroactive Project Setup + Session Lifecycle + Chat-Learnings Loop
+
+### Done
+- New skill `retroactive-project-setup` (Atomic, 188 lines): bootstraps full agent layer over an existing codebase via a strict write-allowlist, never modifies source code. Composes `codebase-understanding`, `product-soul` (inference mode), `architectural-decision-log` (synthesis), and `project-setup` (new `RETROACTIVE=true` mode). Seeds `docs/memory/agent-handoffs.md` with a synthetic entry tagged `synthetic: true`.
+- AGENTS.md template gained a symmetric `Session Lifecycle — Mandatory` block (Session Start = `memory-startup` + git check + 2-4 line context report; During & End = preserved producer-event checkpoints). Same block added to this repo's `AGENTS.md`.
+- `universal-skill-creator` Step 11 — Library Sync (Mandatory) added explicitly to numbered workflow, closing the gap where `library-skill` was in AGENTS.md's invariant but missing from the creator's numbered steps. Verification checklist updated to match.
+- Pre-existing line-count violations fixed as side effects: `library-skill` 207 → 189; `universal-skill-creator` adjusted to 199 after adding Step 11.
+- `learn-from-chat` ↔ `improve-skills` feedback loop closed (changelog: `2026-05-13-chat-learnings-loop.md`): `improve-skills` v1.3 gained `TARGETED` mode (`TARGET=<skill> [SKIP_RESEARCH=true]`) + Step 1b chat-learnings ingest + Step 2l terminal-status close-out; `learn-from-chat` v1.2 gained Step 5 escalation gate (restructure-class edits escalate to `improve-skills TARGET=...`) + mandatory `Status` field.
+- Library sync run for both deliverables: README, skill-graph, PRD (count 17→18), SKILL-INDEX all updated; cross-refs validated (8 files for retroactive-project-setup, no orphans).
+- Two changelogs landed: `2026-05-13-retroactive-project-setup.md` and `2026-05-13-chat-learnings-loop.md`.
+- Working tree consolidated and committed as `37c3dd6 updated project-setup to work for existing projects`.
+
+### Debated
+- Whether to add a `TARGET=` mode to `improve-skills` vs. create a new `apply-skill-patch` skill — chose the mode (canonical post-edit chain already lives in `improve-skills`; second skill would have caused drift).
+- Whether `learn-from-chat` should consume `improve-skills` directly or vice versa — chose bidirectional: lfc → imp (escalation for restructure-class edits), imp → lfc log (Step 1b ingest + Step 2l close). Both ends now wired.
+- Whether the retroactive bootstrap should re-implement `codebase-understanding` etc. inline vs. compose — chose composition to avoid drift.
+
+### Decisions
+- Targeted improvement path is a mode of `improve-skills`, not a separate skill (see chat-learnings-loop changelog).
+- Restructure-class edits (new numbered step, section restructure, new `references/`, routing changes, 200-line crossings) are an automatic escalation in `learn-from-chat` Step 5; append-only edits stay in-scope for `learn-from-chat`.
+- `retroactive-project-setup` refuses on a populated AGENTS.md and routes to `project-setup UPDATE_ONLY=true` rather than merging — keeps semantics clean.
+- The Session Lifecycle block points at `memory/SKILL.md` for triggers rather than inlining the table, so it self-heals when memory checkpoints change upstream.
+
+### Deferred
+- `reality-check/SKILL.md` is 255 lines (pre-existing violation, surfaced during the final library line-count audit). Not addressed — out of scope for this session. Candidate for the next `improve-skills` pass or a focused `compress-skill` invocation.
+- `architectural-decision-log/SKILL.md` was not formally exposed as an inference-mode entry point — `retroactive-project-setup` calls it for synthesis but ADL's own SKILL doesn't yet document a `SYNTHESIS=true` mode parallel to the new `RETROACTIVE=true` mode in `project-setup`. May want to align these idioms in a follow-up.
+- The `agentskills validate` CLI remains unavailable in this environment; only manual structural checks were possible.
+
+### Next Agent Should Know
+- The new canonical targeted-improvement entry point is `improve-skills TARGET=<skill> SKIP_RESEARCH=true`. Use it for any in-session structural fix discovered during normal work — do NOT bypass it with direct `Edit` calls on a SKILL.md.
+- Any chat-discovered learning must go through `learn-from-chat` first; if it's restructure-class, it auto-escalates. Do not hand-patch a SKILL.md from chat.
+- The Session Lifecycle block is now live in this repo's AGENTS.md — at session START, invoke `memory-startup` (bounded), read latest handoff, run `git status` + `git log --oneline -5`, then state recovered context in 2–4 lines before acting.
+- The `[INFERRED — confirm]` tags produced by `retroactive-project-setup` are intentional friction; agents must surface them to the user rather than silently treating them as confirmed facts.
+
+### Revisit Triggers
+- If a new event-producing skill is created (release-notes, feature-flag-decision, migration-plan, etc.), it must register a `memory/SKILL.md` Mandatory Auto-Trigger Checkpoint AND a `learn-from-chat` chat-learnings status row if it can be discovered mid-session.
+- If `improve-skills` `TARGETED` mode gets used and chat-learnings entries silently stay `OPEN`, that's a Step 2l violation — treat as a bug.
+- If `reality-check` or any other skill exceeds 200 lines unintentionally during routine work, route through `improve-skills TARGET=<skill> SKIP_RESEARCH=true`, not a manual Edit.
+
+### Working Tree
+- Clean. Last commit: `37c3dd6 updated project-setup to work for existing projects`.
+- No untracked files; no uncommitted changes.

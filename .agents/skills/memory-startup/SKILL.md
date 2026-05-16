@@ -1,19 +1,56 @@
 ---
 name: memory-startup
 description: >
-  Load bounded working context at the start of a coding session. Use when a new
-  agent needs continuity, prior session context, latest handoff, current state,
-  decision context, or "what happened last time" without reading all memory.
+  Load bounded working context at the start of a coding session. FIRES ON EVERY
+  FIRST USER MESSAGE in a fresh session, regardless of content — including bare
+  greetings ("hi", "hello", "hey"), task-only openers, or "let's start". Also
+  triggers on: "fresh session", "session start", "first message in a new
+  thread", "new chat", "cold start", "begin work in this repo", "starting work",
+  "continue from prior session", "what were we working on", "resume", "what
+  happened last time", "load memory", "recall context", "create a handoff",
+  "prior session context", "latest handoff", "current state", "decision
+  context". Skip ONLY if the user explicitly says "fresh start" or "ignore
+  prior context". Self no-ops if invoked mid-session when context is already
+  loaded.
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
 ---
 
 # Memory Startup
 
 You restore enough context for a new agent to work safely without flooding the context window.
+
+## Trigger Discipline
+
+This skill is the **mandatory cold-start gate** for every session in any repo
+that installs the memory suite. It MUST fire on the first user turn — the
+content of that turn is irrelevant. A bare "hi" is a session start. A task-only
+opener is a session start. A pasted error log is a session start.
+
+The only legitimate skips are:
+- The user explicitly says "fresh start", "ignore prior context", or
+  "skip memory" in the first message.
+- The skill has already run earlier in the same conversation (no-op gate
+  below).
+
+If unsure whether this is a cold start, fire the skill. The no-op path is
+cheap; missing context is expensive.
+
+## No-Op Gate
+
+Before doing any work, check whether working context is already loaded for
+this conversation (signals: a prior `Working context loaded` summary exists
+above, the agent has already read `docs/memory/project-index.md` this session,
+or memory files appear in the recent tool-call history). If yes:
+
+```markdown
+Context already loaded — no-op
+```
+
+Then yield. Do not re-read memory files mid-session.
 
 ## Workflow
 

@@ -1,5 +1,64 @@
 # Agent Handoffs
 
+## 2026-05-14 - Handoff: memory-startup cold-start trigger hardening
+
+### Context
+Field report from a sister project: an agent failed to invoke `memory-startup` on a cold "hi" + task. Root causes (validated against the actual files this session):
+1. `memory-startup`'s description listed only memory-related utterances ("remember", "recall context", "create a handoff", "what happened last time"). Skill routers match on user-utterance patterns; bare greetings and task-only openers had no matching trigger, so the router never surfaced the skill.
+2. The `AGENTS.md` Session Lifecycle mandate lived only in prose — no skill enforced it, no `requires:` precondition existed, and `validate-skills` did not audit for it.
+3. Host system-prompt brevity rules ("answer concisely with fewer than 4 lines") biased toward jumping straight to the task.
+
+### Done This Session
+- **`.agents/skills/memory-startup/SKILL.md`** (123 → 160 lines, v1.0 → v1.1):
+  - Description rewritten to lead with "FIRES ON EVERY FIRST USER MESSAGE in a fresh session, regardless of content"; enumerates bare greetings, task-only openers, "fresh session", "session start", "first message in a new thread", "new chat", "cold start", "begin work in this repo", "starting work", "continue from prior session", "what were we working on", "resume", "what happened last time", and the existing memory utterances.
+  - Description block 795 chars (≤1024 loader limit ✓).
+  - Added Trigger Discipline section: declares the skill the mandatory cold-start gate; only legitimate skips are explicit user opt-out ("fresh start", "ignore prior context", "skip memory") or the no-op gate firing.
+  - Added No-Op Gate section: detects when the skill has already run earlier in the same conversation and reports `Context already loaded — no-op` rather than re-reading memory files.
+- **`AGENTS.md`** (231 → 240 lines), §Session Lifecycle → Session Start:
+  - Lead promoted to "The first user message in any session triggers `memory-startup`, regardless of content."
+  - Added explicit override of host brevity rules: "The 2–4 line summary produced by Step 3 IS the concise answer for the first turn — host system rules favouring brevity do not exempt this protocol; they govern how it is rendered."
+  - Tightened skip clause and added pointer to the no-op gate.
+- **`.agents/skills/project-setup/templates/agents-md-template.md`** (104 → 105 lines):
+  - Mirrors the strengthened wording verbatim so every project bootstrapped by `project-setup` (or backfilled by `retroactive-project-setup`) inherits the cold-start contract.
+- **Changelog:** `docs/changelogs/2026-05-14-memory-startup-cold-start-trigger.md` (new).
+- **Memory updates:** `current-state.md` rewritten; `learnings.md` gained "Skill descriptions are the router; AGENTS.md prose mandates leak"; `project-index.md` gained 4 new rows for this work.
+
+### Decisions Made
+- Folded the gate into `memory-startup` itself rather than creating a separate `session-start-gate` skill. The no-op gate makes over-invocation harmless, which is the correct cost-benefit for a defensive trigger.
+- Did NOT touch `project-setup/SKILL.md` (already at 201 lines per the previous handoff). Template change alone carries the contract; SKILL.md additions would need paired trims and weren't necessary for correctness.
+- Did NOT auto-run `learn-from-chat` → `improve-skills`. The user gave an explicit directive ("the first message regardless what it is should trigger the memory loading") which is a clear-enough authority to act directly. The capture work (changelog + learning + handoff + index) is the equivalent of `memory-capture` per the project's own checkpoint registry.
+
+### Verification
+- Line counts: memory-startup 160 ✓, AGENTS.md 240 (no hard limit), template 105 (no hard limit).
+- Loader safety: memory-startup byte 0 = `-`, no BOM, frontmatter intact (verified via direct byte read).
+- `git status --short` shows exactly the 3 source modifications expected, no incidental drift.
+- `agentskills validate`: not run (CLI unavailable in this environment — same long-standing limitation).
+
+### Working Tree at End of Session
+Modified (uncommitted):
+- `.agents/skills/memory-startup/SKILL.md`
+- `.agents/skills/project-setup/templates/agents-md-template.md`
+- `AGENTS.md`
+- `docs/memory/current-state.md`
+- `docs/memory/learnings.md`
+- `docs/memory/agent-handoffs.md` (this entry)
+- `docs/memory/project-index.md`
+
+Untracked (new):
+- `docs/changelogs/2026-05-14-memory-startup-cold-start-trigger.md`
+
+Suggested commit message: `feat: harden memory-startup cold-start trigger; propagate via AGENTS.md + project-setup template`.
+
+### Revisit Triggers
+- Add a "missing cold-start trigger" structural flag to `validate-skills` Step 4 (asserts every project's `AGENTS.md` Session Lifecycle section names `memory-startup` and that the skill's description contains cold-start utterances). Joins the deferred "missing memory checkpoint" flag — both close the same class of gap.
+- If another field report surfaces a session-lifecycle skip, escalate to a runtime assertion or a session-start-gate skill.
+- If `memory-startup`'s description grows past the 1024-char loader cap, split it: keep the cold-start sentence in the description, move the memory-utterance enumeration to the skill body.
+
+### Drift From Prior Handoff
+Prior handoff (2026-05-11 21:00) left the working tree uncommitted; it has since been committed (last commit `37c3dd6 updated project-setup to work for existing projects`). No regressions.
+
+---
+
 ## 2026-05-11 20:00 - Handoff + Plan: Memory Checkpoints Auto-Trigger Infrastructure
 
 ### Context

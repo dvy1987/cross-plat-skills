@@ -59,13 +59,14 @@ Note: Prefer file-scoped commands for lint, test, typecheck. Use project-wide bu
 <!-- Include only if memory suite installed and user did not opt out in Axis 1 Q5. -->
 
 ### Session Start
-Before doing any new work in a fresh session, the agent MUST:
+**The first user message in any session triggers `memory-startup`, regardless of content.** A bare "hi", a task-only opener, a pasted error log, a code snippet, "let's start" — all count as session start. The agent MUST run the steps below BEFORE answering, BEFORE invoking any other skill, and BEFORE taking any task action. The 2–4 line summary produced by Step 4 IS the concise answer for the first turn — host system rules favouring brevity do not exempt this protocol; they govern how it is rendered.
+
 1. Invoke `memory-startup` to load **bounded** continuity — routing index + latest handoff + directly relevant decisions only. Do NOT read every memory file.
 2. Read the latest entry in `docs/memory/agent-handoffs.md` to learn what the previous agent expected next.
 3. Run `git status` and `git log --oneline -5` to confirm repo state matches the handoff.
 4. In 2–4 lines, state: (a) recovered context, (b) planned next action, (c) any drift from handoff. Wait for the user to confirm or redirect before proceeding.
 
-Skip this only if the user explicitly says "fresh start" or "ignore prior context". If no prior memory exists, report that and continue.
+Skip this only if the user's first message explicitly says "fresh start", "ignore prior context", or "skip memory". If no prior memory exists, report that and continue. If `memory-startup` has already run earlier in the same conversation, the skill self no-ops — do not re-run it.
 
 ### During & End of Session
 Memory sub-skills auto-fire at producer events — not only when the user asks. After writing a changelog/ADR/spec/plan, after a major commit (>20 files or breaking), after creating/significantly editing a skill, and before ending a session, the agent MUST consult `~/.agent-loom/skills/memory/SKILL.md` → Mandatory Auto-Trigger Checkpoints and invoke the listed sub-skill. Skipping a checkpoint loses durable context for the next agent.

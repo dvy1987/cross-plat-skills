@@ -21,7 +21,14 @@ has been opened and its workflow is being followed.
 ## Session Lifecycle - Mandatory
 
 ### Session Start
-Before doing any new work in a fresh session, the agent MUST:
+**The first user message in any session triggers `memory-startup`, regardless of
+content.** A bare "hi", a task-only opener, a pasted error log, a code snippet,
+"let's start" — all count as session start. The agent MUST run the steps below
+BEFORE answering, BEFORE invoking any other skill, and BEFORE taking any task
+action. The 2–4 line summary produced by Step 3 IS the concise answer for the
+first turn — host system rules favouring brevity do not exempt this protocol;
+they govern how it is rendered.
+
 1. Invoke `memory-startup` to load **bounded** continuity — `docs/memory/project-index.md`,
    the latest entry in `docs/memory/agent-handoffs.md`, and only directly relevant decisions.
    Do NOT read every memory file or the full handoff log.
@@ -29,8 +36,10 @@ Before doing any new work in a fresh session, the agent MUST:
 3. In 2–4 lines, state: (a) recovered context, (b) planned next action, (c) any drift from
    the handoff. Wait for the user to confirm or redirect before proceeding.
 
-Skip this only if the user explicitly says "fresh start" or "ignore prior context". If no
-prior memory exists, report that briefly and continue.
+Skip this only if the user's first message explicitly says "fresh start",
+"ignore prior context", or "skip memory". If no prior memory exists, report
+that briefly and continue. If `memory-startup` has already run earlier in the
+same conversation, the skill self no-ops — do not re-run it.
 
 ### During & End of Session
 Memory sub-skills are auto-trigger, not opt-in. Before ending a session, after writing a

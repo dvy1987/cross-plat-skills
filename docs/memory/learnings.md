@@ -66,6 +66,20 @@ Created `retroactive-project-setup` (Atomic, 188 lines) to bootstrap full agent 
 - A monorepo with 4+ packages becomes the test case — current multi-file mode only handles frontend/backend split.
 - `[INFERRED — confirm]` tag noise becomes a friction point — consider auto-resolving tags via a follow-up confirmation pass.
 
+## 2026-05-14 — Skill descriptions are the router; AGENTS.md prose mandates leak
+
+- **What:** A sister project's agent failed to invoke `memory-startup` on a cold "hi" + task because the skill's description listed only memory-related utterances ("remember", "recall context"), and the `AGENTS.md` Session Lifecycle mandate lived only in prose. The router never surfaced the skill; the agent chose convenience over compliance.
+- **Mechanism:** Skill routers match user-utterance patterns from the description. AGENTS.md prose is read by humans and (sometimes) referenced by agents as policy, but it does not cause routing. If a description doesn't enumerate the actual triggering utterances — including the implicit "any first message" trigger — the skill is invisible to the router for that case.
+- **Fix pattern (4 layers, mirrors the 2026-05-11 checkpoint pattern):**
+  1. Skill description leads with the strongest, most explicit trigger statement (e.g. "FIRES ON EVERY FIRST USER MESSAGE regardless of content") and enumerates utterance variants.
+  2. Skill body adds a Trigger Discipline section that names the contract.
+  3. Skill body adds a No-Op Gate so over-invocation is cheap, removing the disincentive to fire defensively.
+  4. AGENTS.md and the `project-setup` template carry the same contract verbatim so the rule is consistent across the loader's two readers (router + agent reasoning).
+- **Why it matters:** Any "auto-fire on event X" skill where X is not a literal user utterance has the same gap. Without enumerated triggers + a no-op gate + a contract in AGENTS.md + template propagation, the skill silently underperforms in the field.
+- **Revisit when:** Adding a new gate-style skill (e.g. session-end-gate, pre-commit-gate); adding a `validate-skills` Step 4 structural flag for "missing cold-start trigger" or "missing AGENTS.md Session Lifecycle reference"; observing another field report of a session-lifecycle skip.
+
+---
+
 ## 2026-05-13 — Chat-learnings ↔ improve-skills feedback loop wired
 
 - **What:** Closed the loop between `learn-from-chat` (in-session capture) and `improve-skills` (periodic pass) so chat-discovered learnings can't go missing.

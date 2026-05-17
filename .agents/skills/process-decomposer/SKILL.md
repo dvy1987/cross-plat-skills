@@ -12,7 +12,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.1"
+  version: "1.2"
   category: project-specific
   sources: >
     agent-loom design spec 2026-04-10,
@@ -97,6 +97,7 @@ Execution feedback is owned by `project-orchestrator` (Section 4.1 of design spe
 - This skill does NOT replace `brainstorming` or `implementation-plan`. Brainstorming = what to build. This = how to execute.
 - When the user brings a problem that needs planning artifacts (spec, plan, TODO), route to `problem-to-plan` — do not try to produce those deliverables here.
 - **Agents miss implicit domain constraints.** They optimize for explicitly stated goals while violating unstated professional norms, regulatory expectations, or domain conventions. During Step 0 (problem understanding), actively probe for implicit constraints: "Are there industry norms, compliance rules, or unwritten expectations that an outsider wouldn't know?" This remains a top failure mode even with good decomposition (AlphaEval 2026, credibility 8/12).
+- **Don't declare parallel tracks "independent" without checking for coupled decisions.** When decomposing into parallel sub-tasks, ask: can a decision in one track make decisions in another suboptimal? If yes, the tracks are coupled, not independent — design a coordination point or merge them. Synergy blindness (agents optimizing independently across artificial boundaries) produced 26% cost overruns in production procurement tasks where this check was missing (AlphaEval 2026, credibility 8/12).
 
 ---
 

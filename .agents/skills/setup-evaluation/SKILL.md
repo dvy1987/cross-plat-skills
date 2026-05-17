@@ -10,9 +10,11 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: project-specific
-  sources: agent-loom design spec 2026-04-10
+  sources: >
+    agent-loom design spec 2026-04-10,
+    AlphaEval 2026 (credibility 8/12 — see docs/learnings/papers/alphaeval-2026-lu-et-al.md)
 ---
 
 # Setup Evaluation
@@ -91,6 +93,7 @@ If the same setup fails 3 times: stop looping, escalate to the user.
 - A "partial pass" is still a FAIL — all checks must pass.
 - Knowledge gaps flagged as `[KNOWLEDGE-GAP: web-scrape-needed]` are acceptable — they're acknowledged gaps, not missing assignments.
 - If the same setup fails 3 times, escalate to the user instead of looping.
+- **Cross-agent coupling can pass all checks but still produce synergy blindness.** Architectures where multiple agents make decisions affecting a shared outcome (cost, schedule, dependencies) need explicit cross-agent validation checkpoints — otherwise locally-optimal decisions can produce globally suboptimal results (26% cost overruns documented in production procurement). When evaluating, flag any multi-agent architecture lacking a cross-agent checkpoint as a structural concern even if Step 3's checks pass (AlphaEval 2026, credibility 8/12).
 
 ---
 

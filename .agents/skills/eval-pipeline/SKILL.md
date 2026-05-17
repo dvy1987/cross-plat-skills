@@ -12,7 +12,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.1"
+  version: "1.2"
   category: project-specific
   sources: >
     Red Hat eval-driven dev 2026, DeepEval framework,
@@ -141,6 +141,7 @@ Tell the user:
 - **Sampling rates matter for cost.** LLM-as-judge on 100% of PR traffic burns budget fast. Start at 20% and increase for high-risk changes only.
 - **Eval datasets go stale.** As the system evolves, old test cases may no longer represent real usage. Schedule quarterly dataset refresh.
 - **Don't evaluate the model when you mean to evaluate the system.** RAG failures are often retrieval problems, not generation problems. Layer evaluators to isolate root causes.
+- **Multi-agent eval needs cross-agent consistency checks.** Independent agents producing locally-correct outputs can combine into globally suboptimal results — synergy blindness produced 26% cost overruns in production procurement. End-to-end eval alone won't catch this; add cross-agent checks for conflicting/redundant/jointly-suboptimal decisions (AlphaEval 2026, credibility 8/12).
 
 ---
 

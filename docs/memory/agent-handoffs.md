@@ -257,3 +257,42 @@ All 4 layers landed. Per the new checkpoint registry, this very entry is the `me
 ### Working Tree
 - Clean. Last commit: `37c3dd6 updated project-setup to work for existing projects`.
 - No untracked files; no uncommitted changes.
+
+---
+
+## 2026-05-17 12:30 — Handoff
+
+### Done
+- Synergy blindness (AlphaEval 2026 FAILURE_MODE) coverage extended from `agent-builder` alone to three additional lifecycle skills via `learn-from-chat` append-only path: `process-decomposer` v1.1→v1.2 (prevention gotcha — coupled-tracks check), `setup-evaluation` v1.0→v1.1 (pre-execution gate gotcha — cross-agent coupling can pass all checks; AlphaEval added to `metadata.sources`), `eval-pipeline` v1.1→v1.2 (post-hoc detection gotcha — multi-agent eval needs cross-agent consistency checks). All three cite AlphaEval 2026 (credibility 8/12, 26% cost-overrun production data).
+- Coverage gap surfaced from in-session AlphaEval coverage verification (user question: "Is agent-loom incorporating these three into the eval skills library?"). Initial answer revealed synergy blindness lived only in `agent-builder`; this session closed the gap.
+- Post-Application Hardening Cycle ran clean on all three: 200-line gate PASS (152 / 137 / 195), modified-skill security sweep SAFE across all four `secure-*` skills (loader safety, injection, exfiltration, credentials, HTML/scripts, zero-width / bidi unicode all checked), validate-skills criteria intact.
+- Full provenance trail: `docs/learnings/chat-learnings.md` (Status IMPLEMENTED), `docs/memory/learnings.md` (+ meta-pattern entry), `docs/memory/project-index.md` (+2 rows), `docs/skill-outputs/SKILL-OUTPUTS.md` (+8 rows), `docs/changelogs/2026-05-17-synergy-blindness-coverage.md` (PATCH).
+- Committed as `56b4c03 improve: extend AlphaEval synergy-blindness coverage to process-decomposer, setup-evaluation, eval-pipeline`. 8 files / +77 / −4. Not pushed.
+
+### Debated
+- Whether to include `eval-pipeline` in the extension (it already has cascade-dependency content covering the spirit of "evals need to see structure not surface"). Decided to include — synergy blindness is a distinct enough mechanism that the explicit gotcha is worth the slight redundancy. User could legitimately have KEEP-CURRENT-ed eval-pipeline alone; chose to apply all three.
+- Whether to also add synergy blindness as a check row to `setup-evaluation`'s Step 3 architecture-evaluation table vs. only a gotcha. Decided gotcha-only — adding a table row counts as restructuring an existing workflow step (out of scope for `learn-from-chat`, would have escalated to `improve-skills`). Deferred as a candidate for `improve-skills TARGET=setup-evaluation SKIP_RESEARCH=true`.
+
+### Decisions
+- Synergy blindness now lives in 4 skills (`agent-builder` + the 3 added) rather than 1. Recorded as a meta-pattern in `docs/memory/learnings.md` (2026-05-17 entry): failure modes from research papers should be distributed across prevention / gate / detection skills, not concentrated in the most-obviously-related skill alone.
+
+### Deferred
+- Same coverage-gap pattern likely affects other AlphaEval findings — cascade dependency is in `eval-pipeline` but arguably belongs in `process-decomposer` Step 0 (most-preventive surface); constraint misinterpretation is only in `process-decomposer` but might also belong in `eval-judge` for post-hoc detection. Not addressed this session.
+- The meta-pattern itself should become an explicit heuristic in `learn-from-paper` Step 5 (Match) or the `learn-from` orchestrator's shared application protocol. Candidate: `improve-skills TARGET=learn-from-paper SKIP_RESEARCH=true`.
+- `eval-pipeline` is now at 195/200 lines. Any further additions should pair with a tightening pass (extract a non-core bullet to `references/`, or merge near-duplicate gotchas) before crossing.
+- The "missing cold-start trigger" structural flag for `validate-skills` Step 4 (carried from prior handoff) is still deferred.
+
+### Next Agent Should Know
+- The user (maintainer) values "the repo should follow its own rules" — when applying chat-learnings or improvements, do not bypass `learn-from-chat` / `universal-skill-creator` / `improve-skills` with direct Edit calls on a SKILL.md. The discipline IS the product. This session demonstrated the full end-to-end discipline path for the first time on substantive content; the commit `56b4c03` is the auditable artifact.
+- The AlphaEval ingestion's Application Map (`docs/learnings/papers/alphaeval-2026-lu-et-al.md`) should be re-audited for similar coverage gaps on the cascade-dependency and constraint-misinterpretation findings — same diagnostic pattern as this session.
+
+### Revisit Triggers
+- Next `learn-from-paper` ingestion lands: apply the prevention / gate / detection / remediation distribution heuristic to the Application Map BEFORE confirming changes. If most insights only map to one skill, audit for missed surfaces.
+- Any AlphaEval re-score event (peer review → +1, dataset release → +1, replication → +2): update `docs/learnings/papers/alphaeval-2026-lu-et-al.md` credibility section; all 8 skills' inline citations resolve there and update automatically.
+- If `eval-pipeline` is touched again: check line count first — currently 195/200.
+- If the meta-pattern heuristic gets added to `learn-from-paper`: close the 2026-05-17 chat-learning's "Notes" follow-up by updating `docs/memory/learnings.md` 2026-05-17 entry's `Revisit when` line.
+
+### Working Tree
+- Dirty after this handoff: 4 modified files (memory/agent-handoffs.md, memory/current-state.md, memory/project-index.md, skill-outputs/SKILL-OUTPUTS.md) staged for the handoff commit but not committed yet (user said "end of session" — handoff written but commit decision deferred to user).
+- Last committed: `56b4c03 improve: extend AlphaEval synergy-blindness coverage to process-decomposer, setup-evaluation, eval-pipeline`.
+- Not pushed to remote.

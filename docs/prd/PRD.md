@@ -1,7 +1,7 @@
 # Product Requirements Document — agent-loom
 
 **Status:** Living Document (source of truth)
-**Last updated:** 2026-05-13
+**Last updated:** 2026-05-19
 **Owner:** Divya
 **Point-in-time PRDs:** See dated files in this directory for historical snapshots.
 
@@ -54,9 +54,9 @@ One architectural direction:
 
 ## 4. Current Skill Inventory
 
-**56 skills** across 4 categories as of 2026-04-18.
+**90 skills** across 3 active categories as of 2026-05-19 (meta · thinking · project-specific; `domain` slot reserved, currently empty).
 
-### 4.1 Meta Skills (20)
+### 4.1 Meta Skills (22)
 
 Manage the library itself. Always global. Users interact directly with `universal-skill-creator` and `improve-skills`; the rest are called automatically.
 
@@ -101,7 +101,7 @@ Structured reasoning frameworks. Always global. Platform-agnostic. Output is alw
 | `fermi` | Decompose unknowns into estimable factors |
 | `ooda` | Boyd's OODA loop for fast-moving situations |
 
-### 4.3 Project-Specific Skills (18)
+### 4.3 Project-Specific Skills (57)
 
 Global install, project-scoped output. Cover the full product and engineering lifecycle.
 

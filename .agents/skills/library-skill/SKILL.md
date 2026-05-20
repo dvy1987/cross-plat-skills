@@ -13,7 +13,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.0"
+  version: "1.1"
   category: meta
 ---
 
@@ -67,6 +67,7 @@ Store as an in-memory skill registry.
 - Ensure skill tables list every current skill with correct name and one-line description.
 - Remove rows for deprecated/removed skills.
 - Add rows for new skills in the correct category section.
+- **Rewrite the total skill count.** Compute `N = len(skill registry from step 1)` — count only `.agents/skills/*/SKILL.md` files, exclude `.deprecated/`. Find every prose occurrence of the pattern `**N skills**` (or `N skills` in headline / What's-New / suite-summary lines) and replace with the recomputed N. Do NOT invent a count line if none exists; only rewrite existing mentions. Treat per-suite counts (e.g. "Spec-Driven Development suite (4 skills)") the same way — recompute from the registry, never carry the old number forward.
 
 ### 5. Generate skill graph → `docs/skill-graph.md`
 
@@ -137,6 +138,7 @@ Call `generate-changelog` with a summary of structural changes made. This is the
 - **Changelog skill location:** The skill named `generate-changelog` lives in `.agents/skills/generate-changelog/` — use the directory name for path, frontmatter `name` for references.
 - **Partial runs:** If scanning finds zero skills, abort — the path is likely wrong. Never wipe reference files.
 - **Concurrent edits:** Another agent may be editing AGENTS.md simultaneously. Read → diff → write, never overwrite wholesale.
+- **Prose counts drift silently.** Table rows are easy — the "N skills" mention in the intro or "What's New" prose gets forgotten because no row signals its existence. Step 4 MUST recompute and rewrite the count from the live registry on every run, even when no skill was added or removed (a deprecate-only sync still changes N).
 
 ---
 

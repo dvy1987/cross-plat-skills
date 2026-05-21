@@ -41,6 +41,8 @@ The same library-skill run surfaced three pre-existing drift items that were *no
 
 These are all in `docs/skill-outputs/SKILL-OUTPUTS.md` under the 2026-05-19 18:15 `library-skill` (audit only) entry.
 
+> **Update 2026-05-20 — RESOLVED.** A deeper audit found these initial findings were partly wrong and incomplete (the "broken refs" `agent-chain` / `setup-evaluator` / `specify` were false positives — a process classification, an agent, and a slash command respectively; the orphan count was 7 not 2). All real items were fixed the same day. See `docs/changelogs/2026-05-20-skill-index-prd-reconciliation.md`.
+
 ## Notes for Next Agent
 - The new Step 4 instruction is mechanical (regex-style rewrite of "N skills" patterns from the live registry). It is **not** a substitute for table-level sync. When the next structural change happens, run the full library-skill workflow, not just the count rewrite.
 - The PRD Section 4 table sync is the highest-value backlog item: ~41 skills are missing from the tables, which means downstream consumers of the PRD (other agents reading it as ground truth) will route on a 56-skill mental model. Worth pairing with a `skill-deconflict` pass since several near-duplicate descriptions may surface.

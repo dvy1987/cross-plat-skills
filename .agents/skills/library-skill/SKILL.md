@@ -13,7 +13,7 @@ description: >
 license: MIT
 metadata:
   author: dvy1987
-  version: "1.1"
+  version: "1.2"
   category: meta
 ---
 
@@ -67,7 +67,7 @@ Store as an in-memory skill registry.
 - Ensure skill tables list every current skill with correct name and one-line description.
 - Remove rows for deprecated/removed skills.
 - Add rows for new skills in the correct category section.
-- **Rewrite the total skill count.** Compute `N = len(skill registry from step 1)` — count only `.agents/skills/*/SKILL.md` files, exclude `.deprecated/`. Find every prose occurrence of the pattern `**N skills**` (or `N skills` in headline / What's-New / suite-summary lines) and replace with the recomputed N. Do NOT invent a count line if none exists; only rewrite existing mentions. Treat per-suite counts (e.g. "Spec-Driven Development suite (4 skills)") the same way — recompute from the registry, never carry the old number forward.
+- **Rewrite skill counts — but only in lockstep with the tables they label.** Compute `N` per category and overall from the step-1 registry (`.agents/skills/*/SKILL.md`, exclude `.deprecated/`). **Standalone prose counts** (e.g. "the library contains **90 skills**" in an intro / What's-New / suite blurb that does not head a table) — rewrite freely to the registry. **Table-labeling counts** (a heading like "Meta Skills (22)" or "(5 skills)" sitting directly above a skill table) MUST equal the rows beneath them — NEVER bump the heading number without adding/removing the matching rows in the same edit. If the table cannot be synced this run, leave the heading number unchanged and flag the gap in the Impact Report; a heading that disagrees with its own table is worse than a stale-but-consistent one. Don't invent a count line where none exists.
 
 ### 5. Generate skill graph → `docs/skill-graph.md`
 
@@ -138,7 +138,7 @@ Call `generate-changelog` with a summary of structural changes made. This is the
 - **Changelog skill location:** The skill named `generate-changelog` lives in `.agents/skills/generate-changelog/` — use the directory name for path, frontmatter `name` for references.
 - **Partial runs:** If scanning finds zero skills, abort — the path is likely wrong. Never wipe reference files.
 - **Concurrent edits:** Another agent may be editing AGENTS.md simultaneously. Read → diff → write, never overwrite wholesale.
-- **Prose counts drift silently.** Table rows are easy — the "N skills" mention in the intro or "What's New" prose gets forgotten because no row signals its existence. Step 4 MUST recompute and rewrite the count from the live registry on every run, even when no skill was added or removed (a deprecate-only sync still changes N).
+- **Never make a heading lie about its own table.** Standalone "N skills" prose drifts silently (no row signals it) — rewrite it every run, even a deprecate-only sync changes N. But a heading like "Meta Skills (22)" labels the rows beneath it; bumping it to the registry while the table is short of rows turns a consistent-but-stale doc into an inconsistent one. Sync heading counts only alongside the rows; otherwise leave them and flag the gap.
 
 ---
 

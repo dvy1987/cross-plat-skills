@@ -218,6 +218,15 @@ Install globally: `~/.agents/skills/`. Called automatically by `improve-skills` 
 
 ---
 
+### `cross-link-skills`
+**Triggers:** "fix cross-references", "sync skill links", "repair broken skill references", "update skill cross-links", "check skill references", "are cross-links correct" — or called by `universal-skill-creator` / `improve-skills`
+**What it does:** Repairs and verifies cross-references between SKILL.md files after a skill is created, renamed, removed, or restructured. Ensures every "Calls" reference uses the correct name and every called skill has accurate "Called by" context.
+**Called by:** `universal-skill-creator` (after creating), `improve-skills` (Step 3)
+**Output:** Files modified — every SKILL.md with stale or missing cross-links. Report of links repaired and broken refs flagged.
+**Impact report:** Links repaired, broken refs flagged, skills touched
+
+---
+
 ## Thinking Skills
 
 Install globally: `~/.agents/skills/`. Apply to any domain — product, engineering, personal decisions, creative work.
@@ -276,6 +285,39 @@ Install globally: `~/.agents/skills/`. Apply to any domain — product, engineer
 **What it does:** Boyd's OODA loop adapted for product and business — Observe (separate facts from assumptions), Orient (filter through mental models and context, find the key insight), Decide (2–3 options, pick one specifically), Act (owner + timeline + reversibility). Sets the next loop trigger so the team knows when to loop again. Based on OODA Canvas framework (TDHJ 2026).
 **Output:** No files. OODA report (Observe/Orient/Decide/Act + next loop trigger) in chat.
 **Impact report:** Key orientation insight, decision made, owner, timeline, next loop trigger
+
+---
+
+### `deep-thinking`
+**Triggers:** "deep thinking", "help me think through this properly", "apply your best thinking frameworks", "I need to think carefully before deciding", "what thinking tools should I use here" — entry point for any complex problem where the right framework is unclear
+**What it does:** Orchestrates one or more thinking frameworks — diagnoses which fit (inversion, pre-mortem, assumption-mapping, socratic, adversarial-hat, first-principles, second-order, fermi, ooda) and guides through them in sequence. Max 2–3 per problem. Always ends with a concrete next action.
+**Calls:** `inversion`, `pre-mortem`, `assumption-mapping`, `socratic`, `adversarial-hat`, `first-principles`, `second-order`, `fermi`, `ooda` (diagnoses which fit)
+**Output:** No files. Framework sequence + insights + concrete next action in chat.
+**Impact report:** Frameworks chosen, sequence run, key insight, next action
+
+---
+
+### `assumption-mapping`
+**Triggers:** "map assumptions", "surface hidden beliefs", "what must be true for this to work", "run an assumption audit", "what are we assuming", "find the untested beliefs" — or called by deep-thinking
+**What it does:** Surfaces every assumption embedded in a plan, strategy, or document, scores each by how critical and how validated it is, and identifies which to test first. Based on Bland & Osterwalder's assumption mapping (Testing Business Ideas).
+**Output:** No files. Assumption map (criticality × validation) + test-priority order in chat.
+**Impact report:** Assumptions surfaced, critical-untested count, top test priorities
+
+---
+
+### `pre-mortem`
+**Triggers:** "pre-mortem", "imagine this fails — why", "what could go wrong before we start", "risk analysis before launch", "what kills this project" — or called by deep-thinking
+**What it does:** Imagines the project has already failed a year out and works backward to root causes before they happen. Based on Gary Klein's prospective hindsight, which surfaces failure causes more effectively than forward risk analysis. Most useful right before a major commitment.
+**Output:** No files. Ranked failure causes + preventive actions in chat.
+**Impact report:** Failure causes surfaced, top risks ranked, preventive actions derived
+
+---
+
+### `socratic`
+**Triggers:** "I keep going in circles", "what is the real question here", "help me reason through this step by step", "unstick my thinking", "recursive questioning", "what is the root question" — or called by deep-thinking
+**What it does:** Breaks a stuck or complex problem into the smallest sub-question that unlocks the next step, answers it, and repeats until the path forward is clear. Based on recursive Socratic questioning (EMNLP 2023), which outperforms CoT and Tree-of-Thought on complex reasoning.
+**Output:** No files. Keystone sub-question chain + resolved path in chat.
+**Impact report:** Sub-questions decomposed, keystone question found, path unlocked
 
 ---
 
@@ -746,15 +788,6 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 
 ---
 
-### `inversion`
-**Triggers:** "invert this", "what could go wrong", "pre-mortem", "stress test this plan", "flip this problem", "think about this differently", "steelman the failure" — or called by brainstorming/prd-writing
-**What it does:** Applies inversion thinking to any problem, goal, or decision. Flips the question 180 degrees — asks what would guarantee failure, what the opposite looks like, what hidden assumptions haven't been examined — then translates findings back to forward actions. Uses the minimum questions needed (max 2 before inverting). Draws on five frames: Failure Inversion (Munger), Opposite Goal, Pre-mortem (Klein), Assumption Inversion, Socratic Decomposition.
-**Called by:** `brainstorming` (before finalising design) and `prd-writing` (before writing, to surface hidden assumptions)
-**Output:** No files generated. Inverted view + hidden assumptions surfaced + forward actions delivered in chat.
-**Impact report:** Frames used, questions asked, hidden assumptions surfaced, forward actions derived
-
----
-
 ### Agent & Process Design Skills
 
 ### `process-decomposer`
@@ -765,6 +798,16 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 **Registry:** `docs/processes/process.md` (volume-split at 500 lines)
 **Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
 **Impact report:** Complexity class, process entry path, steps count, knowledge gaps flagged, next layer
+
+---
+
+### `problem-to-plan`
+**Triggers:** "plan this change", "create a TODO", "write a plan for this", "problem to plan", "break this into tasks for agents", "make this actionable", "turn this into a plan agents can execute" — or routed from `process-decomposer` for lightweight planning
+**What it does:** Tactical fast path — turns a small problem, bug report, edit request, or narrow refactor into three deliverables: a brief change-spec, a detailed implementation-ready plan, and a TODO.md with agent-pickable tasks. For feature-sized work needing an executable spec + constitution + cross-check gate, redirects to `spec-driven-development` / `feature-spec` instead.
+**Calls:** `spec-driven-development` / `feature-spec` (redirect for feature-sized work)
+**Output files:** `docs/specs/YYYY-MM-DD-<slug>-spec.md`, `docs/plans/YYYY-MM-DD-<slug>-plan.md`, `docs/plans/TODO.md`
+**Logged to:** `docs/skill-outputs/SKILL-OUTPUTS.md`
+**Impact report:** Spec + plan + TODO paths, task count, milestones
 
 ---
 
@@ -809,6 +852,16 @@ Install globally: `~/.agents/skills/`. Output files land inside the current proj
 **Called by:** `agent-builder`, user (direct)
 **Output:** Prompt text ready to embed in AGENTS.md or architecture spec
 **Impact report:** Agent name, topology role, handoff defined, failure behavior defined
+
+---
+
+### `agent-launcher`
+**Internal skill** (`internal: true`) — never invoked directly by the user; never launches without a `setup-evaluation` PASS.
+**Triggers:** Called by `setup-evaluation` after a PASS verdict on an agent-chain architecture spec.
+**What it does:** Launches agents from a validated architecture spec using Claude Code / Ampcode native parallelism (Task tool). Does NOT generate scripts or SDK code — outputs structured spawn instructions the platform executes natively. **Claude Code and Ampcode only** (Tier 1 — Task tool available); halts gracefully on unsupported platforms.
+**Called by:** `setup-evaluation` (on PASS)
+**Output file:** Launch manifest at `docs/agents/runs/YYYY-MM-DD-<slug>-manifest.md`; agent outputs to `docs/handoffs/`
+**Impact report:** Agents spawned, topology, manifest path, platform tier
 
 ---
 

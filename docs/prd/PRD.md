@@ -1,7 +1,7 @@
 # Product Requirements Document — agent-loom
 
 **Status:** Living Document (source of truth)
-**Last updated:** 2026-05-19
+**Last updated:** 2026-05-20
 **Owner:** Divya
 **Point-in-time PRDs:** See dated files in this directory for historical snapshots.
 
@@ -54,7 +54,7 @@ One architectural direction:
 
 ## 4. Current Skill Inventory
 
-**90 skills** across 3 active categories as of 2026-05-19 (meta · thinking · project-specific; `domain` slot reserved, currently empty).
+**90 skills** across 3 active categories as of 2026-05-20 (meta · thinking · project-specific; `domain` slot reserved, currently empty).
 
 ### 4.1 Meta Skills (22)
 
@@ -71,17 +71,19 @@ Manage the library itself. Always global. Users interact directly with `universa
 | `split-skill` | Extracts reusable sub-capabilities into child skills |
 | `deprecate-skill` | Retires redundant skills, archives, updates callers |
 | `library-skill` | Syncs SKILL-INDEX, AGENTS.md, README, skill-graph, PRD, architecture after structural changes |
-| `publish-skill` | Packages and publishes to skills.sh or GitHub |
 | `cross-link-skills` | Repairs cross-references between SKILL.md files after creation/rename/removal |
-| `skill-finder` | Maps capabilities to existing skills, prevents sprawl |
-| `tool-finder` | Tool discovery, availability checking, MCP setup guidance |
+| `publish-skill` | Packages and publishes to skills.sh or GitHub |
+| `learn-from` | Orchestrator — auto-detects source type (paper/repo/article/chat) and routes |
+| `learn-from-paper` | Extracts actionable knowledge from research papers |
+| `learn-from-repo` | Extracts patterns and conventions from GitHub/GitLab repos with security scan |
+| `learn-from-article` | Extracts insights from blogs/practitioner content; credibility + security checks |
+| `learn-from-chat` | Captures in-conversation learnings into skills; logs each with a Status field |
 | `secure-skill` | Security orchestrator: 6 core checks before any external content enters |
 | `secure-skill-content-sanitization` | Strips hidden text, zero-width chars, homoglyphs |
 | `secure-skill-repo-ingestion` | Repo-specific: poisoned examples, dependency scan, path attacks |
 | `secure-skill-runtime` | Runtime: state corruption, skill overwrites, DoS prevention |
 | `skill-deconflict` | Detects naming collisions, overlapping triggers, insufficient intent diversity |
 | `skill-routing` | Matches requests to skills via trigger matching, context, and ambiguity scoring |
-| `generate-changelog` | Generates release notes and changelogs |
 
 ### 4.2 Thinking Skills (11)
 
@@ -109,25 +111,61 @@ Global install, project-scoped output. Cover the full product and engineering li
 |-------|---------|
 | `product-soul` | Strategic north star: User, Business, Strategy, PMF, GTM |
 | `prd-writing` | Discovery interview → structured PRD |
+| `problem-to-plan` | Turns a small problem into change-spec + plan + TODO.md for agents |
 | `implementation-plan` | Step-by-step technical implementation plan |
+| `feature-spec` | Executable feature spec — FRs, NFRs, ACs as Given/When/Then; clarification hard gate |
+| `project-constitution` | Authors the project's non-negotiable engineering rules |
+| `spec-driven-development` | Orchestrator — routes the SDD slash commands to leaf skills |
+| `spec-crosscheck` | Hard readiness gate — cross-checks constitution + spec + plan + tasks; PASS/FAIL |
 | `test-driven-development` | Red-Green-Refactor cycle |
 | `code-review-crsp` | 6-criteria review with severity-classified findings |
 | `debug-and-fix` | Reproduce → root-cause → fix → verify |
 | `technical-debt-audit` | Project health audit, identifies high-interest debt |
+| `codebase-understanding` | Maps architecture, traces flows, surfaces hotspots |
 | `agent-system-architecture` | Multi-agent system design and orchestration patterns |
 | `architectural-decision-log` | Captures the "why" behind technical choices |
-| `codebase-understanding` | Maps architecture, traces flows, surfaces hotspots |
 | `project-setup` | Generates tailored AGENTS.md for any project |
-| `retroactive-project-setup` | Bootstraps full agent infrastructure (AGENTS.md + architecture + soul + ADR-0001 + memory seed) over an existing codebase without modifying source code |
+| `retroactive-project-setup` | Bootstraps full agent infrastructure over an existing codebase without modifying source code |
 | `project-orchestrator` | Routes requests, decomposes complex work, manages phases |
 | `process-decomposer` | Conversational problem understanding + complexity triage + decomposition |
-| `problem-to-plan` | Produces mini-spec, detailed plan, and TODO.md from a problem description |
 | `agent-builder` | Designs single/multi-agent execution structures from processes |
 | `setup-evaluation` | Pre-execution QA gate for agent-chain workflows |
 | `create-agent-prompt` | Creates role prompts for agents in multi-agent topologies |
 | `agent-launcher` | Launches agents from validated specs via Task tool (Claude Code / Ampcode only) |
-| `learn-from-paper` | Extracts actionable knowledge from research papers |
+| `skill-finder` | Maps capabilities to existing skills, prevents sprawl |
+| `tool-finder` | Tool discovery, availability checking, MCP setup guidance |
+| `generate-changelog` | Generates release notes and changelogs |
 | `apply-paper-to-project` | Applies paper findings to the current codebase |
+| `memory` | Orchestrator — routes startup, recall, capture, handoff, decisions, promotion, compaction, audit, forget |
+| `memory-startup` | Loads bounded working context for a new session via routing/index files |
+| `memory-capture` | Captures durable project memory from work, debates, discoveries |
+| `memory-recall` | Retrieves task-relevant memory without loading the whole store |
+| `memory-handoff` | Writes compact next-agent summaries after meaningful work |
+| `memory-decision` | Records decisions with rationale, alternatives, status, revisit triggers |
+| `memory-promote` | Promotes stable, cross-project, safe memories into global memory |
+| `memory-compact` | Compresses bloated memory while preserving decisions and provenance |
+| `memory-audit` | Audits memory for bloat, stale decisions, contradictions, unsafe content |
+| `memory-forget` | Deletes, redacts, archives, or retires memory on request or policy |
+| `eval-output` | Orchestrator — evaluates LLM/agent outputs with rubrics + LLM-as-judge |
+| `eval-rubric-design` | Designs structured rubrics — dimensions, scales, hard gates, value-weighting |
+| `eval-judge` | Direct scoring + pairwise comparison with bias mitigation |
+| `eval-pipeline` | Automated eval pipelines — deterministic + statistical + LLM-judge into CI |
+| `experimentation` | Orchestrator — routes backlog → spec → runbook → readout; Decision Class labels |
+| `experiment-backlog` | ICE + feasibility-gated experiment backlog |
+| `experiment-spec` | Decision-grade spec — hypothesis, metrics, MDE/duration, decision rule |
+| `experiment-runbook` | Translates spec into launch runbook — flags, exposure events, ramp, rollback |
+| `experiment-readout` | SRM-blocked readout — validity checks, causal interpretation, decision |
+| `frontend-design` | Orchestrator — archetype → tokens → icons → build → review, anti-vibecoded gates |
+| `design-archetype` | Picks one of 12 curated product archetypes — biggest lever against vibecoded UI |
+| `design-tokens-craft` | Archetype-driven semantic oklch tokens with hand-tuned dark mode |
+| `icon-craft` | Solves "Lucide everywhere" — 5 icon strategies + SVG craft rules |
+| `design-review` | 10-dimension rubric review against the archetype's "feels like X" promise |
+| `venture-exploration` | Orchestrator — diagnoses business-idea lifecycle stage and routes |
+| `idea-generation` | Generates 5–10 structured idea cards; bans "Uber for X" / "everyone" |
+| `business-modeling` | Picks the right canvas (Lean/BMC/VPC) and fills with specifics |
+| `idea-evaluation` | Scores idea on 11 dimensions → GO / ITERATE / KILL + next kill test |
+| `customer-discovery` | Mom Test interview guide + conduct + signal-vs-compliments synthesis |
+| `reality-check` | Evaluates claims vs implementation — truth score, gaps, roadmap |
 
 ### 4.4 Domain Skills (0)
 
